@@ -376,10 +376,10 @@ export default function StickyHeadTable() {
                                 variant="outlined"
                                 size="small"
                                 value={curNote}
+                                style={{ width: '100%' }}
                                 onChange={(e) => {
                                     setCurNote(e.target.value)
                                 }}
-                                fullWidth
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -445,7 +445,7 @@ export default function StickyHeadTable() {
                         }}
                     >
                         <Box
-                            fullWidth
+                            style={{ width: '100%' }}
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -494,7 +494,7 @@ export default function StickyHeadTable() {
                                         label="Enter More Credits"
                                         variant="outlined"
                                         size="small"
-                                        fullWidth
+                                        style={{ width: '100%' }}
                                         value={addCredit}
                                         onChange={(e) => {
                                             setAddCredit(e.target.value)
@@ -538,7 +538,7 @@ export default function StickyHeadTable() {
                                         label="Update Credits"
                                         variant="outlined"
                                         size="small"
-                                        fullWidth
+                                        style={{ width: '100%' }}
                                         value={minusCredit}
                                         onChange={(e) => {
                                             setMinusCredit(e.target.value)
