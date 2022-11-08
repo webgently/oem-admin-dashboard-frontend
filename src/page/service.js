@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -34,34 +34,13 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import axios from 'axios'
 
 const columns = [
-    { id: 'id', label: 'ID', minWidth: 50 },
-    { id: 'type', label: 'Service Type', minWidth: 50 },
-    { id: 'status', label: 'Status', minWidth: 100 },
-    { id: 'action', label: 'Action', minWidth: 150 },
-]
-
-function createData(id, type, status, action) {
-    return { id, type, status, action }
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
+    { id: '_id', label: 'ID', minWidth: 50 },
+    { id: 'serviceType', label: 'Service Type', minWidth: 150 },
+    { id: 'status', label: 'Status', minWidth: 150 },
+    { id: 'action', label: 'Action', minWidth: 50 },
 ]
 
 const ServiceStyle = {
@@ -96,13 +75,105 @@ export default function StickyHeadTable() {
         setPage(0)
     }
 
+    const [serviceType, setServiceType] = useState('')
+    const [serviceData, setServiceData] = useState([])
+    const [currentID, setCurrentID] = useState()
     const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
+    const [modalBtnText, setModalBtnText] = useState('')
+    const handleClose = () => {
+        setOpen(false)
+    }
 
-    const [addservice, setaddservice] = useState(false)
-    const handleOpenAddservice = () => setaddservice(true)
-    const handleCloseAddservice = () => setaddservice(false)
+    const handleOpen = (flag, id) => {
+        setModalBtnText(flag)
+        if (flag === 'update') {
+            getOneService(id)
+            setCurrentID(id)
+        }
+        setOpen(true)
+    }
+
+    const saveServiceType = (flag) => {
+        if (flag === 'add') addService()
+        else updateService(currentID)
+    }
+
+    const addService = async () => {
+        let data = { serviceType }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}addService`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.status) {
+                    setServiceData((serviceData) => [
+                        ...serviceData,
+                        result.data.data,
+                    ])
+                    setServiceType('')
+                    setOpen(false)
+                    toast.success('Service Type Create Successfully')
+                } else {
+                    toast.success(result.data.data)
+                }
+            })
+    }
+
+    const updateService = async (id) => {
+        let data = { _id: id, serviceType: serviceType }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}updateService`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllService()
+                    setOpen(false)
+                    toast.success('Service Type Update Successfully')
+                }
+            })
+    }
+
+    const deleteService = async (row) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}deleteService`, {
+                _id: row._id,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllService()
+                    toast.success('Service Type Delete Successfully')
+                }
+            })
+    }
+
+    const getOneService = async (id) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getOneService`, {
+                _id: id,
+            })
+            .then((result) => {
+                if (result) {
+                    setServiceType(result.data.serviceType)
+                }
+            })
+    }
+
+    const getAllService = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getAllService`)
+            .then((result) => {
+                if (result) {
+                    setServiceData(result.data)
+                } else {
+                    toast.success('Interanal server error')
+                }
+            })
+    }
+
+    useEffect(() => {
+        getAllService()
+    }, [])
 
     return (
         <Paper
@@ -120,7 +191,7 @@ export default function StickyHeadTable() {
                     <Button
                         variant="contained"
                         endIcon={<AddIcon />}
-                        onClick={handleOpenAddservice}
+                        onClick={() => handleOpen('add', 0)}
                     >
                         Service Type
                     </Button>
@@ -150,7 +221,7 @@ export default function StickyHeadTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {serviceData
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -170,21 +241,18 @@ export default function StickyHeadTable() {
                                                     key={column.id}
                                                     align={column.align}
                                                 >
-                                                    {column.id === 'profile' ? (
-                                                        <Avatar
-                                                            alt="Remy Sharp"
-                                                            src={value}
-                                                        />
-                                                    ) : column.id ===
-                                                      'action' ? (
+                                                    {column.id === 'action' ? (
                                                         <ButtonGroup
                                                             variant="outlined"
                                                             aria-label="outlined button group"
                                                         >
                                                             <IconButton
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
+                                                                onClick={() => {
+                                                                    handleOpen(
+                                                                        'update',
+                                                                        row._id
+                                                                    )
+                                                                }}
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
                                                             >
@@ -193,6 +261,11 @@ export default function StickyHeadTable() {
                                                             <IconButton
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
+                                                                onClick={() =>
+                                                                    deleteService(
+                                                                        row
+                                                                    )
+                                                                }
                                                             >
                                                                 <DeleteIcon />
                                                             </IconButton>
@@ -212,7 +285,7 @@ export default function StickyHeadTable() {
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={rows.length}
+                count={serviceData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -256,6 +329,8 @@ export default function StickyHeadTable() {
                                 variant="outlined"
                                 size="small"
                                 fullWidth
+                                value={serviceType}
+                                onChange={(e) => setServiceType(e.target.value)}
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -270,68 +345,14 @@ export default function StickyHeadTable() {
                                 >
                                     Close
                                 </Button>
-                                <Button size="small" variant="contained">
-                                    Update
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Box>
-            </Modal>
-            <Modal
-                open={addservice}
-                onClose={handleCloseAddservice}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={ServiceStyle}>
-                    <Box
-                        sx={{
-                            px: 3,
-                            py: 1,
-                            bgcolor: '#1976d2',
-                            borderRadius: 1,
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Box>Service Type</Box>
-                        <Box sx={{ flex: '1' }}></Box>
-                        <Box>
-                            <IconButton
-                                onClick={() => {
-                                    handleCloseAddservice()
-                                }}
-                            >
-                                <CloseIcon sx={{ color: 'white' }} />
-                            </IconButton>
-                        </Box>
-                    </Box>
-                    <Box sx={{ p: 3 }}>
-                        <Box>
-                            <TextField
-                                id="outlined-basic"
-                                label="Service Type"
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            />
-                        </Box>
-                        <Box sx={{ display: 'flex' }}>
-                            <Box sx={{ flex: '1' }}></Box>
-                            <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
                                 <Button
                                     size="small"
                                     variant="contained"
-                                    onClick={() => {
-                                        handleCloseAddservice()
-                                    }}
+                                    onClick={() =>
+                                        saveServiceType(modalBtnText)
+                                    }
                                 >
-                                    Close
-                                </Button>
-                                <Button size="small" variant="contained">
-                                    Add
+                                    {modalBtnText}
                                 </Button>
                             </Box>
                         </Box>

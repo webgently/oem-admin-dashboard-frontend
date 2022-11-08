@@ -20,3 +20,18 @@ code {
     width: 3px;
     color: gray;
 }
+.font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.font-mulish {
+    font-family: 'Mulish', sans-serif;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+p {
+    font-family: 'Mulish', sans-serif;
+}
