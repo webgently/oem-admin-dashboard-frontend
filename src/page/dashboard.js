@@ -6,6 +6,9 @@ import Grid from '@mui/material/Grid'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import { IconButton } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -19,7 +22,21 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function ResponsiveGrid() {
     const navigate = useNavigate()
+    const [userCount, setUserCount] = useState(0)
+    const [serviceCount, setServiceCount] = useState(0)
 
+    useEffect(() => {
+        getDashBoardData()
+    }, [])
+
+    const getDashBoardData = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getDashBoardData`)
+            .then((result) => {
+                setUserCount(result.data.userCount)
+                setServiceCount(result.data.serviceCount)
+            })
+    }
     return (
         <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>
             <Box>
@@ -58,7 +75,7 @@ export default function ResponsiveGrid() {
                                     justifyContent: 'flex-start',
                                 }}
                             >
-                                <h2 style={{ margin: '0px' }}>11</h2>
+                                <h2 style={{ margin: '0px' }}>{userCount}</h2>
                             </Box>
                         </Item>
                     </Grid>
@@ -94,7 +111,9 @@ export default function ResponsiveGrid() {
                                     justifyContent: 'flex-start',
                                 }}
                             >
-                                <h2 style={{ margin: '0px' }}>2</h2>
+                                <h2 style={{ margin: '0px' }}>
+                                    {serviceCount}
+                                </h2>
                             </Box>
                         </Item>
                     </Grid>
