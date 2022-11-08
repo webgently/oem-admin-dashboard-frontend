@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
-import Avatar from '@mui/material/Avatar'
 import {
     Box,
     Button,
@@ -22,15 +21,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
-import ClearIcon from '@mui/icons-material/Clear'
-import CheckIcon from '@mui/icons-material/Check'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -59,12 +51,6 @@ const ServiceStyle = {
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [creditAddFlag, setCreditAddFlag] = useState(true)
-    const [age, setAge] = React.useState('')
-
-    const handleChange = (event) => {
-        setAge(event.target.value)
-    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -78,13 +64,11 @@ export default function StickyHeadTable() {
     const [serviceType, setServiceType] = useState('')
     const [serviceData, setServiceData] = useState([])
     const [currentID, setCurrentID] = useState()
-    const [open, setOpen] = useState(false)
     const [modalBtnText, setModalBtnText] = useState('')
-    const handleClose = () => {
-        setOpen(false)
-    }
+    const [open, setOpen] = useState(false)
 
     const handleOpen = (flag, id) => {
+        setServiceType('')
         setModalBtnText(flag)
         if (flag === 'update') {
             getOneService(id)
@@ -93,7 +77,15 @@ export default function StickyHeadTable() {
         setOpen(true)
     }
 
+    const handleClose = () => {
+        setOpen(false)
+    }
+
     const saveServiceType = (flag) => {
+        if (!serviceType) {
+            toast.error('Select Service Type')
+            return
+        }
         if (flag === 'add') addService()
         else updateService(currentID)
     }
@@ -110,7 +102,6 @@ export default function StickyHeadTable() {
                         ...serviceData,
                         result.data.data,
                     ])
-                    setServiceType('')
                     setOpen(false)
                     toast.success('Service Type Create Successfully')
                 } else {
@@ -166,7 +157,7 @@ export default function StickyHeadTable() {
                 if (result) {
                     setServiceData(result.data)
                 } else {
-                    toast.success('Interanal server error')
+                    toast.error('Interanal server error')
                 }
             })
     }
@@ -245,6 +236,7 @@ export default function StickyHeadTable() {
                                                         <ButtonGroup
                                                             variant="outlined"
                                                             aria-label="outlined button group"
+                                                            key={column.id}
                                                         >
                                                             <IconButton
                                                                 onClick={() => {

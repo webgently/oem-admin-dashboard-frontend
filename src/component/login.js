@@ -61,22 +61,22 @@ export default function Login() {
                         } else if (result.data === 'password') {
                             toast.error('Password Incorrect!')
                         } else {
-                            if (result.data === 'user') {
+                            if (result.data.permission === 'user') {
                                 dispatch(
                                     setAccountData({
                                         mail,
                                         pass,
-                                        permission: result.data,
+                                        permission: result.data.permission,
                                     })
                                 )
                                 toast.success('Login Successed')
                                 navigate('dashboard')
-                            } else if (result.data === 'admin') {
+                            } else if (result.data.permission === 'admin') {
                                 dispatch(
                                     setAccountData({
                                         mail,
                                         pass,
-                                        permission: result.data,
+                                        permission: result.data.permission,
                                     })
                                 )
                                 toast.success('Login Successed')

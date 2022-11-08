@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
-import Avatar from '@mui/material/Avatar'
 import {
     Box,
     Button,
@@ -22,47 +21,19 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
-import ClearIcon from '@mui/icons-material/Clear'
-import CheckIcon from '@mui/icons-material/Check'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import axios from 'axios'
 
 const columns = [
-    { id: 'id', label: 'ID', minWidth: 50 },
-    { id: 'type', label: 'Service Type', minWidth: 50 },
-    { id: 'service', label: 'Service', minWidth: 100 },
+    { id: '_id', label: 'ID', minWidth: 50 },
+    { id: 'serviceType', label: 'Service Type', minWidth: 100 },
+    { id: 'service', label: 'Service', minWidth: 150 },
     { id: 'credit', label: 'Credit', minWidth: 100 },
-    { id: 'action', label: 'Action', minWidth: 150 },
-]
-
-function createData(id, type, service, credit, action) {
-    return { id, type, service, credit, action }
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
+    { id: 'action', label: 'Action', minWidth: 50 },
 ]
 
 const ServiceStyle = {
@@ -81,12 +52,6 @@ const ServiceStyle = {
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [creditAddFlag, setCreditAddFlag] = useState(true)
-    const [age, setAge] = React.useState('')
-
-    const handleChange = (event) => {
-        setAge(event.target.value)
-    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -97,9 +62,130 @@ export default function StickyHeadTable() {
         setPage(0)
     }
 
+    const [serviceTypeData, setServiceTypeData] = useState([])
+    const [currentServiceType, setCurrentServiceType] = useState('')
+    const [pricesData, setPricesData] = useState([])
+    const [modalBtnText, setModalBtnText] = useState('')
+    const [credit, setCredit] = useState('')
+    const [service, setService] = useState('')
+    const [currentID, setCurrentID] = useState()
     const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
+
+    const handleOpen = (flag, id) => {
+        getServeType()
+        setCredit('')
+        setService('')
+        setCurrentServiceType('')
+        setModalBtnText(flag)
+        if (flag === 'update') {
+            getOnePrice(id)
+            setCurrentID(id)
+        }
+        setOpen(true)
+    }
+
     const handleClose = () => setOpen(false)
+
+    const getServeType = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getServiceType`)
+            .then((result) => {
+                setServiceTypeData(result.data)
+            })
+    }
+
+    const savePriceType = (flag) => {
+        if (!currentServiceType) {
+            toast.error('Select Service Type')
+            return
+        }
+        if (!credit) {
+            toast.error('Input credit')
+            return
+        }
+        if (!service) {
+            toast.error('Input Service')
+            return
+        }
+        if (flag === 'add') addPrice()
+        else updatePrice(currentID)
+    }
+
+    const addPrice = async () => {
+        let data = { serviceType: currentServiceType, service, credit }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}addPrice`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.status) {
+                    setPricesData((pricesData) => [
+                        ...pricesData,
+                        result.data.data,
+                    ])
+                    setOpen(false)
+                    toast.success('Price List Create Successfully')
+                }
+            })
+    }
+
+    const updatePrice = async (id) => {
+        let data = { _id: id, serviceType: currentServiceType, service, credit }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}updatePrice`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllPrice()
+                    setOpen(false)
+                    toast.success('Price List Update Successfully')
+                }
+            })
+    }
+
+    const deletePrice = async (row) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}deletePrice`, {
+                _id: row._id,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllPrice()
+                    toast.success('Price List Delete Successfully')
+                }
+            })
+    }
+
+    const getOnePrice = async (id) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getOnePrice`, {
+                _id: id,
+            })
+            .then((result) => {
+                if (result) {
+                    setCredit(result.data.credit)
+                    setService(result.data.service)
+                    setCurrentServiceType(result.data.serviceType)
+                }
+            })
+    }
+
+    const getAllPrice = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getAllPrice`)
+            .then((result) => {
+                if (result) {
+                    setPricesData(result.data)
+                } else {
+                    toast.error('Interanal server error')
+                }
+            })
+    }
+
+    useEffect(() => {
+        getAllPrice()
+    }, [])
 
     return (
         <Paper
@@ -117,7 +203,7 @@ export default function StickyHeadTable() {
                     <Button
                         variant="contained"
                         endIcon={<AddIcon />}
-                        onClick={handleOpen}
+                        onClick={() => handleOpen('add', 0)}
                     >
                         Price
                     </Button>
@@ -147,7 +233,7 @@ export default function StickyHeadTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {pricesData
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -167,21 +253,19 @@ export default function StickyHeadTable() {
                                                     key={column.id}
                                                     align={column.align}
                                                 >
-                                                    {column.id === 'profile' ? (
-                                                        <Avatar
-                                                            alt="Remy Sharp"
-                                                            src={value}
-                                                        />
-                                                    ) : column.id ===
-                                                      'action' ? (
+                                                    {column.id === 'action' ? (
                                                         <ButtonGroup
                                                             variant="outlined"
                                                             aria-label="outlined button group"
+                                                            key={column.id}
                                                         >
                                                             <IconButton
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
+                                                                onClick={() => {
+                                                                    handleOpen(
+                                                                        'update',
+                                                                        row._id
+                                                                    )
+                                                                }}
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
                                                             >
@@ -190,6 +274,11 @@ export default function StickyHeadTable() {
                                                             <IconButton
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
+                                                                onClick={() =>
+                                                                    deletePrice(
+                                                                        row
+                                                                    )
+                                                                }
                                                             >
                                                                 <DeleteIcon />
                                                             </IconButton>
@@ -209,7 +298,7 @@ export default function StickyHeadTable() {
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={rows.length}
+                count={pricesData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -233,7 +322,10 @@ export default function StickyHeadTable() {
                             alignItems: 'center',
                         }}
                     >
-                        <Box>Edit Credit</Box>
+                        <Box>
+                            {modalBtnText === 'add' ? 'Create' : 'Edit'} Price
+                            List
+                        </Box>
                         <Box sx={{ flex: '1' }}></Box>
                         <Box>
                             <IconButton
@@ -251,14 +343,34 @@ export default function StickyHeadTable() {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={age}
-                                    onChange={handleChange}
+                                    value={currentServiceType}
+                                    onChange={(e) =>
+                                        setCurrentServiceType(e.target.value)
+                                    }
                                 >
-                                    <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
+                                    {serviceTypeData.map((item) => {
+                                        return (
+                                            <MenuItem
+                                                value={item.serviceType}
+                                                key={item._id}
+                                            >
+                                                {item.serviceType}
+                                            </MenuItem>
+                                        )
+                                    })}
                                 </Select>
                             </FormControl>
+                        </Box>
+                        <Box sx={{ mt: '20px' }}>
+                            <TextField
+                                id="outlined-basic"
+                                label="Service"
+                                variant="outlined"
+                                size="small"
+                                value={service}
+                                fullWidth
+                                onChange={(e) => setService(e.target.value)}
+                            />
                         </Box>
                         <Box sx={{ mt: '20px' }}>
                             <TextField
@@ -266,16 +378,14 @@ export default function StickyHeadTable() {
                                 label="Credit"
                                 variant="outlined"
                                 size="small"
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault()
+                                    }
+                                }}
+                                value={credit}
                                 fullWidth
-                            />
-                        </Box>
-                        <Box sx={{ mt: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Price"
-                                variant="outlined"
-                                size="small"
-                                fullWidth
+                                onChange={(e) => setCredit(e.target.value)}
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -290,8 +400,12 @@ export default function StickyHeadTable() {
                                 >
                                     Close
                                 </Button>
-                                <Button size="small" variant="contained">
-                                    Update
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => savePriceType(modalBtnText)}
+                                >
+                                    {modalBtnText}
                                 </Button>
                             </Box>
                         </Box>
