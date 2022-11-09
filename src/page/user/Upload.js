@@ -42,7 +42,7 @@ function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein }
 }
 
-export default function ResponsiveGrid() {
+export default function Upload() {
     const [age, setAge] = useState('')
     const [value, setValue] = useState(dayjs('2022-04-07'))
     const [Radiovalue, setRadioValue] = useState('')

@@ -22,10 +22,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
-import ClearIcon from '@mui/icons-material/Clear'
-import CheckIcon from '@mui/icons-material/Check'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -147,7 +143,7 @@ export default function AdminUpload() {
                                         hover
                                         role="checkbox"
                                         tabIndex={-1}
-                                        key={row.code}
+                                        key={row.id}
                                     >
                                         {columns.map((column) => {
                                             const value = row[column.id]

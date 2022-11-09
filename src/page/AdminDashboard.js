@@ -1,12 +1,11 @@
-import * as React from 'react'
+import React,{ useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import { IconButton } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const Item = styled(Paper)(({ theme }) => ({

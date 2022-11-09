@@ -63,7 +63,7 @@ const Item3 = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }))
 
-export default function ResponsiveGrid() {
+export default function Dashboard() {
     return (
         <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>
             <Box sx={{ mt: '130px' }}>

@@ -136,7 +136,7 @@ const StyledMenu = styled((props) => (
     },
 }))
 
-export default function ResponsiveGrid() {
+export default function OverviewCredit() {
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
 

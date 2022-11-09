@@ -12,7 +12,7 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setAccountData } from '../features/account/account'
 
-const isTest = process.env.REACT_APP_MODE = "development";
+const isTest = process.env.REACT_APP_MODE
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
@@ -56,21 +56,19 @@ const Login = () => {
                 await axios
                     .post(`${process.env.REACT_APP_Base_Url}signin`, { data })
                     .then((result) => {
-                        const data = result.data;
-                        delete data.__v;
+                        const data = result.data
+                        delete data.__v
                         if (data === 'not exist') {
                             toast.error('This email is not exist!')
                         } else if (data === 'password') {
                             toast.error('Password Incorrect!')
                         } else {
-                            if (data.permission === 'user') navigate('dashboard')
-                            else if (data.permission === 'admin') navigate('admin_dashboard')
+                            if (data.permission === 'user')
+                                navigate('dashboard')
+                            else if (data.permission === 'admin')
+                                navigate('admin_dashboard')
                             toast.success('Login Successed')
-                            dispatch(
-                                setAccountData({
-                                    data
-                                })
-                            )
+                            dispatch(setAccountData(data))
                             localStorage.setItem('user', JSON.stringify(data))
                         }
                     })
@@ -165,22 +163,22 @@ const Login = () => {
             const data = localStorage.getItem('user')
             if (data) {
                 const data = JSON.parse(data)
-                switch(data.permission) {
-                    case 'admin': 
+                switch (data.permission) {
+                    case 'admin':
                         navigate('admin_dashboard')
-                        break;
-                    case 'user': 
+                        break
+                    case 'user':
                         navigate('dashboard')
-                        break;
+                        break
                     default:
-                        break;
+                        break
                 }
-                dispatch(setAccountData({data}))
+                dispatch(setAccountData(data))
             } else {
                 if (isTest) console.log('storage is emtry or broken')
             }
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     }, [])
 

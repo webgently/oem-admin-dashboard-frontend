@@ -33,7 +33,7 @@ const Item1 = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }))
 
-export default function ResponsiveGrid() {
+export default function Profile() {
     return (
         <Box
             sx={{

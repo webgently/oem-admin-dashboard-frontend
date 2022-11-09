@@ -241,7 +241,7 @@ export default function AdminPricelist() {
                                         hover
                                         role="checkbox"
                                         tabIndex={-1}
-                                        key={row.code}
+                                        key={row._id}
                                     >
                                         {columns.map((column) => {
                                             const value = row[column.id]

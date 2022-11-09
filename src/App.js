@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Login from './component/login'
-import Header from './component/header'
-import Sidebar from './component/user/sidebar'
-import Dashboard from './page/user/dashboard'
-import Upload from './page/user/upload'
-import Overview from './page/user/overview'
-import OverviewCredit from './page/user/overviewCredit'
-import BuyCredit from './page/user/buyCredit'
-import Profile from './page/user/profile'
+import Login from './component/Login'
+import Header from './component/Header'
+import Sidebar from './component/user/Sidebar'
+import Dashboard from './page/user/Dashboard'
+import Upload from './page/user/Upload'
+import Overview from './page/user/Overview'
+import OverviewCredit from './page/user/OverviewCredit'
+import BuyCredit from './page/user/BuyCredit'
+import Profile from './page/user/Profile'
 // --------admin------------
 import AdminDashboard from './page/AdminDashboard'
 import Users from './page/AdminRegister'
@@ -20,7 +20,6 @@ import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 
 export default function App() {
-
     return (
         <Router>
             <Routes>
