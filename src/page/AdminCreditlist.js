@@ -44,7 +44,7 @@ const ServiceStyle = {
     p: 0,
 }
 
-export default function StickyHeadTable() {
+export default function AdminCreditlist() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
 

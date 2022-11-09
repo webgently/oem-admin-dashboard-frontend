@@ -8,7 +8,6 @@ import { IconButton } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import toast from 'react-hot-toast'
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -20,7 +19,7 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }))
 
-export default function ResponsiveGrid() {
+export default function AdminDashboard() {
     const navigate = useNavigate()
     const [userCount, setUserCount] = useState(0)
     const [serviceCount, setServiceCount] = useState(0)
@@ -149,7 +148,7 @@ export default function ResponsiveGrid() {
                                     justifyContent: 'flex-start',
                                 }}
                             >
-                                <h2 style={{ margin: '0px' }}>5</h2>
+                                <h2 style={{ margin: '0px' }}>N/A</h2>
                             </Box>
                         </Item>
                     </Grid>
@@ -183,7 +182,7 @@ export default function ResponsiveGrid() {
                                     justifyContent: 'flex-start',
                                 }}
                             >
-                                <h2 style={{ margin: '0px' }}>6</h2>
+                                <h2 style={{ margin: '0px' }}>N/A</h2>
                             </Box>
                         </Item>
                     </Grid>

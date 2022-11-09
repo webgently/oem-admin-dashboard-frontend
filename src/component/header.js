@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { styled, useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -16,8 +16,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 import LogoIcon from '../assets/img/OEMservice2.jpg'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PersonIcon from '@mui/icons-material/Person'
@@ -26,15 +24,13 @@ import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
-import { Navigate, Outlet } from 'react-router-dom'
 import { Collapse, Menu, MenuItem } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Outlet } from 'react-router-dom'
 import CloudUpload from '@mui/icons-material/CloudUpload'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
 import EuroIcon from '@mui/icons-material/Euro'
-import { useSelector, useDispatch } from 'react-redux'
-import { setAccountData } from '../features/account/account'
+import { useDispatch } from 'react-redux'
+import { clearAccountData } from '../features/account/account'
 
 const drawerWidth = 240
 
@@ -89,7 +85,6 @@ export default function PersistentDrawerLeft() {
     const [anchorElUser, setAnchorElUser] = useState(null)
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const account = useSelector((state) => state.account)
     const [listopen, setListOpen] = useState(false)
 
     const handleClickList = () => {
@@ -125,14 +120,6 @@ export default function PersistentDrawerLeft() {
     const gotoRegisteredUsers = () => {
         navigate('admin_user')
     }
-
-    useEffect(() => {
-        if (account.permission === 'user') {
-            navigate('dashboard')
-        } else if (account.permission === '') {
-            navigate('/')
-        }
-    }, [])
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -189,12 +176,9 @@ export default function PersistentDrawerLeft() {
                     >
                         <MenuItem
                             onClick={() => {
+                                localStorage.removeItem('user');
                                 dispatch(
-                                    setAccountData({
-                                        mail: '',
-                                        pass: '',
-                                        permission: '',
-                                    })
+                                    clearAccountData()
                                 )
                                 navigate('/')
                             }}

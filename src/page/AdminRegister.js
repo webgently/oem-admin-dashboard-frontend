@@ -53,7 +53,7 @@ const style = {
     p: 0,
 }
 
-export default function StickyHeadTable() {
+export default function AdminRegister() {
     const [creditAddFlag, setCreditAddFlag] = useState(true)
     const confirm = useConfirm()
     const [page, setPage] = useState(0)

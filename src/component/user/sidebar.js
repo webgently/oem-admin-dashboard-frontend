@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -8,27 +8,15 @@ import Toolbar from '@mui/material/Toolbar'
 import List from '@mui/material/List'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 import LogoIcon from '../../assets/img/OEMservice2.jpg'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PersonIcon from '@mui/icons-material/Person'
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
-import SettingsIcon from '@mui/icons-material/Settings'
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
-import { Navigate, Outlet } from 'react-router-dom'
 import { Button, Collapse, Menu, MenuItem } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Outlet } from 'react-router-dom'
 import WalletIcon from '@mui/icons-material/Wallet'
 import GroupsIcon from '@mui/icons-material/Groups'
 import ListIcon from '@mui/icons-material/List'
@@ -89,16 +77,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft() {
     const navigate = useNavigate()
-    const account = useSelector((state) => state.account)
-    const theme = useTheme()
     const [open, setOpen] = useState(false)
     const [anchorElUser, setAnchorElUser] = useState(null)
     const [listopen, setListOpen] = useState(false)
     const [creditopen, setCreditOpen] = useState(false)
-
-    const handleClickList = () => {
-        setListOpen(!listopen)
-    }
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget)
@@ -108,29 +90,9 @@ export default function PersistentDrawerLeft() {
         setAnchorElUser(null)
     }
 
-    const handleDrawerOpen = () => {
-        setOpen(true)
-    }
-
-    const handleDrawerClose = () => {
-        setOpen(false)
-    }
-
     const gotoDashboard = () => {
         navigate('dashboard')
     }
-
-    const gotoRegisteredUsers = () => {
-        navigate('users')
-    }
-
-    useEffect(() => {
-        if (account.permission === 'admin') {
-            navigate('admin_dashboard')
-        } else if (account.permission === '') {
-            navigate('/')
-        }
-    }, [])
 
     return (
         <Box sx={{ display: 'flex' }}>

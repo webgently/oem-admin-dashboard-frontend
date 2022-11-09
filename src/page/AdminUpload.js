@@ -79,7 +79,7 @@ const style = {
     p: 0,
 }
 
-export default function StickyHeadTable() {
+export default function AdminUpload() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [creditAddFlag, setCreditAddFlag] = useState(true)

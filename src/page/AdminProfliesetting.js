@@ -3,15 +3,7 @@ import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
-import {
-    Avatar,
-    Button,
-    Divider,
-    Icon,
-    IconButton,
-    TextField,
-} from '@mui/material'
+import { Avatar, Button, Divider, IconButton, TextField } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -19,17 +11,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
 
 import TablePagination from '@mui/material/TablePagination'
 import { ButtonGroup } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
-import ClearIcon from '@mui/icons-material/Clear'
-import CheckIcon from '@mui/icons-material/Check'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
-import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
 import logo from '../assets/img/OEMservice2.jpg'
 import Key from '../assets/img/changepassword.png'
@@ -78,7 +64,7 @@ const Item1 = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }))
 
-export default function ResponsiveGrid() {
+export default function AdminProfliesetting() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const handleChangePage = (event, newPage) => {

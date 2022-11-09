@@ -9,14 +9,14 @@ import bgLogin from '../assets/img/bg-login.png'
 import logo from '../assets/img/logo.jpg'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setAccountData } from '../features/account/account'
+
+const isTest = process.env.REACT_APP_MODE = "development";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
-export default function Login() {
-    const account = useSelector((state) => state.account)
-
+const Login = () => {
     const [mail, setMail] = useState('')
     const [pass, setPass] = useState('')
     const [name, setName] = useState('')
@@ -56,32 +56,22 @@ export default function Login() {
                 await axios
                     .post(`${process.env.REACT_APP_Base_Url}signin`, { data })
                     .then((result) => {
-                        if (result.data === 'not exist') {
+                        const data = result.data;
+                        delete data.__v;
+                        if (data === 'not exist') {
                             toast.error('This email is not exist!')
-                        } else if (result.data === 'password') {
+                        } else if (data === 'password') {
                             toast.error('Password Incorrect!')
                         } else {
-                            if (result.data.permission === 'user') {
-                                dispatch(
-                                    setAccountData({
-                                        mail,
-                                        pass,
-                                        permission: result.data.permission,
-                                    })
-                                )
-                                toast.success('Login Successed')
-                                navigate('dashboard')
-                            } else if (result.data.permission === 'admin') {
-                                dispatch(
-                                    setAccountData({
-                                        mail,
-                                        pass,
-                                        permission: result.data.permission,
-                                    })
-                                )
-                                toast.success('Login Successed')
-                                navigate('admin_dashboard')
-                            }
+                            if (data.permission === 'user') navigate('dashboard')
+                            else if (data.permission === 'admin') navigate('admin_dashboard')
+                            toast.success('Login Successed')
+                            dispatch(
+                                setAccountData({
+                                    data
+                                })
+                            )
+                            localStorage.setItem('user', JSON.stringify(data))
                         }
                     })
             } else {
@@ -171,12 +161,29 @@ export default function Login() {
     }
 
     useEffect(() => {
-        if (account.permission === 'admin') {
-            navigate('admin_dashboard')
-        } else if (account.permission === 'user') {
-            navigate('dashboard')
+        try {
+            const data = localStorage.getItem('user')
+            if (data) {
+                const data = JSON.parse(data)
+                switch(data.permission) {
+                    case 'admin': 
+                        navigate('admin_dashboard')
+                        break;
+                    case 'user': 
+                        navigate('dashboard')
+                        break;
+                    default:
+                        break;
+                }
+                dispatch(setAccountData({data}))
+            } else {
+                if (isTest) console.log('storage is emtry or broken')
+            }
+        } catch (error) {
+            console.log(error);
         }
     }, [])
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Toaster />
@@ -514,3 +521,4 @@ export default function Login() {
         </Box>
     )
 }
+export default Login

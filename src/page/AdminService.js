@@ -11,12 +11,15 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Divider,
     FormControl,
+    Grid,
     IconButton,
     MenuItem,
     Modal,
     Select,
     TextField,
+    Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
@@ -27,9 +30,8 @@ import axios from 'axios'
 
 const columns = [
     { id: '_id', label: 'ID', minWidth: 50 },
-    { id: 'serviceType', label: 'Service Type', minWidth: 100 },
-    { id: 'service', label: 'Service', minWidth: 150 },
-    { id: 'credit', label: 'Credit', minWidth: 100 },
+    { id: 'serviceType', label: 'Service Type', minWidth: 150 },
+    { id: 'status', label: 'Status', minWidth: 150 },
     { id: 'action', label: 'Action', minWidth: 50 },
 ]
 
@@ -46,7 +48,7 @@ const ServiceStyle = {
     p: 0,
 }
 
-export default function StickyHeadTable() {
+export default function AdminService() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
 
@@ -59,121 +61,101 @@ export default function StickyHeadTable() {
         setPage(0)
     }
 
-    const [serviceTypeData, setServiceTypeData] = useState([])
-    const [currentServiceType, setCurrentServiceType] = useState('')
-    const [pricesData, setPricesData] = useState([])
-    const [modalBtnText, setModalBtnText] = useState('')
-    const [credit, setCredit] = useState('')
-    const [service, setService] = useState('')
+    const [serviceType, setServiceType] = useState('')
+    const [serviceData, setServiceData] = useState([])
     const [currentID, setCurrentID] = useState()
+    const [modalBtnText, setModalBtnText] = useState('')
     const [open, setOpen] = useState(false)
 
     const handleOpen = (flag, id) => {
-        getServeType()
-        setCredit('')
-        setService('')
-        setCurrentServiceType('')
+        setServiceType('')
         setModalBtnText(flag)
         if (flag === 'update') {
-            getOnePrice(id)
+            getOneService(id)
             setCurrentID(id)
         }
         setOpen(true)
     }
 
-    const handleClose = () => setOpen(false)
-
-    const getServeType = async () => {
-        await axios
-            .post(`${process.env.REACT_APP_Base_Url}getServiceType`)
-            .then((result) => {
-                setServiceTypeData(result.data)
-            })
+    const handleClose = () => {
+        setOpen(false)
     }
 
-    const savePriceType = (flag) => {
-        if (!currentServiceType) {
+    const saveServiceType = (flag) => {
+        if (!serviceType) {
             toast.error('Select Service Type')
             return
         }
-        if (!credit) {
-            toast.error('Input credit')
-            return
-        }
-        if (!service) {
-            toast.error('Input Service')
-            return
-        }
-        if (flag === 'add') addPrice()
-        else updatePrice(currentID)
+        if (flag === 'add') addService()
+        else updateService(currentID)
     }
 
-    const addPrice = async () => {
-        let data = { serviceType: currentServiceType, service, credit }
+    const addService = async () => {
+        let data = { serviceType }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}addPrice`, {
+            .post(`${process.env.REACT_APP_Base_Url}addService`, {
                 data: data,
             })
             .then((result) => {
                 if (result.status) {
-                    setPricesData((pricesData) => [
-                        ...pricesData,
+                    setServiceData((serviceData) => [
+                        ...serviceData,
                         result.data.data,
                     ])
                     setOpen(false)
-                    toast.success('Price List Create Successfully')
+                    toast.success('Service Type Create Successfully')
+                } else {
+                    toast.success(result.data.data)
                 }
             })
     }
 
-    const updatePrice = async (id) => {
-        let data = { _id: id, serviceType: currentServiceType, service, credit }
+    const updateService = async (id) => {
+        let data = { _id: id, serviceType: serviceType }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}updatePrice`, {
+            .post(`${process.env.REACT_APP_Base_Url}updateService`, {
                 data: data,
             })
             .then((result) => {
                 if (result.data === 'success') {
-                    getAllPrice()
+                    getAllService()
                     setOpen(false)
-                    toast.success('Price List Update Successfully')
+                    toast.success('Service Type Update Successfully')
                 }
             })
     }
 
-    const deletePrice = async (row) => {
+    const deleteService = async (row) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}deletePrice`, {
+            .post(`${process.env.REACT_APP_Base_Url}deleteService`, {
                 _id: row._id,
             })
             .then((result) => {
                 if (result.data === 'success') {
-                    getAllPrice()
-                    toast.success('Price List Delete Successfully')
+                    getAllService()
+                    toast.success('Service Type Delete Successfully')
                 }
             })
     }
 
-    const getOnePrice = async (id) => {
+    const getOneService = async (id) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getOnePrice`, {
+            .post(`${process.env.REACT_APP_Base_Url}getOneService`, {
                 _id: id,
             })
             .then((result) => {
                 if (result) {
-                    setCredit(result.data.credit)
-                    setService(result.data.service)
-                    setCurrentServiceType(result.data.serviceType)
+                    setServiceType(result.data.serviceType)
                 }
             })
     }
 
-    const getAllPrice = async () => {
+    const getAllService = async () => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getAllPrice`)
+            .post(`${process.env.REACT_APP_Base_Url}getAllService`)
             .then((result) => {
                 if (result) {
-                    setPricesData(result.data)
+                    setServiceData(result.data)
                 } else {
                     toast.error('Interanal server error')
                 }
@@ -181,7 +163,7 @@ export default function StickyHeadTable() {
     }
 
     useEffect(() => {
-        getAllPrice()
+        getAllService()
     }, [])
 
     return (
@@ -193,7 +175,7 @@ export default function StickyHeadTable() {
                 overflowY: 'overlay',
             }}
         >
-            Price Control Section
+            Service Types
             <Box sx={{ display: 'flex', width: '100%' }}>
                 <Box sx={{ flex: '1' }}></Box>
                 <Box>
@@ -202,7 +184,7 @@ export default function StickyHeadTable() {
                         endIcon={<AddIcon />}
                         onClick={() => handleOpen('add', 0)}
                     >
-                        Price
+                        Service Type
                     </Button>
                 </Box>
             </Box>
@@ -230,7 +212,7 @@ export default function StickyHeadTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {pricesData
+                        {serviceData
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -272,7 +254,7 @@ export default function StickyHeadTable() {
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
                                                                 onClick={() =>
-                                                                    deletePrice(
+                                                                    deleteService(
                                                                         row
                                                                     )
                                                                 }
@@ -295,7 +277,7 @@ export default function StickyHeadTable() {
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={pricesData.length}
+                count={serviceData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -319,10 +301,7 @@ export default function StickyHeadTable() {
                             alignItems: 'center',
                         }}
                     >
-                        <Box>
-                            {modalBtnText === 'add' ? 'Create' : 'Edit'} Price
-                            List
-                        </Box>
+                        <Box>Edit Service Type</Box>
                         <Box sx={{ flex: '1' }}></Box>
                         <Box>
                             <IconButton
@@ -336,53 +315,14 @@ export default function StickyHeadTable() {
                     </Box>
                     <Box sx={{ p: 3 }}>
                         <Box>
-                            <FormControl fullWidth size="small">
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={currentServiceType}
-                                    onChange={(e) =>
-                                        setCurrentServiceType(e.target.value)
-                                    }
-                                >
-                                    {serviceTypeData.map((item) => {
-                                        return (
-                                            <MenuItem
-                                                value={item.serviceType}
-                                                key={item._id}
-                                            >
-                                                {item.serviceType}
-                                            </MenuItem>
-                                        )
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        <Box sx={{ mt: '20px' }}>
                             <TextField
                                 id="outlined-basic"
-                                label="Service"
+                                label="Service Type"
                                 variant="outlined"
                                 size="small"
-                                value={service}
                                 fullWidth
-                                onChange={(e) => setService(e.target.value)}
-                            />
-                        </Box>
-                        <Box sx={{ mt: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Credit"
-                                variant="outlined"
-                                size="small"
-                                onKeyPress={(event) => {
-                                    if (!/[0-9]/.test(event.key)) {
-                                        event.preventDefault()
-                                    }
-                                }}
-                                value={credit}
-                                fullWidth
-                                onChange={(e) => setCredit(e.target.value)}
+                                value={serviceType}
+                                onChange={(e) => setServiceType(e.target.value)}
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -400,7 +340,9 @@ export default function StickyHeadTable() {
                                 <Button
                                     size="small"
                                     variant="contained"
-                                    onClick={() => savePriceType(modalBtnText)}
+                                    onClick={() =>
+                                        saveServiceType(modalBtnText)
+                                    }
                                 >
                                     {modalBtnText}
                                 </Button>
