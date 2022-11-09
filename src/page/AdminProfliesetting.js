@@ -22,6 +22,7 @@ import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
 
 import TablePagination from '@mui/material/TablePagination'
+
 import { ButtonGroup } from '@mui/material'
 import toast, { Toaster } from 'react-hot-toast'
 import logo from '../assets/img/OEMservice2.jpg'
@@ -29,12 +30,21 @@ import Key from '../assets/img/changepassword.png'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
 
+import dayjs, { Dayjs } from 'dayjs'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import Stack from '@mui/material/Stack'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { TimePicker } from '@mui/x-date-pickers/TimePicker'
+
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
    { id: 'day', label: 'Day', minWidth: 50 },
    { id: 'open', label: 'Opening time', minWidth: 100 },
    { id: 'close', label: 'Closing time', minWidth: 150 },
-   { id: 'holiday', label: 'Holiday', minWidth: 100 },
+   { id: 'holyday', label: 'Holiday', minWidth: 100 },
    { id: 'action', label: 'Action' },
 ]
 
@@ -43,21 +53,13 @@ function createData(id, day, open, close, holiday, action) {
 }
 
 const rows = [
-   createData('India', 'IN', 1324171354, 3287263),
-   createData('China', 'CN', 1403500365, 9596961),
-   createData('Italy', 'IT', 60483973, 301340),
-   createData('United States', 'US', 327167434, 9833520),
-   createData('Canada', 'CA', 37602103, 9984670),
-   createData('Australia', 'AU', 25475400, 7692024),
-   createData('Germany', 'DE', 83019200, 357578),
-   createData('Ireland', 'IE', 4857000, 70273),
-   createData('Mexico', 'MX', 126577691, 1972550),
-   createData('Japan', 'JP', 126317000, 377973),
-   createData('France', 'FR', 67022000, 640679),
-   createData('United Kingdom', 'GB', 67545757, 242495),
-   createData('Russia', 'RU', 146793744, 17098246),
-   createData('Nigeria', 'NG', 200962417, 923768),
-   createData('Brazil', 'BR', 210147125, 8515767),
+   createData('1', 'Monday', 1324171354, 3287263),
+   createData('2', 'Tuesday', 1403500365, 9596961),
+   createData('3', 'Wednesday', 60483973, 301340),
+   createData('4', 'Thursday', 327167434, 9833520),
+   createData('5', 'Friday', 37602103, 9984670),
+   createData('6', 'Saturday', 25475400, 7692024),
+   createData('7', 'Sunday', 83019200, 357578),
 ]
 
 const Item1 = styled(Paper)(({ theme }) => ({
@@ -79,7 +81,7 @@ const ServiceStyle = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
-   height: '40vh',
+   height: '50vh',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -97,7 +99,6 @@ export default function AdminProfliesetting() {
       setRowsPerPage(+event.target.value)
       setPage(0)
    }
-
    // profile setting
    const [userData, setUserData] = useState([])
    const [userName, setUserName] = useState('')
@@ -154,7 +155,96 @@ export default function AdminProfliesetting() {
             }
          })
    }
-
+   // Store Timings
+   const [open3, setOpen3] = useState(false)
+   const [dailyTable, setDailyTable] = useState([])
+   const [openTime, setOpenTime] = useState(new Date())
+   const [openTimeFlag, setOpenTimeFlag] = useState(true)
+   const [closeTime, setCloseTime] = useState(new Date())
+   const [closeTimeFlag, setCloseTimeFlag] = useState(true)
+   const [dayID, setDayID] = useState()
+   const [day, setDay] = useState()
+   const [holyDay, setHolyDay] = useState(false)
+   const handleOpen3 = (id) => {
+      setOpen3(true)
+      setDayID(id)
+      getOneDaily(id)
+   }
+   const handleClose3 = () => {
+      setOpen3(false)
+   }
+   const getAllDaily = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_Base_Url}getAllDaily`)
+            .then((result) => {
+               if (result.data.status) {
+                  setDailyTable(result.data.table)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+   const updateDaily = async () => {
+      let data = {}
+      if (holyDay) {
+         data = {
+            id: dayID,
+            holyDay,
+            openTime: '',
+            closeTime: '',
+         }
+      } else {
+         data = {
+            id: dayID,
+            holyDay,
+            openTime,
+            closeTime,
+         }
+      }
+      await axios
+         .post(`${process.env.REACT_APP_Base_Url}updateDaily`, {
+            data,
+         })
+         .then((result) => {
+            if (result.data.status) {
+               setDailyTable(result.data.result)
+               setOpen3(false)
+               toast.success('Timing Updated Successfully')
+            }
+         })
+   }
+   const getOneDaily = async (id) => {
+      await axios
+         .post(`${process.env.REACT_APP_Base_Url}getOneDaily`, {
+            id,
+         })
+         .then((result) => {
+            if (result.data.status) {
+               setHolyDay(result.data.data.holyday)
+               setOpenTimeFlag(result.data.data.holyday)
+               setCloseTimeFlag(result.data.data.holyday)
+               setDay(result.data.data.day)
+               if (holyDay) {
+                  setOpenTime(null)
+                  setCloseTime(null)
+               } else {
+                  setOpenTime(result.data.data.open)
+                  setCloseTime(result.data.data.close)
+               }
+            }
+         })
+   }
+   useEffect(() => {
+      if (holyDay) {
+         setOpenTimeFlag(true)
+         setCloseTimeFlag(true)
+      } else {
+         setOpenTimeFlag(false)
+         setCloseTimeFlag(false)
+      }
+   }, [holyDay])
    // privacy setting
    const [privacyContent, setPrivacyContent] = useState('')
    const [privacyMsg, setPrivacyMsg] = useState('')
@@ -176,14 +266,12 @@ export default function AdminProfliesetting() {
          })
          .then((result) => {
             if (result.data.status) {
-               console.log(result.data)
                setPrivacyContent(privacyMsg)
                setOpen2(false)
                toast.success('Content Updated Successfully')
             }
          })
    }
-
    const getPrivacy = async () => {
       await axios
          .post(`${process.env.REACT_APP_Base_Url}getPrivacy`)
@@ -193,7 +281,50 @@ export default function AdminProfliesetting() {
             setPrivacyID(result.data._id)
          })
    }
+   // change password
+   const [oldPassword, setOldPassword] = useState('')
+   const [newPassword, setNewPassword] = useState('')
+   const [confirmPassword, setConfirmPassword] = useState('')
+   const changePassword = async () => {
+      if (!oldPassword) {
+         toast.error('Input Old Password')
+         return
+      }
+      if (!newPassword) {
+         toast.error('Input New Password')
+         return
+      }
+      if (!confirmPassword) {
+         toast.error('Input Confirm Password')
+         return
+      }
 
+      if (confirmPassword !== newPassword) {
+         toast.error('Please check Confirm password again')
+         return
+      }
+      await axios
+         .post(`${process.env.REACT_APP_Base_Url}changePassword`, {
+            _id: userID,
+            oldPassword,
+            newPassword,
+         })
+         .then((result) => {
+            if (result.data.status) {
+               const data = result.data.result
+               delete data._v
+               localStorage.setItem('user', JSON.stringify(data))
+               setNewPassword('')
+               setOldPassword('')
+               setConfirmPassword('')
+               toast.success('Password Updated Successfully')
+            } else {
+               toast.error('Old passoword is wrong')
+            }
+         })
+   }
+   // upload logo image
+   const uploadIMG = async () => {}
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
@@ -211,6 +342,7 @@ export default function AdminProfliesetting() {
          { label: 'Address:', value: account.address },
       ])
       getPrivacy()
+      getAllDaily()
    }, [])
 
    return (
@@ -428,7 +560,7 @@ export default function AdminProfliesetting() {
                         </TableRow>
                      </TableHead>
                      <TableBody>
-                        {rows
+                        {dailyTable
                            .slice(
                               page * rowsPerPage,
                               page * rowsPerPage + rowsPerPage
@@ -448,15 +580,15 @@ export default function AdminProfliesetting() {
                                              key={column.id}
                                              align={column.align}
                                           >
-                                             {column.id === 'profile' ? (
-                                                <Avatar
-                                                   alt="Remy Sharp"
-                                                   src={value}
-                                                />
+                                             {column.id === 'id' ? (
+                                                ind + 1
                                              ) : column.id === 'action' ? (
                                                 <ButtonGroup
                                                    variant="outlined"
                                                    aria-label="outlined button group"
+                                                   onClick={() =>
+                                                      handleOpen3(row._id)
+                                                   }
                                                 >
                                                    <IconButton
                                                       color="primary"
@@ -465,6 +597,9 @@ export default function AdminProfliesetting() {
                                                       <EditIcon />
                                                    </IconButton>
                                                 </ButtonGroup>
+                                             ) : column.id === 'holyday' &&
+                                               value ? (
+                                                'holiday'
                                              ) : (
                                                 value
                                              )}
@@ -480,7 +615,7 @@ export default function AdminProfliesetting() {
                <TablePagination
                   rowsPerPageOptions={[10, 25, 100]}
                   component="div"
-                  count={rows.length}
+                  count={dailyTable.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}
@@ -564,6 +699,7 @@ export default function AdminProfliesetting() {
                                  borderRadius: '12px',
                                  color: 'red',
                               }}
+                              onClick={() => uploadIMG()}
                            >
                               Browse File
                            </Button>
@@ -647,17 +783,37 @@ export default function AdminProfliesetting() {
                         gap: '20px',
                      }}
                   >
-                     <TextField type="password" placeholder="Old password" />
-                     <TextField type="password" placeholder="New password" />
+                     <TextField
+                        type="password"
+                        placeholder="Old password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                     />
+                     <TextField
+                        type="password"
+                        placeholder="New password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                     />
                      <TextField
                         type="password"
                         placeholder="Confirm password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                      />
-                     <Button variant="contained">Change Password</Button>
+                     <Button
+                        variant="contained"
+                        onClick={() => {
+                           changePassword()
+                        }}
+                     >
+                        Change Password
+                     </Button>
                   </Grid>
                </Grid>
             </Box>
          </Box>
+
          <Modal
             open={open1}
             onClose={handleClose1}
@@ -804,6 +960,114 @@ export default function AdminProfliesetting() {
                </Box>
             </Box>
          </Modal>
+
+         <Modal
+            open={open3}
+            onClose={handleClose3}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Store Timing</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose3()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box>
+                     <Box>You are Updating {day} Timing</Box>
+                     <FormControlLabel
+                        control={
+                           <Switch
+                              checked={holyDay}
+                              onChange={(e) => setHolyDay(e.target.checked)}
+                           />
+                        }
+                        label="Holiday"
+                     />
+                     <br />
+                     <br />
+
+                     <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <Stack spacing={3}>
+                           <TimePicker
+                              ampm={false}
+                              openTo="hours"
+                              views={['hours', 'minutes', 'seconds']}
+                              inputFormat="HH:mm:ss"
+                              mask="__:__:__"
+                              label="Opening Time"
+                              value={new Date(openTime)}
+                              onChange={(e) => {
+                                 setOpenTime(e.$d)
+                              }}
+                              renderInput={(params) => (
+                                 <TextField {...params} />
+                              )}
+                              disabled={openTimeFlag}
+                           />
+                           <TimePicker
+                              ampm={false}
+                              openTo="hours"
+                              views={['hours', 'minutes', 'seconds']}
+                              inputFormat="HH:mm:ss"
+                              mask="__:__:__"
+                              label="Closing Time"
+                              value={new Date(closeTime)}
+                              onChange={(e) => {
+                                 setCloseTime(e.$d)
+                              }}
+                              renderInput={(params) => (
+                                 <TextField {...params} />
+                              )}
+                              disabled={closeTimeFlag}
+                           />
+                        </Stack>
+                     </LocalizationProvider>
+                  </Box>
+                  <Box sx={{ display: 'flex' }}>
+                     <Box sx={{ flex: '1' }}></Box>
+                     <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
+                        <Button
+                           size="small"
+                           variant="contained"
+                           onClick={() => {
+                              handleClose3()
+                           }}
+                        >
+                           Cancel
+                        </Button>
+                        <Button
+                           size="small"
+                           variant="contained"
+                           onClick={() => updateDaily()}
+                        >
+                           Update
+                        </Button>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Modal>
+         <Toaster />
       </>
    )
 }
