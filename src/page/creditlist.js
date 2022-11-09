@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -12,56 +12,23 @@ import {
     Box,
     Button,
     ButtonGroup,
-    Divider,
-    FormControl,
-    Grid,
     IconButton,
-    MenuItem,
     Modal,
-    Select,
     TextField,
-    Typography,
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
-import ClearIcon from '@mui/icons-material/Clear'
-import CheckIcon from '@mui/icons-material/Check'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import axios from 'axios'
 
 const columns = [
-    { id: 'id', label: 'ID', minWidth: 50 },
-    { id: 'credit', label: 'Credit', minWidth: 50 },
-    { id: 'price', label: 'Price', minWidth: 100 },
-    { id: 'action', label: 'Action', minWidth: 150 },
-]
-
-function createData(id, credit, price, action) {
-    return { id, credit, price, action }
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
+    { id: '_id', label: 'ID', minWidth: 150 },
+    { id: 'credit', label: 'Credit', minWidth: 150 },
+    { id: 'price', label: 'Price', minWidth: 150 },
+    { id: 'action', label: 'Action', minWidth: 50 },
 ]
 
 const ServiceStyle = {
@@ -80,12 +47,6 @@ const ServiceStyle = {
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [creditAddFlag, setCreditAddFlag] = useState(true)
-    const [age, setAge] = React.useState('')
-
-    const handleChange = (event) => {
-        setAge(event.target.value)
-    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -96,13 +57,141 @@ export default function StickyHeadTable() {
         setPage(0)
     }
 
+    const [creditsData, setCreditsData] = useState([])
+    const [modalBtnText, setModalBtnText] = useState('')
+    const [credit, setCredit] = useState('')
+    const [price, setPrice] = useState('')
+    const [currentID, setCurrentID] = useState()
     const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
+
+    const [handleFee, setHandleFee] = useState(0)
+    const [feeID, setFeeID] = useState('')
+    const [addservice, setaddservice] = useState(false)
+    const handleOpenGetFee = async () => {
+        setaddservice(true)
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getFee`)
+            .then((result) => {
+                setHandleFee(result.data.fee)
+                setFeeID(result.data._id)
+            })
+    }
+    const handleCloseAddservice = () => setaddservice(false)
+
+    const updateFee = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}updateFee`, {
+                id: feeID,
+                handleFee,
+            })
+            .then((result) => {
+                if (result.status) {
+                    setOpen(false)
+                    toast.success('Handling Fee Updated Successfully')
+                } else toast.error('Interanal server error')
+            })
+    }
+
+    const handleOpen = (flag, id) => {
+        setCredit('')
+        setPrice('')
+        setModalBtnText(flag)
+        if (flag === 'update') {
+            getOneCredit(id)
+            setCurrentID(id)
+        }
+        setOpen(true)
+    }
+
     const handleClose = () => setOpen(false)
 
-    const [addservice, setaddservice] = useState(false)
-    const handleOpenAddservice = () => setaddservice(true)
-    const handleCloseAddservice = () => setaddservice(false)
+    const saveCreditType = (flag) => {
+        if (!credit) {
+            toast.error('Input credit')
+            return
+        }
+        if (!price) {
+            toast.error('Input price')
+            return
+        }
+        if (flag === 'add') addCredit()
+        else updateCredit(currentID)
+    }
+
+    const addCredit = async () => {
+        let data = { credit, price }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}createCredit`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.status) {
+                    setCreditsData((creditsData) => [
+                        ...creditsData,
+                        result.data.data,
+                    ])
+                    setOpen(false)
+                    toast.success('Credit Category Create Successfully')
+                }
+            })
+    }
+
+    const updateCredit = async (id) => {
+        let data = { _id: id, credit, price }
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}updateCredit`, {
+                data: data,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllCredit()
+                    setOpen(false)
+                    toast.success('Credit Category Update Successfully')
+                }
+            })
+    }
+
+    const deleteCredit = async (row) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}deleteCredit`, {
+                _id: row._id,
+            })
+            .then((result) => {
+                if (result.data === 'success') {
+                    getAllCredit()
+                    toast.success('Credit Category Delete Successfully')
+                }
+            })
+    }
+
+    const getOneCredit = async (id) => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getOneCredit`, {
+                _id: id,
+            })
+            .then((result) => {
+                if (result) {
+                    setCredit(result.data.credit)
+                    setPrice(result.data.price)
+                }
+            })
+    }
+
+    const getAllCredit = async () => {
+        await axios
+            .post(`${process.env.REACT_APP_Base_Url}getAllCredit`)
+            .then((result) => {
+                if (result) {
+                    setCreditsData(result.data)
+                } else {
+                    toast.error('Interanal server error')
+                }
+            })
+    }
+
+    useEffect(() => {
+        getAllCredit()
+    }, [])
 
     return (
         <Paper
@@ -121,14 +210,14 @@ export default function StickyHeadTable() {
                         sx={{ mr: '20px' }}
                         variant="contained"
                         endIcon={<AddIcon />}
-                        onClick={handleOpenAddservice}
+                        onClick={handleOpenGetFee}
                     >
                         Handling Fee
                     </Button>
                     <Button
                         variant="contained"
                         endIcon={<AddIcon />}
-                        onClick={handleOpen}
+                        onClick={() => handleOpen('add', 0)}
                     >
                         Credit
                     </Button>
@@ -158,7 +247,7 @@ export default function StickyHeadTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {creditsData
                             .slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
@@ -178,21 +267,18 @@ export default function StickyHeadTable() {
                                                     key={column.id}
                                                     align={column.align}
                                                 >
-                                                    {column.id === 'profile' ? (
-                                                        <Avatar
-                                                            alt="Remy Sharp"
-                                                            src={value}
-                                                        />
-                                                    ) : column.id ===
-                                                      'action' ? (
+                                                    {column.id === 'action' ? (
                                                         <ButtonGroup
                                                             variant="outlined"
                                                             aria-label="outlined button group"
                                                         >
                                                             <IconButton
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
+                                                                onClick={() => {
+                                                                    handleOpen(
+                                                                        'update',
+                                                                        row._id
+                                                                    )
+                                                                }}
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
                                                             >
@@ -201,6 +287,11 @@ export default function StickyHeadTable() {
                                                             <IconButton
                                                                 color="primary"
                                                                 aria-label="add to shopping cart"
+                                                                onClick={() =>
+                                                                    deleteCredit(
+                                                                        row
+                                                                    )
+                                                                }
                                                             >
                                                                 <DeleteIcon />
                                                             </IconButton>
@@ -220,7 +311,7 @@ export default function StickyHeadTable() {
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={rows.length}
+                count={creditsData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -244,7 +335,9 @@ export default function StickyHeadTable() {
                             alignItems: 'center',
                         }}
                     >
-                        <Box>Edit Credit</Box>
+                        <Box>
+                            {modalBtnText === 'add' ? 'Create' : 'Edit'} Credit
+                        </Box>
                         <Box sx={{ flex: '1' }}></Box>
                         <Box>
                             <IconButton
@@ -264,6 +357,13 @@ export default function StickyHeadTable() {
                                 variant="outlined"
                                 size="small"
                                 fullWidth
+                                value={credit}
+                                onChange={(e) => setCredit(e.target.value)}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault()
+                                    }
+                                }}
                             />
                         </Box>
                         <Box sx={{ mt: '20px' }}>
@@ -273,6 +373,13 @@ export default function StickyHeadTable() {
                                 variant="outlined"
                                 size="small"
                                 fullWidth
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault()
+                                    }
+                                }}
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -287,8 +394,12 @@ export default function StickyHeadTable() {
                                 >
                                     Close
                                 </Button>
-                                <Button size="small" variant="contained">
-                                    Update
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => saveCreditType(modalBtnText)}
+                                >
+                                    {modalBtnText}
                                 </Button>
                             </Box>
                         </Box>
@@ -338,7 +449,7 @@ export default function StickyHeadTable() {
                                         fontSize: '20px',
                                     }}
                                 >
-                                    <EuroIcon /> 0.50
+                                    <EuroIcon /> {handleFee}
                                 </Box>
                             </Box>
                             <TextField
@@ -348,6 +459,13 @@ export default function StickyHeadTable() {
                                 size="small"
                                 fullWidth
                                 sx={{ flex: '1' }}
+                                value={handleFee}
+                                onChange={(e) => setHandleFee(e.target.value)}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault()
+                                    }
+                                }}
                             />
                         </Box>
                         <Box sx={{ display: 'flex' }}>
@@ -362,7 +480,11 @@ export default function StickyHeadTable() {
                                 >
                                     Close
                                 </Button>
-                                <Button size="small" variant="contained">
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={updateFee}
+                                >
                                     Update Fee
                                 </Button>
                             </Box>
