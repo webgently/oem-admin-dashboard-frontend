@@ -69,7 +69,7 @@ export default function AdminCreditlist() {
    const handleOpenGetFee = async () => {
       setaddservice(true)
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}getFee`)
+         .post(`${process.env.REACT_APP_API_Url}getFee`)
          .then((result) => {
             setHandleFee(result.data.fee)
             setFeeID(result.data._id)
@@ -79,7 +79,7 @@ export default function AdminCreditlist() {
 
    const updateFee = async () => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}updateFee`, {
+         .post(`${process.env.REACT_APP_API_Url}updateFee`, {
             id: feeID,
             handleFee,
          })
@@ -120,7 +120,7 @@ export default function AdminCreditlist() {
    const addCredit = async () => {
       let data = { credit, price }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}createCredit`, {
+         .post(`${process.env.REACT_APP_API_Url}createCredit`, {
             data: data,
          })
          .then((result) => {
@@ -138,7 +138,7 @@ export default function AdminCreditlist() {
    const updateCredit = async (id) => {
       let data = { _id: id, credit, price }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}updateCredit`, {
+         .post(`${process.env.REACT_APP_API_Url}updateCredit`, {
             data: data,
          })
          .then((result) => {
@@ -152,7 +152,7 @@ export default function AdminCreditlist() {
 
    const deleteCredit = async (row) => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}deleteCredit`, {
+         .post(`${process.env.REACT_APP_API_Url}deleteCredit`, {
             _id: row._id,
          })
          .then((result) => {
@@ -165,7 +165,7 @@ export default function AdminCreditlist() {
 
    const getOneCredit = async (id) => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}getOneCredit`, {
+         .post(`${process.env.REACT_APP_API_Url}getOneCredit`, {
             _id: id,
          })
          .then((result) => {
@@ -178,7 +178,7 @@ export default function AdminCreditlist() {
 
    const getAllCredit = async () => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}getAllCredit`)
+         .post(`${process.env.REACT_APP_API_Url}getAllCredit`)
          .then((result) => {
             if (result) {
                setCreditsData(result.data)

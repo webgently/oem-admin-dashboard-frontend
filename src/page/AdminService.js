@@ -87,7 +87,7 @@ export default function AdminService() {
     const addService = async () => {
         let data = { serviceType }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}addService`, {
+            .post(`${process.env.REACT_APP_API_Url}addService`, {
                 data: data,
             })
             .then((result) => {
@@ -107,7 +107,7 @@ export default function AdminService() {
     const updateService = async (id) => {
         let data = { _id: id, serviceType: serviceType }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}updateService`, {
+            .post(`${process.env.REACT_APP_API_Url}updateService`, {
                 data: data,
             })
             .then((result) => {
@@ -121,7 +121,7 @@ export default function AdminService() {
 
     const deleteService = async (row) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}deleteService`, {
+            .post(`${process.env.REACT_APP_API_Url}deleteService`, {
                 _id: row._id,
             })
             .then((result) => {
@@ -134,7 +134,7 @@ export default function AdminService() {
 
     const getOneService = async (id) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getOneService`, {
+            .post(`${process.env.REACT_APP_API_Url}getOneService`, {
                 _id: id,
             })
             .then((result) => {
@@ -146,7 +146,7 @@ export default function AdminService() {
 
     const getAllService = async () => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getAllService`)
+            .post(`${process.env.REACT_APP_API_Url}getAllService`)
             .then((result) => {
                 if (result) {
                     setServiceData(result.data)

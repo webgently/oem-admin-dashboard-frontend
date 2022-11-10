@@ -85,7 +85,7 @@ export default function AdminPricelist() {
 
     const getServeType = async () => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getServiceType`)
+            .post(`${process.env.REACT_APP_API_Url}getServiceType`)
             .then((result) => {
                 setServiceTypeData(result.data)
             })
@@ -111,7 +111,7 @@ export default function AdminPricelist() {
     const addPrice = async () => {
         let data = { serviceType: currentServiceType, service, credit }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}addPrice`, {
+            .post(`${process.env.REACT_APP_API_Url}addPrice`, {
                 data: data,
             })
             .then((result) => {
@@ -129,7 +129,7 @@ export default function AdminPricelist() {
     const updatePrice = async (id) => {
         let data = { _id: id, serviceType: currentServiceType, service, credit }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}updatePrice`, {
+            .post(`${process.env.REACT_APP_API_Url}updatePrice`, {
                 data: data,
             })
             .then((result) => {
@@ -143,7 +143,7 @@ export default function AdminPricelist() {
 
     const deletePrice = async (row) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}deletePrice`, {
+            .post(`${process.env.REACT_APP_API_Url}deletePrice`, {
                 _id: row._id,
             })
             .then((result) => {
@@ -156,7 +156,7 @@ export default function AdminPricelist() {
 
     const getOnePrice = async (id) => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getOnePrice`, {
+            .post(`${process.env.REACT_APP_API_Url}getOnePrice`, {
                 _id: id,
             })
             .then((result) => {
@@ -170,7 +170,7 @@ export default function AdminPricelist() {
 
     const getAllPrice = async () => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getAllPrice`)
+            .post(`${process.env.REACT_APP_API_Url}getAllPrice`)
             .then((result) => {
                 if (result) {
                     setPricesData(result.data)

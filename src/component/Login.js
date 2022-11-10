@@ -54,7 +54,7 @@ const Login = () => {
                     pass,
                 }
                 await axios
-                    .post(`${process.env.REACT_APP_Base_Url}signin`, { data })
+                    .post(`${process.env.REACT_APP_API_Url}signin`, { data })
                     .then((result) => {
                         const data = result.data
                         delete data.__v
@@ -126,7 +126,7 @@ const Login = () => {
                 password,
             }
             await axios
-                .post(`${process.env.REACT_APP_Base_Url}signup`, { data })
+                .post(`${process.env.REACT_APP_API_Url}signup`, { data })
                 .then((result) => {
                     if (result.data.status === false) {
                         toast.error('Internal Server Error!')

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -25,7 +25,7 @@ import TablePagination from '@mui/material/TablePagination'
 
 import { ButtonGroup } from '@mui/material'
 import toast, { Toaster } from 'react-hot-toast'
-import logo from '../assets/img/OEMservice2.jpg'
+import logoIcon from '../assets/img/OEMservice2.jpg'
 import Key from '../assets/img/changepassword.png'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
@@ -38,6 +38,7 @@ import Stack from '@mui/material/Stack'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
+import LogoIcon from '../assets/img/OEMservice2.jpg'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -46,20 +47,6 @@ const columns = [
    { id: 'close', label: 'Closing time', minWidth: 150 },
    { id: 'holyday', label: 'Holiday', minWidth: 100 },
    { id: 'action', label: 'Action' },
-]
-
-function createData(id, day, open, close, holiday, action) {
-   return { id, day, open, close, holiday, action }
-}
-
-const rows = [
-   createData('1', 'Monday', 1324171354, 3287263),
-   createData('2', 'Tuesday', 1403500365, 9596961),
-   createData('3', 'Wednesday', 60483973, 301340),
-   createData('4', 'Thursday', 327167434, 9833520),
-   createData('5', 'Friday', 37602103, 9984670),
-   createData('6', 'Saturday', 25475400, 7692024),
-   createData('7', 'Sunday', 83019200, 357578),
 ]
 
 const Item1 = styled(Paper)(({ theme }) => ({
@@ -128,7 +115,7 @@ export default function AdminProfliesetting() {
          return
       }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}updateProfile`, {
+         .post(`${process.env.REACT_APP_API_Url}updateProfile`, {
             _id: userID,
             contact,
             address,
@@ -151,6 +138,7 @@ export default function AdminProfliesetting() {
                   { label: 'Address:', value: data.address },
                ])
                localStorage.setItem('user', JSON.stringify(data))
+               setOpen1(false)
                toast.success('Details Updated Successfully')
             }
          })
@@ -176,7 +164,7 @@ export default function AdminProfliesetting() {
    const getAllDaily = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_Base_Url}getAllDaily`)
+            .post(`${process.env.REACT_APP_API_Url}getAllDaily`)
             .then((result) => {
                if (result.data.status) {
                   setDailyTable(result.data.table)
@@ -188,6 +176,14 @@ export default function AdminProfliesetting() {
    }
    const updateDaily = async () => {
       let data = {}
+      if (!openTime) {
+         toast.error('Select an time')
+         return
+      }
+      if (!closeTime) {
+         toast.error('Select an time')
+         return
+      }
       if (holyDay) {
          data = {
             id: dayID,
@@ -204,7 +200,7 @@ export default function AdminProfliesetting() {
          }
       }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}updateDaily`, {
+         .post(`${process.env.REACT_APP_API_Url}updateDaily`, {
             data,
          })
          .then((result) => {
@@ -217,11 +213,12 @@ export default function AdminProfliesetting() {
    }
    const getOneDaily = async (id) => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}getOneDaily`, {
+         .post(`${process.env.REACT_APP_API_Url}getOneDaily`, {
             id,
          })
          .then((result) => {
             if (result.data.status) {
+               console.log(result.data.data)
                setHolyDay(result.data.data.holyday)
                setOpenTimeFlag(result.data.data.holyday)
                setCloseTimeFlag(result.data.data.holyday)
@@ -260,7 +257,7 @@ export default function AdminProfliesetting() {
          return
       }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}savePrivacy`, {
+         .post(`${process.env.REACT_APP_API_Url}savePrivacy`, {
             id: privacyID,
             privacyMsg,
          })
@@ -274,7 +271,7 @@ export default function AdminProfliesetting() {
    }
    const getPrivacy = async () => {
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}getPrivacy`)
+         .post(`${process.env.REACT_APP_API_Url}getPrivacy`)
          .then((result) => {
             setPrivacyMsg(result.data.privacy)
             setPrivacyContent(result.data.privacy)
@@ -304,7 +301,7 @@ export default function AdminProfliesetting() {
          return
       }
       await axios
-         .post(`${process.env.REACT_APP_Base_Url}changePassword`, {
+         .post(`${process.env.REACT_APP_API_Url}changePassword`, {
             _id: userID,
             oldPassword,
             newPassword,
@@ -324,7 +321,61 @@ export default function AdminProfliesetting() {
          })
    }
    // upload logo image
-   const uploadIMG = async () => {}
+   const [logo, setLogo] = useState('')
+   const [fileData, setFileData] = useState({})
+   const inputElement = useRef('fileInput')
+   const handleFileload = () => {
+      inputElement.current.click()
+   }
+   const getFile = async (e) => {
+      setFileData(e.target.files[0])
+   }
+   const handleFileUpload = async () => {
+      let params = new FormData()
+      let data = {
+         name: fileData.name,
+         size: fileData.size,
+         type: fileData.type,
+         rename: fileData.lastModified,
+      }
+      params.append('file', fileData)
+      params.append('data', JSON.stringify(data))
+      if (!fileData.name) {
+         toast.error('Please select an image')
+      } else {
+         if (
+            fileData.type === 'image/jpeg' ||
+            fileData.type === 'image/png' ||
+            fileData.type === 'image/svg' ||
+            fileData.type === 'image/gif' ||
+            fileData.type === 'image/tiff'
+         ) {
+            await axios
+               .post(`${process.env.REACT_APP_API_Url}uploadLogo`, params)
+               .then((result) => {
+                  if (result.data.status) {
+                     setFileData({})
+                     setLogo(result.data.data.url)
+                     toast.success('Image Uploaded Successfully')
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } else {
+            toast.error('This isn`t an image')
+         }
+      }
+   }
+   const getLogo = async () => {
+      await axios
+         .post(`${process.env.REACT_APP_API_Url}getLogo`)
+         .then((result) => {
+            if (result.data.status) {
+               setLogo(process.env.REACT_APP_Base_Url + result.data.data)
+            }
+         })
+   }
+
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
@@ -343,6 +394,7 @@ export default function AdminProfliesetting() {
       ])
       getPrivacy()
       getAllDaily()
+      getLogo()
    }, [])
 
    return (
@@ -691,18 +743,39 @@ export default function AdminProfliesetting() {
                         </Box>
                         <Box>Drag amd Drop your File here</Box>
                         <Box>Or</Box>
-                        <Box>
-                           <Button
-                              variant="outlined"
-                              sx={{
-                                 border: '1px solid red',
-                                 borderRadius: '12px',
-                                 color: 'red',
-                              }}
-                              onClick={() => uploadIMG()}
-                           >
-                              Browse File
-                           </Button>
+                        <Box sx={{ display: 'flex' }} gap={1}>
+                           <Box>
+                              <input
+                                 ref={inputElement}
+                                 type="file"
+                                 style={{ display: 'none' }}
+                                 onChange={(e) => getFile(e)}
+                              />
+                              <Button
+                                 variant="outlined"
+                                 sx={{
+                                    border: '1px solid red',
+                                    borderRadius: '12px',
+                                    color: 'red',
+                                 }}
+                                 onClick={handleFileload}
+                              >
+                                 Browse File
+                              </Button>
+                           </Box>
+                           <Box>
+                              <Button
+                                 variant="outlined"
+                                 sx={{
+                                    border: '1px solid red',
+                                    borderRadius: '12px',
+                                    color: 'red',
+                                 }}
+                                 onClick={handleFileUpload}
+                              >
+                                 Upload File
+                              </Button>
+                           </Box>
                         </Box>
                      </Box>
                   </Grid>
@@ -731,7 +804,8 @@ export default function AdminProfliesetting() {
                         }}
                      >
                         <img
-                           src={logo}
+                           src={logo === '' ? LogoIcon : logo}
+                           alt="Logo Upload Image"
                            style={{
                               height: '100%',
                            }}
@@ -845,7 +919,7 @@ export default function AdminProfliesetting() {
                   </Box>
                </Box>
                <Box sx={{ p: 3 }}>
-                  <Box>
+                  <Box sx={{ mt: '30px' }}>
                      <TextField
                         id="outlined-basic"
                         label="Contact"
@@ -856,7 +930,7 @@ export default function AdminProfliesetting() {
                         onChange={(e) => setContact(e.target.value)}
                      />
                   </Box>
-                  <Box sx={{ mt: '20px' }}>
+                  <Box sx={{ mt: '30px' }}>
                      <TextField
                         id="outlined-basic"
                         label="Address"
@@ -867,7 +941,7 @@ export default function AdminProfliesetting() {
                         onChange={(e) => setAddress(e.target.value)}
                      />
                   </Box>
-                  <Box sx={{ mt: '20px' }}>
+                  <Box sx={{ mt: '30px' }}>
                      <TextField
                         id="outlined-basic"
                         label="City"
@@ -881,7 +955,7 @@ export default function AdminProfliesetting() {
 
                   <Box sx={{ display: 'flex' }}>
                      <Box sx={{ flex: '1' }}></Box>
-                     <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
+                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
                         <Button
                            size="small"
                            variant="contained"
@@ -941,7 +1015,7 @@ export default function AdminProfliesetting() {
                      multiline
                      fullWidth
                      value={privacyMsg}
-                     rows={6}
+                     rows={9}
                      onChange={(e) => setPrivacyMsg(e.target.value)}
                   />
 
@@ -1009,36 +1083,26 @@ export default function AdminProfliesetting() {
                      <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <Stack spacing={3}>
                            <TimePicker
-                              ampm={false}
-                              openTo="hours"
-                              views={['hours', 'minutes', 'seconds']}
-                              inputFormat="HH:mm:ss"
-                              mask="__:__:__"
                               label="Opening Time"
                               value={new Date(openTime)}
                               onChange={(e) => {
                                  setOpenTime(e.$d)
                               }}
+                              disabled={openTimeFlag}
                               renderInput={(params) => (
                                  <TextField {...params} />
                               )}
-                              disabled={openTimeFlag}
                            />
                            <TimePicker
-                              ampm={false}
-                              openTo="hours"
-                              views={['hours', 'minutes', 'seconds']}
-                              inputFormat="HH:mm:ss"
-                              mask="__:__:__"
                               label="Closing Time"
                               value={new Date(closeTime)}
                               onChange={(e) => {
                                  setCloseTime(e.$d)
                               }}
+                              disabled={closeTimeFlag}
                               renderInput={(params) => (
                                  <TextField {...params} />
                               )}
-                              disabled={closeTimeFlag}
                            />
                         </Stack>
                      </LocalizationProvider>

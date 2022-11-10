@@ -29,7 +29,7 @@ export default function AdminDashboard() {
 
     const getDashBoardData = async () => {
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}getDashBoardData`)
+            .post(`${process.env.REACT_APP_API_Url}getDashBoardData`)
             .then((result) => {
                 setUserCount(result.data.userCount)
                 setServiceCount(result.data.serviceCount)

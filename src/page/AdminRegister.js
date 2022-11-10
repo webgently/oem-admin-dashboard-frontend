@@ -70,7 +70,7 @@ export default function AdminRegister() {
     const AddCredit = async () => {
         let data = { _id: currentRow._id, credit: addCredit }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}addCredit`, { data: data })
+            .post(`${process.env.REACT_APP_API_Url}addCredit`, { data: data })
             .then((result) => {
                 if (result.data === 'success') {
                     getUserData()
@@ -83,7 +83,7 @@ export default function AdminRegister() {
     const SubtractCredit = async () => {
         let data = { _id: currentRow._id, credit: minusCredit }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}subtractCredit`, {
+            .post(`${process.env.REACT_APP_API_Url}subtractCredit`, {
                 data: data,
             })
             .then((result) => {
@@ -132,7 +132,7 @@ export default function AdminRegister() {
 
     const getUserData = async () => {
         await axios
-            .get(`${process.env.REACT_APP_Base_Url}getUserData`)
+            .get(`${process.env.REACT_APP_API_Url}getUserData`)
             .then((result) => {
                 setUserData(result.data)
             })
@@ -141,7 +141,7 @@ export default function AdminRegister() {
     const UpdateNote = async () => {
         let data = { _id: curId, note: curNote }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}updateNote`, { data: data })
+            .post(`${process.env.REACT_APP_API_Url}updateNote`, { data: data })
             .then((result) => {
                 if (result.data === 'success') {
                     getUserData()
@@ -158,7 +158,7 @@ export default function AdminRegister() {
         }
         let data = { _id: row._id, status: status }
         await axios
-            .post(`${process.env.REACT_APP_Base_Url}updatestatus`, {
+            .post(`${process.env.REACT_APP_API_Url}updatestatus`, {
                 data: data,
             })
             .then((result) => {
@@ -177,7 +177,7 @@ export default function AdminRegister() {
         })
             .then(() => {
                 axios
-                    .post(`${process.env.REACT_APP_Base_Url}deleteUser`, {
+                    .post(`${process.env.REACT_APP_API_Url}deleteUser`, {
                         _id: row._id,
                     })
                     .then((result) => {
