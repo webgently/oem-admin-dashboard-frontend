@@ -344,7 +344,13 @@ export default function PersistentDrawerLeft() {
                      <ListItemIcon>
                         <ErrorOutlineIcon />
                      </ListItemIcon>
-                     <ListItemText>Support</ListItemText>
+                     <ListItemText
+                        onClick={() => {
+                           navigate('admin_support')
+                        }}
+                     >
+                        Support
+                     </ListItemText>
                   </ListItemButton>
                </ListItem>
             </List>
@@ -472,7 +478,11 @@ export default function PersistentDrawerLeft() {
                            </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
-                           <ListItemButton>
+                           <ListItemButton
+                              onClick={() => {
+                                 navigate('admin_support')
+                              }}
+                           >
                               <ListItemIcon>
                                  <ErrorOutlineIcon />
                               </ListItemIcon>

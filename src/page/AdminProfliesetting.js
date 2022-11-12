@@ -20,18 +20,12 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
-
 import TablePagination from '@mui/material/TablePagination'
-
 import { ButtonGroup } from '@mui/material'
 import toast, { Toaster } from 'react-hot-toast'
-import logoIcon from '../assets/img/OEMservice2.jpg'
 import Key from '../assets/img/changepassword.png'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
-
-import dayjs, { Dayjs } from 'dayjs'
-import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import Stack from '@mui/material/Stack'
@@ -355,7 +349,7 @@ export default function AdminProfliesetting() {
                .then((result) => {
                   if (result.data.status) {
                      setFileData({})
-                     setLogo(result.data.data.url)
+                     setLogo(process.env.REACT_APP_Base_Url + result.data.data)
                      toast.success('Image Uploaded Successfully')
                   } else {
                      toast.error(result.data.data)

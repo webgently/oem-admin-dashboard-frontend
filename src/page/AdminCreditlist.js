@@ -125,10 +125,7 @@ export default function AdminCreditlist() {
          })
          .then((result) => {
             if (result.status) {
-               setCreditsData((creditsData) => [
-                  ...creditsData,
-                  result.data.data,
-               ])
+               setCreditsData([...creditsData, result.data.data])
                setOpen(false)
                toast.success('Credit Category Create Successfully')
             }
@@ -344,34 +341,24 @@ export default function AdminCreditlist() {
                <Box sx={{ p: 3 }}>
                   <Box>
                      <TextField
-                        id="outlined-basic"
+                        id="outlined-number"
                         label="Credit"
+                        type="number"
                         variant="outlined"
-                        size="small"
                         fullWidth
                         value={credit}
                         onChange={(e) => setCredit(e.target.value)}
-                        onKeyPress={(event) => {
-                           if (!/[0-9]/.test(event.key)) {
-                              event.preventDefault()
-                           }
-                        }}
                      />
                   </Box>
                   <Box sx={{ mt: '20px' }}>
                      <TextField
-                        id="outlined-basic"
+                        id="outlined-number"
                         label="Price"
+                        type="number"
                         variant="outlined"
-                        size="small"
                         fullWidth
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
-                        onKeyPress={(event) => {
-                           if (!/[0-9]/.test(event.key)) {
-                              event.preventDefault()
-                           }
-                        }}
                      />
                   </Box>
                   <Box sx={{ display: 'flex' }}>
@@ -445,19 +432,13 @@ export default function AdminCreditlist() {
                         </Box>
                      </Box>
                      <TextField
-                        id="outlined-basic"
+                        id="outlined-number"
                         label="Update Handling Fee"
-                        variant="outlined"
-                        size="small"
+                        type="number"
                         fullWidth
                         sx={{ flex: '1' }}
                         value={handleFee}
                         onChange={(e) => setHandleFee(e.target.value)}
-                        onKeyPress={(event) => {
-                           if (!/[0-9]/.test(event.key)) {
-                              event.preventDefault()
-                           }
-                        }}
                      />
                   </Box>
                   <Box sx={{ display: 'flex' }}>

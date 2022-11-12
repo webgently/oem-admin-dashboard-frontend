@@ -1,331 +1,342 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
-import {
-    Button,
-    FormHelperText,
-    FormLabel,
-    IconButton,
-    InputAdornment,
-    RadioGroup,
-    TextareaAutosize,
-} from '@mui/material'
-import Textarea from '@mui/joy/Textarea'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import { ButtonGroup, IconButton, InputAdornment } from '@mui/material'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
-import InputLabel from '@mui/material/InputLabel'
+import ChatIcon from '@mui/icons-material/Chat'
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import dayjs from 'dayjs'
 import TextField from '@mui/material/TextField'
-import Stack from '@mui/material/Stack'
-import Radio from '@mui/joy/Radio'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import SearchIcon from '@mui/icons-material/Search'
 import { alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
-import EditIcon from '@mui/icons-material/Edit'
-import Divider from '@mui/material/Divider'
-import ArchiveIcon from '@mui/icons-material/Archive'
-import FileCopyIcon from '@mui/icons-material/FileCopy'
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import TablePagination from '@mui/material/TablePagination'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const columns = [
-    { id: 'name', label: 'Name', minWidth: 170 },
-    { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-    {
-        id: 'population',
-        label: 'Population',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toLocaleString('en-US'),
-    },
-    {
-        id: 'size',
-        label: 'Size\u00a0(km\u00b2)',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toLocaleString('en-US'),
-    },
-    {
-        id: 'density',
-        label: 'Density',
-        minWidth: 170,
-        align: 'right',
-        format: (value) => value.toFixed(2),
-    },
-]
-
-function createData(name, code, population, size) {
-    const density = population / size
-    return { name, code, population, size, density }
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
+   { id: 'orderId', label: 'Order Id', minWidth: 100 },
+   { id: 'createdAt', label: 'Created at', minWidth: 120 },
+   {
+      id: 'vehicleInformation',
+      label: 'Vehicle Information',
+      minWidth: 200,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
+   },
+   {
+      id: 'note',
+      label: 'Note',
+      minWidth: 200,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
+   },
+   {
+      id: 'status',
+      label: 'Request Status',
+      minWidth: 120,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
+   },
+   {
+      id: 'downloadFiles',
+      label: 'Download Files',
+      minWidth: 50,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
+   },
+   {
+      id: 'support',
+      label: 'Support',
+      minWidth: 50,
+      align: 'center',
+      format: (value) => value.toLocaleString('en-US'),
+   },
 ]
 
 const StyledMenu = styled((props) => (
-    <Menu
-        elevation={0}
-        anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-        }}
-        transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-        }}
-        {...props}
-    />
+   <Menu
+      elevation={0}
+      anchorOrigin={{
+         vertical: 'bottom',
+         horizontal: 'center',
+      }}
+      transformOrigin={{
+         vertical: 'top',
+         horizontal: 'center',
+      }}
+      {...props}
+   />
 ))(({ theme }) => ({
-    '& .MuiPaper-root': {
-        borderRadius: 6,
-        marginTop: theme.spacing(1),
-        minWidth: 180,
-        color:
-            theme.palette.mode === 'light'
-                ? 'rgb(55, 65, 81)'
-                : theme.palette.grey[300],
-        boxShadow:
-            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-        '& .MuiMenu-list': {
-            padding: '4px 0',
-        },
-        '& .MuiMenuItem-root': {
-            '& .MuiSvgIcon-root': {
-                fontSize: 18,
-                color: theme.palette.text.secondary,
-                marginRight: theme.spacing(1.5),
-            },
-            '&:active': {
-                backgroundColor: alpha(
-                    theme.palette.primary.main,
-                    theme.palette.action.selectedOpacity
-                ),
-            },
-        },
-    },
+   '& .MuiPaper-root': {
+      borderRadius: 6,
+      marginTop: theme.spacing(1),
+      minWidth: 180,
+      color:
+         theme.palette.mode === 'light'
+            ? 'rgb(55, 65, 81)'
+            : theme.palette.grey[300],
+      boxShadow:
+         'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+      '& .MuiMenu-list': {
+         padding: '4px 0',
+      },
+      '& .MuiMenuItem-root': {
+         '& .MuiSvgIcon-root': {
+            fontSize: 18,
+            color: theme.palette.text.secondary,
+            marginRight: theme.spacing(1.5),
+         },
+         '&:active': {
+            backgroundColor: alpha(
+               theme.palette.primary.main,
+               theme.palette.action.selectedOpacity
+            ),
+         },
+      },
+   },
 }))
 
 export default function Overview() {
-    const [page, setPage] = React.useState(0)
-    const [rowsPerPage, setRowsPerPage] = React.useState(10)
+   const [page, setPage] = React.useState(0)
+   const [rowsPerPage, setRowsPerPage] = useState(10)
+   const [allData, setAllData] = useState([])
+   const [filterSetting, setFilterSetting] = useState('all')
+   const [OrderID, setOrderID] = useState('')
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage)
-    }
+   const handleChangePage = (event, newPage) => {
+      setPage(newPage)
+   }
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value)
-        setPage(0)
-    }
+   const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(+event.target.value)
+      setPage(0)
+   }
 
-    const [age, setAge] = useState('')
-    const [value, setValue] = useState(dayjs('2022-04-07'))
-    const [Radiovalue, setRadioValue] = useState('')
+   const getDataByOrderID = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getDataByOrderID`, {
+               data: OrderID,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setAllData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
 
-    const handleChange = (event) => {
-        setAge(event.target.value)
-    }
+   const getDataByFilter = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getDataByFilter`, {
+               data: filterSetting,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setAllData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
 
-    const handleChangeRadio = (event) => {
-        setRadioValue(event.target.value)
-    }
+   useEffect(() => {
+      if (!OrderID) {
+         getDataByFilter()
+      } else {
+         getDataByOrderID()
+      }
+   }, [OrderID, filterSetting])
 
-    const [anchorEl, setAnchorEl] = React.useState(null)
-    const open = Boolean(anchorEl)
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
-    const handleClose = () => {
-        setAnchorEl(null)
-    }
-
-    return (
-        <Box
+   return (
+      <Box
+         sx={{
+            flexGrow: 1,
+            p: 3,
+            bgcolor: 'rgb(229, 229, 229)',
+            overflowY: 'overlay',
+         }}
+      >
+         <Box sx={{ mt: '130px' }}>
+            <h3 style={{ margin: '0px' }}>Files Overview</h3>
+         </Box>
+         <Box
             sx={{
-                flexGrow: 1,
-                p: 3,
-                bgcolor: 'rgb(229, 229, 229)',
-                overflowY: 'overlay',
+               mt: '10px',
+               borderTop: '5px solid #ffc800',
+               bgcolor: 'white',
+               borderBottomRightRadius: '5px',
+               borderBottomLeftRadius: '5px',
+               p: '10px',
             }}
-        >
-            <Box sx={{ mt: '130px' }}>
-                <h3 style={{ margin: '0px' }}>Files Overview</h3>
-            </Box>
-            <Box
-                sx={{
-                    mt: '10px',
-                    borderTop: '5px solid #ffc800',
-                    bgcolor: 'white',
-                    borderBottomRightRadius: '5px',
-                    borderBottomLeftRadius: '5px',
-                    p: '10px',
-                }}
+         >
+            <Grid
+               container
+               spacing={{ xs: 2, md: 3 }}
+               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-                <Grid
-                    container
-                    spacing={{ xs: 2, md: 3 }}
-                    columns={{ xs: 4, sm: 8, md: 12 }}
-                >
-                    <Grid item xs={12} sm={6} md={6}>
-                        <TextField
-                            fullWidth
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            placeholder="Search by Order Id"
-                            size="small"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={3} md={3}></Grid>
-                    <Grid
-                        item
-                        xs={12}
-                        sm={3}
-                        md={3}
-                        sx={{ display: 'flex', justifyContent: 'flex-end' }}
-                    >
-                        <Button
-                            id="demo-customized-button"
-                            aria-controls={
-                                open ? 'demo-customized-menu' : undefined
-                            }
-                            aria-haspopup="true"
-                            aria-expanded={open ? 'true' : undefined}
-                            variant="contained"
-                            disableElevation
-                            onClick={handleClick}
-                            endIcon={<KeyboardArrowDownIcon />}
-                        >
-                            Filter Requests
-                        </Button>
-                        <StyledMenu
-                            id="demo-customized-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'demo-customized-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={handleClose} disableRipple>
-                                All Requests
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} disableRipple>
-                                Complete Requests
-                            </MenuItem>
-                            <Divider sx={{ my: 0.5 }} />
-                            <MenuItem onClick={handleClose} disableRipple>
-                                Pending Requests
-                            </MenuItem>
-                        </StyledMenu>
-                    </Grid>
-                </Grid>
-                <TableContainer
-                    sx={{
-                        maxHeight: 440,
-                        mt: 2,
-                    }}
-                >
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{
-                                            minWidth: column.minWidth,
-                                            backgroundColor: '#3791e9',
-                                            color: 'white',
-                                        }}
-                                    >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows
-                                .slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                )
-                                .map((row) => {
+               <Grid item xs={12} sm={6} md={6}>
+                  <TextField
+                     fullWidth
+                     InputProps={{
+                        startAdornment: (
+                           <InputAdornment position="start">
+                              <SearchIcon />
+                           </InputAdornment>
+                        ),
+                     }}
+                     placeholder="Search by Order Id"
+                     size="small"
+                     value={OrderID}
+                     onChange={(e) => setOrderID(e.target.value)}
+                  />
+               </Grid>
+               <Grid item xs={12} sm={3} md={3}></Grid>
+               <Grid
+                  item
+                  xs={12}
+                  sm={3}
+                  md={3}
+                  sx={{ display: 'flex', justifyContent: 'flex-end' }}
+               >
+                  <FormControl fullWidth>
+                     <Select
+                        size="small"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={filterSetting}
+                        onChange={(e) => setFilterSetting(e.target.value)}
+                     >
+                        <MenuItem value="all">All Requests</MenuItem>
+                        <MenuItem value="completed">Complete Requests</MenuItem>
+                        <MenuItem value="in-progress">
+                           Pending Requests
+                        </MenuItem>
+                     </Select>
+                  </FormControl>
+               </Grid>
+            </Grid>
+            <TableContainer
+               sx={{
+                  maxHeight: 440,
+                  mt: 2,
+               }}
+            >
+               <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                     <TableRow>
+                        {columns.map((column) => (
+                           <TableCell
+                              key={column.id}
+                              align={column.align}
+                              style={{
+                                 minWidth: column.minWidth,
+                                 backgroundColor: '#3791e9',
+                                 color: 'white',
+                              }}
+                           >
+                              {column.label}
+                           </TableCell>
+                        ))}
+                     </TableRow>
+                  </TableHead>
+                  <TableBody>
+                     {allData
+                        .slice(
+                           page * rowsPerPage,
+                           page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row) => {
+                           return (
+                              <TableRow
+                                 hover
+                                 role="checkbox"
+                                 tabIndex={-1}
+                                 key={row._id}
+                              >
+                                 {columns.map((column) => {
+                                    const value = row[column.id]
                                     return (
-                                        <TableRow
-                                            hover
-                                            role="checkbox"
-                                            tabIndex={-1}
-                                            key={row.code}
-                                        >
-                                            {columns.map((column) => {
-                                                const value = row[column.id]
-                                                return (
-                                                    <TableCell
-                                                        key={column.id}
-                                                        align={column.align}
-                                                    >
-                                                        {column.format &&
-                                                        typeof value ===
-                                                            'number'
-                                                            ? column.format(
-                                                                  value
-                                                              )
-                                                            : value}
-                                                    </TableCell>
-                                                )
-                                            })}
-                                        </TableRow>
+                                       <TableCell
+                                          key={column.id}
+                                          align={column.align}
+                                       >
+                                          {column.id === 'support' ? (
+                                             <ButtonGroup
+                                                variant="outlined"
+                                                aria-label="outlined button group"
+                                             >
+                                                <IconButton
+                                                   color="primary"
+                                                   aria-label="add to shopping cart"
+                                                >
+                                                   <ChatIcon />
+                                                </IconButton>
+                                             </ButtonGroup>
+                                          ) : column.id === 'downloadFiles' ? (
+                                             <ButtonGroup
+                                                variant="outlined"
+                                                aria-label="outlined button group"
+                                             >
+                                                <IconButton
+                                                   color="primary"
+                                                   aria-label="add to shopping cart"
+                                                >
+                                                   <a
+                                                      href={`${process.env.REACT_APP_Base_Url}/fileService/${row.fileRename}`}
+                                                      download
+                                                   >
+                                                      <DownloadForOfflineIcon />
+                                                   </a>
+                                                </IconButton>
+                                             </ButtonGroup>
+                                          ) : column.id ===
+                                            'vehicleInformation' ? (
+                                             <div style={{ lineHeight: '6px' }}>
+                                                <p>{row.vehicleType}</p>
+                                                <p>{row.vehicleBrand}</p>
+                                                <p>{row.transmission}</p>
+                                             </div>
+                                          ) : (
+                                             value
+                                          )}
+                                       </TableCell>
                                     )
-                                })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Box>
-        </Box>
-    )
+                                 })}
+                              </TableRow>
+                           )
+                        })}
+                  </TableBody>
+               </Table>
+            </TableContainer>
+            <TablePagination
+               rowsPerPageOptions={[10, 25, 100]}
+               component="div"
+               count={allData.length}
+               rowsPerPage={rowsPerPage}
+               page={page}
+               onPageChange={handleChangePage}
+               onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+         </Box>
+      </Box>
+   )
 }
