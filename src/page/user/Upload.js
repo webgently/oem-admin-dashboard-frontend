@@ -24,9 +24,6 @@ import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios'
 
 export default function Upload() {
-   // const [age, setAge] = useState('')
-   // const [value, setValue] = useState(dayjs('2022-04-07'))
-   // const [Radiovalue, setRadioValue] = useState('')
    const [userName, setUserName] = useState('')
    const [vehicleType, setVehicleType] = useState('')
    const [vehicleBrand, setVehicleBrand] = useState('')
@@ -48,6 +45,7 @@ export default function Upload() {
    const [message, setMessage] = useState('')
    const [term, setTerm] = useState('')
 
+   const [userId, setUserID] = useState('')
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
    const handleFileload = () => {
@@ -129,6 +127,7 @@ export default function Upload() {
       let params = new FormData()
       const data = {
          orderId: '',
+         userId,
          client: userName,
          fileName: fileData.name,
          fileSize: fileData.size,
@@ -183,6 +182,7 @@ export default function Upload() {
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
+      setUserID(account._id)
    }, [])
 
    return (
@@ -321,6 +321,7 @@ export default function Upload() {
                      <TextField
                         size="small"
                         value={HP}
+                        type="number"
                         onChange={(e) => setHP(e.target.value)}
                      />
                   </FormControl>

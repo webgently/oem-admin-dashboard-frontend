@@ -14,7 +14,6 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
-import dayjs from 'dayjs'
 import TextField from '@mui/material/TextField'
 import SearchIcon from '@mui/icons-material/Search'
 import { alpha } from '@mui/material/styles'
@@ -122,11 +121,12 @@ export default function Overview() {
       setPage(0)
    }
 
-   const getDataByOrderID = async () => {
+   const getDataByOrderID = async (id) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_Url}getDataByOrderID`, {
-               data: OrderID,
+               order: OrderID,
+               id,
             })
             .then((result) => {
                if (result.data.status) {
@@ -140,11 +140,12 @@ export default function Overview() {
       }
    }
 
-   const getDataByFilter = async () => {
+   const getDataByFilter = async (id) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_Url}getDataByFilter`, {
-               data: filterSetting,
+               filter: filterSetting,
+               id,
             })
             .then((result) => {
                if (result.data.status) {
@@ -159,10 +160,11 @@ export default function Overview() {
    }
 
    useEffect(() => {
+      const account = JSON.parse(localStorage.getItem('user'))
       if (!OrderID) {
-         getDataByFilter()
+         getDataByFilter(account._id)
       } else {
-         getDataByOrderID()
+         getDataByOrderID(account._id)
       }
    }, [OrderID, filterSetting])
 
