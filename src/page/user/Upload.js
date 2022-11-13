@@ -56,7 +56,7 @@ export default function Upload() {
    }
    const upload = async () => {
       if (!fileData.name) {
-         toast.error('Select the file(.bin .zip .ori .bdc .unq)')
+         toast.error('Select the file')
          return
       }
       if (!vehicleType) {
@@ -129,10 +129,10 @@ export default function Upload() {
          orderId: '',
          userId,
          client: userName,
-         fileName: fileData.name,
-         fileSize: fileData.size,
-         fileType: fileData.type,
-         fileRename: fileData.lastModified,
+         fileName: [fileData.name],
+         fileSize: [fileData.size],
+         fileType: [fileData.type],
+         fileRename: [fileData.lastModified],
          vehicleType,
          vehicleBrand,
          vehicleSeries,

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import { ButtonGroup, IconButton, InputAdornment } from '@mui/material'
+import {
+   Button,
+   ButtonGroup,
+   IconButton,
+   InputAdornment,
+   Modal,
+} from '@mui/material'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -20,7 +26,8 @@ import { alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
 import TablePagination from '@mui/material/TablePagination'
 import axios from 'axios'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
+import CloseIcon from '@mui/icons-material/Close'
 
 const columns = [
    { id: 'orderId', label: 'Order Id', minWidth: 100 },
@@ -105,12 +112,31 @@ const StyledMenu = styled((props) => (
    },
 }))
 
+const ServiceStyle = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '50vw',
+   height: '50vh',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+
 export default function Overview() {
    const [page, setPage] = React.useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const [allData, setAllData] = useState([])
    const [filterSetting, setFilterSetting] = useState('all')
    const [OrderID, setOrderID] = useState('')
+   const [downloadList, setDownloadList] = useState({
+      origin: [],
+      rename: [],
+   })
+   const [open1, setOpen1] = useState(false)
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -157,6 +183,18 @@ export default function Overview() {
       } catch (error) {
          console.log(error)
       }
+   }
+
+   const handleOpen1 = async (origin, rename) => {
+      setDownloadList({
+         origin,
+         rename,
+      })
+      setOpen1(true)
+   }
+
+   const handleClose1 = () => {
+      setOpen1(false)
    }
 
    useEffect(() => {
@@ -297,17 +335,18 @@ export default function Overview() {
                                              <ButtonGroup
                                                 variant="outlined"
                                                 aria-label="outlined button group"
+                                                onClick={() =>
+                                                   handleOpen1(
+                                                      row.fileName,
+                                                      row.fileRename
+                                                   )
+                                                }
                                              >
                                                 <IconButton
                                                    color="primary"
                                                    aria-label="add to shopping cart"
                                                 >
-                                                   <a
-                                                      href={`${process.env.REACT_APP_Base_Url}/fileService/${row.fileRename}`}
-                                                      download
-                                                   >
-                                                      <DownloadForOfflineIcon />
-                                                   </a>
+                                                   <DownloadForOfflineIcon />
                                                 </IconButton>
                                              </ButtonGroup>
                                           ) : column.id ===
@@ -339,6 +378,77 @@ export default function Overview() {
                onRowsPerPageChange={handleChangeRowsPerPage}
             />
          </Box>
+         <Modal
+            open={open1}
+            onClose={handleClose1}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>File Overview</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose1()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ px: 3 }}>
+                  <h3>Click link to Download File</h3>
+                  <Box pt={2}>
+                     <Box>User Files</Box>
+                     <ul>
+                        <li>
+                           <a
+                              href={`${process.env.REACT_APP_Base_Url}/fileService/${downloadList?.rename[0]}`}
+                              download
+                           >
+                              {downloadList?.origin[0]}
+                           </a>
+                        </li>
+                     </ul>
+                  </Box>
+                  {downloadList?.rename.length > 0 ? (
+                     <Box pt={2}>
+                        <Box>Admin Files</Box>
+                        <ul style={{ overflowY: 'auto', height: '100px' }}>
+                           {downloadList.origin.map((item, ind) => {
+                              if (ind === 0) return
+                              return (
+                                 <li key={ind}>
+                                    <a
+                                       href={`${process.env.REACT_APP_Base_Url}/fileService/${downloadList.rename[ind]}`}
+                                       download
+                                    >
+                                       {item}
+                                    </a>
+                                 </li>
+                              )
+                           })}
+                        </ul>
+                     </Box>
+                  ) : (
+                     <></>
+                  )}
+               </Box>
+            </Box>
+         </Modal>
+         <Toaster />
       </Box>
    )
 }
