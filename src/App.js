@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './component/Login'
-import Header from './component/Header'
-import Sidebar from './component/user/Sidebar'
+import Header from './component/AdminSidebar'
+import UserSidebar from './component/UserSidebar'
 import Dashboard from './page/user/Dashboard'
 import Upload from './page/user/Upload'
 import Overview from './page/user/Overview'
@@ -26,7 +26,7 @@ export default function App() {
       <Router>
          <Routes>
             <Route path="/" element={<Login />} />
-            <Route element={<Sidebar />}>
+            <Route element={<UserSidebar />}>
                <Route path="/dashboard" element={<Dashboard />} />
                <Route path="/upload" element={<Upload />} />
                <Route path="/overview" element={<Overview />} />

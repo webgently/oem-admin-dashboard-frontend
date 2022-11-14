@@ -262,7 +262,13 @@ export default function Dashboard() {
                               }}
                            >
                               {allData.length > 0 ? (
-                                 <TableContainer component={Paper}>
+                                 <TableContainer
+                                    component={Paper}
+                                    style={{
+                                       overflowY: 'auto',
+                                       height: '260px',
+                                    }}
+                                 >
                                     <Table
                                        sx={{ width: '100%' }}
                                        aria-label="simple table"

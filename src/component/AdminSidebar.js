@@ -200,6 +200,7 @@ export default function PersistentDrawerLeft() {
                </Menu>
             </Toolbar>
          </AppBar>
+
          <Drawer
             sx={{
                width: drawerWidth,

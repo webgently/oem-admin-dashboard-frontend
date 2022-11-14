@@ -116,9 +116,12 @@ export default function AdminUpload() {
       let params = new FormData()
       const data = {
          id: oneData._id,
+         userId: oneData.userId,
+         orderId: oneData.orderId,
          status,
          note,
          credit,
+         date: getCustomDate(),
       }
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
@@ -127,6 +130,7 @@ export default function AdminUpload() {
          .then((result) => {
             if (result.data.status) {
                toast.success(result.data.data)
+               getRequests()
                setOpen(false)
                setFileData('')
                setStatus('')
@@ -149,10 +153,12 @@ export default function AdminUpload() {
 
    const [open, setOpen] = useState(false)
    const handleOpen = async (id) => {
+      console.log(id)
       await axios
-         .post(`${process.env.REACT_APP_API_Url}getOneRequest`, id)
+         .post(`${process.env.REACT_APP_API_Url}getOneRequest`, { id })
          .then((result) => {
             if (result.data.status) {
+               console.log(result.data.data[0])
                setOneData(result.data.data[0])
                setOpen(true)
             } else {
@@ -185,6 +191,33 @@ export default function AdminUpload() {
                toast.error(result.data.data)
             }
          })
+   }
+
+   const getCustomDate = () => {
+      const d = new Date()
+      const weekdaylist = [
+         'Sunday',
+         'Monday',
+         'Tuesday',
+         'Wednesday',
+         'Thursday',
+         'Friday',
+         'Saturday',
+      ]
+      let year = d.getFullYear()
+      let month = d.getMonth()
+      let day = d.getDate()
+      let hour = d.getHours()
+      let minute = d.getMinutes()
+
+      if (month < 10) month = '0' + (month + 1)
+      if (day < 10) day = '0' + day
+      if (hour < 10) hour = '0' + hour
+      if (minute < 10) minute = '0' + minute
+      const ampm = hour >= 12 ? 'pm' : 'am'
+
+      const result = `${day}-${month}-${year} ${hour}:${minute} ${ampm}`
+      return result
    }
 
    useEffect(() => {

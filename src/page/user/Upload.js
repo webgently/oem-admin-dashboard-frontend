@@ -7,21 +7,16 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
-// import dayjs from 'dayjs'
 import TextField from '@mui/material/TextField'
-import Stack from '@mui/material/Stack'
-import Radio from '@mui/joy/Radio'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-
 import FormControlJoy from '@mui/joy/FormControl'
-import FormLabelJoy from '@mui/joy/FormLabel'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
-import { upload } from '@testing-library/user-event/dist/upload'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export default function Upload() {
    const [userName, setUserName] = useState('')
