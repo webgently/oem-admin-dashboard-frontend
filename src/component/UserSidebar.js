@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { styled, useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -83,6 +84,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function UserSidebar() {
    const theme = useTheme()
+   const dispatch = useDispatch()
    const [open, setOpen] = useState(false)
    const [logo, setLogo] = useState('')
    const [anchorElUser, setAnchorElUser] = useState(null)
@@ -236,7 +238,7 @@ export default function UserSidebar() {
                   </MenuItem>
                   <MenuItem
                      onClick={() => {
-                        handleCloseUserMenu()
+                        dispatch(clearAccountData())
                         navigate('/')
                      }}
                   >

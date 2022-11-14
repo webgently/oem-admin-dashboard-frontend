@@ -16,9 +16,10 @@ import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 export default function Upload() {
+   const account = useSelector((state) => state.account)
    const [userName, setUserName] = useState('')
    const [vehicleType, setVehicleType] = useState('')
    const [vehicleBrand, setVehicleBrand] = useState('')
@@ -175,7 +176,6 @@ export default function Upload() {
    }
 
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
       setUserID(account._id)
    }, [])

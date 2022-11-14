@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import Login from './component/Login'
 // --------user------------
 import UserSidebar from './component/UserSidebar'
@@ -21,8 +22,14 @@ import AdminPricelist from './page/AdminPricelist'
 import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 import AdminSupport from './page/AdminSupport'
+import { setAccountData } from './features/account/account'
 
 export default function App() {
+   const dispatch = useDispatch()
+   useEffect(() => {
+      const account = JSON.parse(localStorage.getItem('user'))
+      if (account) dispatch(setAccountData(account))
+   }, [])
    return (
       <Router>
          <Routes>

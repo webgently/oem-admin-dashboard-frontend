@@ -4,7 +4,7 @@ import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
-import { Button, IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Table from '@mui/material/Table'
 import TableCell from '@mui/material/TableCell'
@@ -16,6 +16,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const columns = [
    { id: 'orderId', label: 'Code', minWidth: 120 },
@@ -70,6 +71,7 @@ const Item3 = styled(Paper)(({ theme }) => ({
 }))
 
 export default function Dashboard() {
+   const account = useSelector((state) => state.account)
    const [allData, setAllData] = useState([])
    const navigate = useNavigate()
    const getDataByFilter = async (id) => {
@@ -91,7 +93,6 @@ export default function Dashboard() {
       }
    }
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
       getDataByFilter(account._id)
    }, [])
 

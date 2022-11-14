@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import toast, { Toaster } from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
+import { useSelector } from 'react-redux'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -54,6 +55,7 @@ const ServiceStyle = {
 }
 
 export default function Profile() {
+   const account = useSelector((state) => state.account)
    const [userData, setUserData] = useState([])
    const [userName, setUserName] = useState('')
    const [userID, setUserID] = useState('')
@@ -112,7 +114,6 @@ export default function Profile() {
    }
 
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
       setUserID(account._id)
       setUserData([

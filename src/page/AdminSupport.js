@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
@@ -30,6 +31,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 export default function AdminSupport() {
+   const account = useSelector((state) => state.account)
    const socket = io(process.env.REACT_APP_Base_Url)
    const [selectedIndex, setSelectedIndex] = React.useState(0)
    const [myID, setMyID] = useState('')
@@ -55,10 +57,6 @@ export default function AdminSupport() {
       })
    }
 
-   socket.on(myID, async (e) => {
-      if (selectedIndex === e.data.from) setAllMsg([...allMsg, e.data])
-   })
-
    const getUserList = async (id) => {
       try {
          await axios
@@ -82,17 +80,17 @@ export default function AdminSupport() {
          date: date,
       }
       socket.emit('sendToUser', data)
-      setTimeout(async () => {
-         await setAllMsg([...allMsg, data])
-      }, 300)
+      await setAllMsg([...allMsg, data])
       setChattingMsg('')
       inputRef.current.focus()
    }
 
    const getKeyCode = async (e) => {
       if (e === 13) {
-         if (chattingMsg === '') {
+         if (chattingMsg.trim() === '') {
             toast.error('Write the message')
+            setChattingMsg('')
+            inputRef.current.focus()
          } else {
             if (selectedIndex != 0) {
                await sendChatting()
@@ -148,16 +146,26 @@ export default function AdminSupport() {
    }
 
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
+      socket.on(myID, async (e) => {
+         if (selectedIndex === e.data.from) {
+            await setAllMsg([...allMsg, e.data])
+         }
+         toast.success('New Message Received')
+      })
+      return () => {
+         socket.off('connect')
+         socket.off('disconnect')
+         socket.off(myID)
+         setTimeout(() => {
+            scrollToBottom()
+         }, 100)
+      }
+   }, [selectedIndex, allMsg])
+
+   useEffect(() => {
       setMyID(account._id)
       getUserList(account._id)
    }, [])
-
-   useEffect(() => {
-      setTimeout(() => {
-         scrollToBottom()
-      }, 200)
-   }, [allMsg])
 
    return (
       <Box

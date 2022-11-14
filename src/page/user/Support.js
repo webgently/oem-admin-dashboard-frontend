@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Fab from '@mui/material/Fab'
 import SendIcon from '@mui/icons-material/Send'
 import { experimentalStyled as styled } from '@mui/material/styles'
-import io from 'socket.io-client'
-import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
 import TextField from '@mui/material/TextField'
+import axios from 'axios'
+import io from 'socket.io-client'
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -25,6 +26,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Support() {
    const socket = io(process.env.REACT_APP_Base_Url)
+   const account = useSelector((state) => state.account)
    const [myID, setMyID] = useState('')
    const [supportID, setSupportID] = useState('')
    const [chattingMsg, setChattingMsg] = useState('')
@@ -38,10 +40,6 @@ export default function Support() {
          block: 'start',
       })
    }
-
-   socket.on(myID, async (e) => {
-      await setAllMsg([...allMsg, e.data])
-   })
 
    const getSupportID = async () => {
       try {
@@ -65,18 +63,18 @@ export default function Support() {
          msg: chattingMsg,
          date: date,
       }
-      await socket.emit('sendToSupport', data)
-      setTimeout(async () => {
-         await setAllMsg([...allMsg, data])
-      }, 300)
+      socket.emit('sendToSupport', data)
+      await setAllMsg([...allMsg, data])
       setChattingMsg('')
       inputRef.current.focus()
    }
 
    const getKeyCode = async (e) => {
       if (e === 13) {
-         if (chattingMsg === '') {
+         if (chattingMsg.trim() === '') {
             toast.error('Write the message')
+            setChattingMsg('')
+            inputRef.current.focus()
          } else {
             await sendChatting()
          }
@@ -129,16 +127,24 @@ export default function Support() {
    }
 
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
       setMyID(account._id)
-      getSupportID()
       getChattingHistory(account._id)
+      getSupportID()
    }, [])
 
    useEffect(() => {
-      setTimeout(() => {
-         scrollToBottom()
-      }, 200)
+      socket.on(myID, async (e) => {
+         await setAllMsg([...allMsg, e.data])
+         toast.success('New Message Received')
+      })
+      return () => {
+         socket.off('connect')
+         socket.off('disconnect')
+         socket.off(myID)
+         setTimeout(() => {
+            scrollToBottom()
+         }, 100)
+      }
    }, [allMsg])
 
    return (

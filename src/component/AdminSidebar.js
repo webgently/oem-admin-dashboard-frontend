@@ -192,7 +192,6 @@ export default function PersistentDrawerLeft() {
                >
                   <MenuItem
                      onClick={() => {
-                        localStorage.removeItem('user')
                         dispatch(clearAccountData())
                         navigate('/')
                      }}

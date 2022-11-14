@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -71,6 +72,7 @@ const ServiceStyle = {
 }
 
 export default function AdminProfliesetting() {
+   const account = useSelector((state) => state.account)
    const [page, setPage] = useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const handleChangePage = (event, newPage) => {
@@ -371,7 +373,6 @@ export default function AdminProfliesetting() {
    }
 
    useEffect(() => {
-      const account = JSON.parse(localStorage.getItem('user'))
       setUserName(account.name)
       setUserID(account._id)
       setUserData([
