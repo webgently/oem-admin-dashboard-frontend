@@ -97,7 +97,7 @@ export default function Dashboard() {
 
    return (
       <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>
-         <Box sx={{ mt: '130px' }}>
+         <Box sx={{ mt: '80px' }}>
             <Grid
                container
                spacing={{ xs: 2, md: 3 }}

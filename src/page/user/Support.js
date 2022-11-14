@@ -69,16 +69,16 @@ export default function Support() {
       setTimeout(async () => {
          await setAllMsg([...allMsg, data])
       }, 300)
-      await setChattingMsg('')
+      setChattingMsg('')
       inputRef.current.focus()
    }
 
-   const getKeyCode = (e) => {
+   const getKeyCode = async (e) => {
       if (e === 13) {
          if (chattingMsg === '') {
             toast.error('Write the message')
          } else {
-            sendChatting()
+            await sendChatting()
          }
       }
    }
@@ -150,7 +150,7 @@ export default function Support() {
             overflowY: 'overlay',
          }}
       >
-         <Box sx={{ mt: '120px' }}>
+         <Box sx={{ mt: '80px' }}>
             <Grid
                container
                spacing={{ xs: 2, md: 3 }}
@@ -164,13 +164,18 @@ export default function Support() {
                   </Box>
                   <Item>
                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="flex-end"
                         paddingX={'2vw'}
                         height={'94%'}
                         fontSize={'16px'}
-                        style={{ overflowY: 'auto' }}
+                        style={{
+                           overflowY: 'auto',
+                        }}
                      >
-                        {allMsg.map((item, ind) => {
-                           return (
+                        <Grid item lg={12} md={12} sm={12}>
+                           {allMsg.map((item, ind) => (
                               <Box
                                  textAlign={
                                     myID === item.from ? 'right' : 'left'
@@ -182,17 +187,20 @@ export default function Support() {
                                  }
                                  key={ind}
                               >
-                                 <p>{item.msg}</p>
-                                 <p style={{ fontSize: '10px' }}>{item.date}</p>
+                                 <Box>
+                                    <p>{item.msg}</p>
+                                    <p style={{ fontSize: '10px' }}>
+                                       {item.date}
+                                    </p>
+                                 </Box>
                               </Box>
-                           )
-                        })}
-                        <div ref={messagesEndRef} />
+                           ))}
+                           <div ref={messagesEndRef} />
+                        </Grid>
                      </Grid>
                      <Grid
                         container
                         justifyContent={'space-between'}
-                        alignItems={'flex-end'}
                         paddingX={'2vw'}
                      >
                         <Grid item xs={10.8}>
@@ -203,7 +211,7 @@ export default function Support() {
                               multiline
                               variant="filled"
                               minRows={1}
-                              maxRows={2}
+                              maxRows={3}
                               fullWidth
                               value={chattingMsg}
                               onKeyUp={(e) => getKeyCode(e.keyCode)}

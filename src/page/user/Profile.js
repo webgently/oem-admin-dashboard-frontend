@@ -139,7 +139,7 @@ export default function Profile() {
                overflowY: 'overlay',
             }}
          >
-            <Box sx={{ mt: '130px' }}>
+            <Box sx={{ mt: '80px' }}>
                <Grid
                   container
                   spacing={{ xs: 2, md: 3 }}

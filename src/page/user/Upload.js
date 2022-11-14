@@ -189,7 +189,7 @@ export default function Upload() {
             overflowY: 'overlay',
          }}
       >
-         <Box sx={{ mt: '130px' }}>
+         <Box sx={{ mt: '80px' }}>
             <h3 style={{ color: 'red', margin: '0px' }}>Upload File</h3>
             <span>Upload here the original file</span>
          </Box>

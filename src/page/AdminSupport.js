@@ -57,7 +57,6 @@ export default function AdminSupport() {
 
    socket.on(myID, async (e) => {
       setAllMsg([...allMsg, e.data])
-      // toast.success('New message received!')
    })
 
    const getUserList = async (id) => {
@@ -233,24 +232,43 @@ export default function AdminSupport() {
                   </Box>
                   <Item>
                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="flex-end"
                         paddingX={'2vw'}
                         height={'100%'}
                         fontSize={'16px'}
                         style={{ overflowY: 'auto' }}
                      >
-                        {allMsg.map((item, ind) => (
-                           <Box
-                              textAlign={myID === item.from ? 'right' : 'left'}
-                              lineHeight={'2px'}
-                              paddingTop={'0.5px'}
-                              color={myID === item.from ? '#1976d2' : '#e10000'}
-                              key={ind}
-                           >
-                              <p>{item.msg}</p>
-                              <p style={{ fontSize: '10px' }}>{item.date}</p>
-                           </Box>
-                        ))}
-                        <div ref={messagesEndRef} />
+                        {selectedIndex ? (
+                           <>
+                              <Grid item lg={12} md={12} sm={12}>
+                                 {allMsg.map((item, ind) => (
+                                    <Box
+                                       textAlign={
+                                          myID === item.from ? 'right' : 'left'
+                                       }
+                                       lineHeight={'2px'}
+                                       paddingTop={'0.5px'}
+                                       color={
+                                          myID === item.from
+                                             ? '#1976d2'
+                                             : '#e10000'
+                                       }
+                                       key={ind}
+                                    >
+                                       <p>{item.msg}</p>
+                                       <p style={{ fontSize: '10px' }}>
+                                          {item.date}
+                                       </p>
+                                    </Box>
+                                 ))}
+                              </Grid>
+                              <div ref={messagesEndRef} />
+                           </>
+                        ) : (
+                           <></>
+                        )}
                      </Grid>
                      <Grid
                         container
@@ -266,7 +284,7 @@ export default function AdminSupport() {
                               multiline
                               variant="filled"
                               minRows={1}
-                              maxRows={2}
+                              maxRows={3}
                               fullWidth
                               value={chattingMsg}
                               onKeyUp={(e) => getKeyCode(e.keyCode)}

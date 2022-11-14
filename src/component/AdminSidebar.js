@@ -122,6 +122,7 @@ export default function PersistentDrawerLeft() {
    const gotoRegisteredUsers = () => {
       navigate('admin_user')
    }
+
    const getLogo = async () => {
       await axios
          .post(`${process.env.REACT_APP_API_Url}getLogo`)
@@ -131,6 +132,7 @@ export default function PersistentDrawerLeft() {
             }
          })
    }
+
    useEffect(() => {
       getLogo()
    }, [])
