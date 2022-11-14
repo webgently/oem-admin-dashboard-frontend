@@ -56,7 +56,7 @@ export default function AdminSupport() {
    }
 
    socket.on(myID, async (e) => {
-      setAllMsg([...allMsg, e.data])
+      if (selectedIndex === e.data.from) setAllMsg([...allMsg, e.data])
    })
 
    const getUserList = async (id) => {
