@@ -50,3 +50,13 @@ code {
 p {
     font-family: 'Mulish', sans-serif;
 }
+
+.shaking-animation {
+    animation: horizontalShake infinite 1.5s linear!important;
+}
+
+@keyframes horizontalShake {
+    3%, 12%, 21%, 30%, 39%, 48%, 57%, 65%, 74%, 83%, 92% { transform: translateX(5px) }
+    6%, 15%, 24%, 33%, 42%, 51%, 60%, 68%, 77%, 86%, 95% { transform: translateX(3px) }
+    9%, 18%, 27%, 36%, 45%, 54%, 63%, 71%, 80%, 89%, 98% { transform: translateX(-5px) }
+}

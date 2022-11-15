@@ -176,9 +176,11 @@ export default function Upload() {
    }
 
    useEffect(() => {
-      setUserName(account.name)
-      setUserID(account._id)
-   }, [])
+      if (account._id) {
+         setUserName(account.name)
+         setUserID(account._id)
+      }
+   }, [account])
 
    return (
       <Box

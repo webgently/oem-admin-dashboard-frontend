@@ -373,8 +373,10 @@ export default function AdminProfliesetting() {
    }
 
    useEffect(() => {
-      setUserName(account.name)
-      setUserID(account._id)
+      if (account._id) {
+         setUserName(account.name)
+         setUserID(account._id)
+      }
       setUserData([
          { label: 'Email:', value: account.email },
          { label: 'Contact:', value: account.phone },
@@ -387,6 +389,9 @@ export default function AdminProfliesetting() {
          { label: 'City:', value: account.city },
          { label: 'Address:', value: account.address },
       ])
+   }, [account])
+
+   useEffect(() => {
       getPrivacy()
       getAllDaily()
       getLogo()

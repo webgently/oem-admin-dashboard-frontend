@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { styled, useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -34,6 +34,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard'
 import axios from 'axios'
 import MenuIcon from '@mui/icons-material/Menu'
 import { clearAccountData } from '../features/account/account'
+import io from 'socket.io-client'
 
 const drawerWidth = 240
 
@@ -83,14 +84,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }))
 
 export default function UserSidebar() {
+   const socket = io(process.env.REACT_APP_Base_Url)
+   const account = useSelector((state) => state.account)
    const theme = useTheme()
    const dispatch = useDispatch()
    const [open, setOpen] = useState(false)
    const [logo, setLogo] = useState('')
+   const [myID, setMyID] = useState('')
    const [anchorElUser, setAnchorElUser] = useState(null)
+   const [currentLink, setCurrentLink] = useState('')
    const navigate = useNavigate()
    const [listopen, setListOpen] = useState(false)
    const [creditopen, setCreditOpen] = useState(false)
+   const [unreadCount, setUnreadCount] = useState(0)
+
    const handleOpenUserMenu = (event) => {
       setAnchorElUser(event.currentTarget)
    }
@@ -98,23 +105,76 @@ export default function UserSidebar() {
    const handleCloseUserMenu = () => {
       setAnchorElUser(null)
    }
+
    const handleDrawerClose = () => {
       setOpen(false)
    }
 
+   const getUserUnreadCount = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getUserUnreadCount`, {
+               id: id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setUnreadCount(result.data.unreadCount)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    const getLogo = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getLogo`)
-         .then((result) => {
-            if (result.data.status) {
-               setLogo(process.env.REACT_APP_Base_Url + result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getLogo`)
+            .then((result) => {
+               if (result.data.status) {
+                  setLogo(process.env.REACT_APP_Base_Url + result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const checkMsg = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}updateUserReadStatus`, {
+               id: myID,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  navigate('/support')
+                  setCurrentLink('support')
+                  setUnreadCount(0)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
    }
 
    useEffect(() => {
+      const check = location.href.search('support')
+      if (check > 0) {
+         checkMsg()
+      }
+   }, [location.href, unreadCount])
+
+   useEffect(() => {
       getLogo()
-   }, [])
+      if (account._id) {
+         setMyID(account._id)
+         getUserUnreadCount(account._id)
+         socket.on(account._id, async (e) => {
+            setUnreadCount(unreadCount + 1)
+         })
+      }
+   }, [account, unreadCount])
 
    return (
       <Box sx={{ display: 'flex' }}>
@@ -247,7 +307,6 @@ export default function UserSidebar() {
                </Menu>
             </Toolbar>
          </AppBar>
-
          <Drawer
             sx={{
                width: drawerWidth,
@@ -378,12 +437,11 @@ export default function UserSidebar() {
                      <ListItemIcon>
                         <ErrorOutlineIcon />
                      </ListItemIcon>
-                     <ListItemText
-                        onClick={() => {
-                           navigate('support')
-                        }}
-                     >
-                        Support
+                     <ListItemText onClick={() => checkMsg()}>
+                        Support{' '}
+                        <span style={{ color: 'blue', fontWeight: 'bold' }}>
+                           {unreadCount}
+                        </span>
                      </ListItemText>
                   </ListItemButton>
                </ListItem>
@@ -502,13 +560,17 @@ export default function UserSidebar() {
                            </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
-                           <ListItemButton
-                              onClick={() => {
-                                 navigate('support')
-                              }}
-                           >
+                           <ListItemButton onClick={() => checkMsg()}>
                               <ListItemIcon>
-                                 <ErrorOutlineIcon />
+                                 <ErrorOutlineIcon />{' '}
+                                 <span
+                                    style={{
+                                       color: 'blue',
+                                       fontWeight: 'bold',
+                                    }}
+                                 >
+                                    {unreadCount}
+                                 </span>
                               </ListItemIcon>
                            </ListItemButton>
                         </ListItem>

@@ -75,11 +75,13 @@ export default function OverviewCredit() {
    }
 
    useEffect(() => {
-      setUserId(account._id)
-      if (OrderID) {
-         getCreditByOrderID()
-      } else {
-         getCreditHistory(account._id)
+      if (account._id) {
+         setUserId(account._id)
+         if (OrderID) {
+            getCreditByOrderID()
+         } else {
+            getCreditHistory(account._id)
+         }
       }
    }, [OrderID])
 

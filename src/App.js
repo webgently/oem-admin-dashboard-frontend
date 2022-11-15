@@ -23,12 +23,23 @@ import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 import AdminSupport from './page/AdminSupport'
 import { setAccountData } from './features/account/account'
+import toast from 'react-hot-toast'
+import io from 'socket.io-client'
 
 export default function App() {
+   const socket = io(process.env.REACT_APP_Base_Url)
    const dispatch = useDispatch()
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       if (account) dispatch(setAccountData(account))
+      socket.on(account._id, async (e) => {
+         toast.success('New Message Received')
+      })
+      return () => {
+         socket.off('connect')
+         socket.off('disconnect')
+         socket.off(account._id)
+      }
    }, [])
    return (
       <Router>

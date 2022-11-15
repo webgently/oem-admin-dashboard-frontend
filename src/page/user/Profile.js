@@ -114,20 +114,22 @@ export default function Profile() {
    }
 
    useEffect(() => {
-      setUserName(account.name)
-      setUserID(account._id)
-      setUserData([
-         { label: 'Email:', value: account.email },
-         { label: 'Contact:', value: account.phone },
-         { label: 'VAT Number:', value: account.vatNumber },
-         {
-            label: 'Account Status:',
-            value: account.status,
-         },
-         { label: 'Region:', value: account.country },
-         { label: 'City:', value: account.city },
-         { label: 'Address:', value: account.address },
-      ])
+      if (account._id) {
+         setUserName(account.name)
+         setUserID(account._id)
+         setUserData([
+            { label: 'Email:', value: account.email },
+            { label: 'Contact:', value: account.phone },
+            { label: 'VAT Number:', value: account.vatNumber },
+            {
+               label: 'Account Status:',
+               value: account.status,
+            },
+            { label: 'Region:', value: account.country },
+            { label: 'City:', value: account.city },
+            { label: 'Address:', value: account.address },
+         ])
+      }
    }, [])
 
    return (

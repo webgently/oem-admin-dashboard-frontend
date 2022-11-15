@@ -93,8 +93,10 @@ export default function Dashboard() {
       }
    }
    useEffect(() => {
-      getDataByFilter(account._id)
-   }, [])
+      if (account._id) {
+         getDataByFilter(account._id)
+      }
+   }, [account])
 
    return (
       <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>

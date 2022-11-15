@@ -148,12 +148,14 @@ export default function Overview() {
    }
 
    useEffect(() => {
-      if (!OrderID) {
-         getDataByFilter(account._id)
-      } else {
-         getDataByOrderID(account._id)
+      if (account._id) {
+         if (!OrderID) {
+            getDataByFilter(account._id)
+         } else {
+            getDataByOrderID(account._id)
+         }
       }
-   }, [OrderID, filterSetting])
+   }, [OrderID, filterSetting, account])
 
    return (
       <Box

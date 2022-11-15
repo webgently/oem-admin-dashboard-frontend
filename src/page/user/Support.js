@@ -46,9 +46,8 @@ export default function Support() {
          await axios
             .post(`${process.env.REACT_APP_API_Url}getSupportID`)
             .then(async (result) => {
-               if (result.data.status) {
+               if (result.data.status)
                   await setSupportID(result.data.data)
-               }
             })
       } catch (error) {
          console.log(error)
@@ -62,22 +61,21 @@ export default function Support() {
          to: supportID,
          msg: chattingMsg,
          date: date,
+         status: false,
       }
-      socket.emit('sendToSupport', data)
-      await setAllMsg([...allMsg, data])
+      if (chattingMsg.trim() === '') {
+         toast.error('Write the message')
+      } else {
+         socket.emit('sendToSupport', data)
+         await setAllMsg([...allMsg, data])
+      }
       setChattingMsg('')
       inputRef.current.focus()
    }
 
    const getKeyCode = async (e) => {
       if (e === 13) {
-         if (chattingMsg.trim() === '') {
-            toast.error('Write the message')
-            setChattingMsg('')
-            inputRef.current.focus()
-         } else {
-            await sendChatting()
-         }
+         await sendChatting()
       }
    }
 
@@ -127,15 +125,16 @@ export default function Support() {
    }
 
    useEffect(() => {
-      setMyID(account._id)
-      getChattingHistory(account._id)
-      getSupportID()
-   }, [])
+      if (account._id) {
+         setMyID(account._id)
+         getChattingHistory(account._id)
+         getSupportID()
+      }
+   }, [account])
 
    useEffect(() => {
       socket.on(myID, async (e) => {
          await setAllMsg([...allMsg, e.data])
-         toast.success('New Message Received')
       })
       return () => {
          socket.off('connect')

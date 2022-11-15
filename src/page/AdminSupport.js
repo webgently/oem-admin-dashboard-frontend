@@ -14,6 +14,7 @@ import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
 import DraftsIcon from '@mui/icons-material/Drafts'
 import axios from 'axios'
+import Badge from '@mui/material/Badge'
 import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
 
@@ -31,11 +32,12 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 export default function AdminSupport() {
-   const account = useSelector((state) => state.account)
    const socket = io(process.env.REACT_APP_Base_Url)
+   const account = useSelector((state) => state.account)
    const [selectedIndex, setSelectedIndex] = React.useState(0)
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
+   const [unreadCount, setUnreadCount] = useState([])
    const [chattingMsg, setChattingMsg] = useState('')
    const [allMsg, setAllMsg] = useState([])
    const messagesEndRef = useRef(null)
@@ -48,6 +50,7 @@ export default function AdminSupport() {
       setSelectedIndex(index)
       setAllMsg([])
       getChattingHistory(index)
+      updateReadStatus(myID, index)
    }
 
    const scrollToBottom = () => {
@@ -57,13 +60,37 @@ export default function AdminSupport() {
       })
    }
 
+   const updateReadStatus = async (id, index) => {
+      try {
+         await axios
+             .post(`${process.env.REACT_APP_API_Url}updateReadStatus`, {
+                from: index,
+                to: id,
+             })
+             .then((result) => {
+                if (result.data.status) {
+                   allUserList.map((item, i) => {
+                      if(item._id === index) {
+                         let newArray = [...unreadCount]
+                         newArray[i] = 0
+                         setUnreadCount(newArray)
+                      }
+                   })
+                }
+             })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    const getUserList = async (id) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_Url}getUserList`, { id: id })
             .then((result) => {
                if (result.data.status) {
-                  setAllUserList(result.data.data)
+                  setUnreadCount(result.data.unreadCount)
+                  setAllUserList(result.data.userList)
                }
             })
       } catch (error) {
@@ -78,27 +105,25 @@ export default function AdminSupport() {
          to: selectedIndex,
          msg: chattingMsg,
          date: date,
+         status: false,
       }
-      socket.emit('sendToUser', data)
-      await setAllMsg([...allMsg, data])
+      if (chattingMsg.trim() === '') {
+         toast.error('Write the message')
+      } else {
+         if (selectedIndex != 0) {
+            socket.emit('sendToUser', data)
+            await setAllMsg([...allMsg, data])
+         } else {
+            toast.error('Select the user')
+         }
+      }
       setChattingMsg('')
       inputRef.current.focus()
    }
 
    const getKeyCode = async (e) => {
       if (e === 13) {
-         if (chattingMsg.trim() === '') {
-            toast.error('Write the message')
-            setChattingMsg('')
-            inputRef.current.focus()
-         } else {
-            if (selectedIndex != 0) {
-               await sendChatting()
-            } else {
-               setChattingMsg('')
-               toast.error('Select the user')
-            }
-         }
+         await sendChatting()
       }
    }
 
@@ -146,26 +171,38 @@ export default function AdminSupport() {
    }
 
    useEffect(() => {
-      socket.on(myID, async (e) => {
+      if (account._id) {
+         setMyID(account._id)
+         getUserList(account._id)
+      }
+   }, [account])
+
+   useEffect(()=>{
+      socket.on(account._id, async (e) => {
          if (selectedIndex === e.data.from) {
             await setAllMsg([...allMsg, e.data])
+            updateReadStatus(account._id, selectedIndex)
          }
-         toast.success('New Message Received')
+         allUserList.map((item, i) => {
+            if(item._id === e.data.from) {
+               let newArray = [...unreadCount]
+               newArray[i] += 1
+               setUnreadCount(newArray)
+            }
+         })
       })
       return () => {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
-         setTimeout(() => {
-            scrollToBottom()
-         }, 100)
       }
-   }, [selectedIndex, allMsg])
+   },[allUserList, unreadCount])
 
-   useEffect(() => {
-      setMyID(account._id)
-      getUserList(account._id)
-   }, [])
+   useEffect(()=>{
+      setTimeout(() => {
+         scrollToBottom()
+      }, 100)
+   },[allMsg])
 
    return (
       <Box
@@ -205,7 +242,7 @@ export default function AdminSupport() {
                         height: '70vh',
                      }}
                   >
-                     {allUserList.map((item) => {
+                     {allUserList.map((item, ind) => {
                         return (
                            <div key={item._id}>
                               <ListItemButton
@@ -218,9 +255,18 @@ export default function AdminSupport() {
                                     borderTopRightRadius: 10,
                                  }}
                               >
-                                 <ListItemIcon>
-                                    <DraftsIcon />
-                                 </ListItemIcon>
+                                 <Badge
+                                    badgeContent={unreadCount[ind]}
+                                    color="success"
+                                    anchorOrigin={{
+                                       vertical: 'top',
+                                       horizontal: 'left',
+                                    }}
+                                 >
+                                    <ListItemIcon>
+                                       <DraftsIcon />
+                                    </ListItemIcon>
+                                 </Badge>
                                  <ListItemText primary={`${item.name}`} />
                               </ListItemButton>
                               <Divider />

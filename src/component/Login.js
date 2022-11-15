@@ -159,8 +159,7 @@ const Login = () => {
 
    useEffect(() => {
       try {
-         const account = JSON.parse(localStorage.getItem('user'))
-         if (account) {
+         if (account._id) {
             switch (account.permission) {
                case 'admin':
                   navigate('admin_dashboard')
@@ -178,7 +177,7 @@ const Login = () => {
       } catch (error) {
          console.log(error)
       }
-   }, [])
+   }, [account])
 
    return (
       <Box sx={{ flexGrow: 1 }}>
