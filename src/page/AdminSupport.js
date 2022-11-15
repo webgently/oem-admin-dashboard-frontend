@@ -195,14 +195,11 @@ export default function AdminSupport() {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
+         setTimeout(() => {
+            scrollToBottom()
+         }, 100)
       }
    },[allUserList, unreadCount])
-
-   useEffect(()=>{
-      setTimeout(() => {
-         scrollToBottom()
-      }, 100)
-   },[allMsg])
 
    return (
       <Box
@@ -223,14 +220,15 @@ export default function AdminSupport() {
             >
                <Grid
                   sx={{
-                     width: '94%',
-                     maxWidth: 360,
+                     width: '100%',
+                     maxWidth: 500,
                      bgcolor: 'background.paper',
                   }}
                   item
-                  xs={3}
+                  xs={12}
                   sm={12}
                   md={3}
+                  lg={3}
                   paddingRight={3}
                   borderRadius={2}
                >
@@ -275,11 +273,11 @@ export default function AdminSupport() {
                      })}
                   </List>
                </Grid>
-               <Grid item xs={9} sm={12} md={9}>
+               <Grid item xs={12} sm={12} md={9} lg={9}>
                   <Box
                      color={'#1976d2'}
                      fontSize={'25px'}
-                     marginTop={-2}
+                     marginTop={1}
                      paddingBottom={1}
                   >
                      Support Area | Chat Section
@@ -296,7 +294,7 @@ export default function AdminSupport() {
                      >
                         {selectedIndex ? (
                            <>
-                              <Grid item lg={12} md={12} sm={12}>
+                              <Grid item lg={12} md={12} sm={12} xs={12}>
                                  {allMsg.map((item, ind) => (
                                     <Box
                                        textAlign={
@@ -311,7 +309,7 @@ export default function AdminSupport() {
                                        }
                                        key={ind}
                                     >
-                                       <p>{item.msg}</p>
+                                       <p className='break-string'>{item.msg}</p>
                                        <p style={{ fontSize: '10px' }}>
                                           {item.date}
                                        </p>

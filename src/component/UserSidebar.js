@@ -92,7 +92,6 @@ export default function UserSidebar() {
    const [logo, setLogo] = useState('')
    const [myID, setMyID] = useState('')
    const [anchorElUser, setAnchorElUser] = useState(null)
-   const [currentLink, setCurrentLink] = useState('')
    const navigate = useNavigate()
    const [listopen, setListOpen] = useState(false)
    const [creditopen, setCreditOpen] = useState(false)
@@ -149,7 +148,6 @@ export default function UserSidebar() {
             .then((result) => {
                if (result.data.status) {
                   navigate('/support')
-                  setCurrentLink('support')
                   setUnreadCount(0)
                }
             })
@@ -159,11 +157,11 @@ export default function UserSidebar() {
    }
 
    useEffect(() => {
-      const check = location.href.search('support')
+      const check = window.location.href.search('support')
       if (check > 0) {
          checkMsg()
       }
-   }, [location.href, unreadCount])
+   }, [window.location, unreadCount])
 
    useEffect(() => {
       getLogo()

@@ -160,7 +160,7 @@ export default function Support() {
                container
                spacing={{ xs: 2, md: 3 }}
                columns={{ xs: 4, sm: 8, md: 12 }}
-               paddingX={'10vw'}
+               paddingX={'8vw'}
                paddingY={'2vh'}
             >
                <Grid item xs={12} sm={12} md={12}>
@@ -179,7 +179,7 @@ export default function Support() {
                            overflowY: 'auto',
                         }}
                      >
-                        <Grid item lg={12} md={12} sm={12}>
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
                            {allMsg.map((item, ind) => (
                               <Box
                                  textAlign={
