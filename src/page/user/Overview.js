@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -77,6 +78,7 @@ const ServiceStyle = {
 
 export default function Overview() {
    const account = useSelector((state) => state.account)
+   const navigate = useNavigate()
    const [page, setPage] = React.useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const [allData, setAllData] = useState([])
@@ -274,6 +276,9 @@ export default function Overview() {
                                              <ButtonGroup
                                                 variant="outlined"
                                                 aria-label="outlined button group"
+                                                onClick={() => {
+                                                   navigate('/support')
+                                                }}
                                              >
                                                 <IconButton
                                                    color="primary"
