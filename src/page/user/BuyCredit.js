@@ -20,13 +20,28 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import axios from 'axios'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
+const rows = [
+   { category: 100, credits: 100, price: 120, value: 120 },
+   { category: 200, credits: 200, price: 220, value: 220 },
+   { category: 300, credits: 300, price: 300, value: 300 },
+   { category: 50, credits: 50, price: 65, value: 65 },
+   { category: 100, credits: 100, price: 50, value: 50 },
+   { category: 33234, credits: 33234, price: 23423423, value: 23423423 },
+   { category: 453, credits: 453, price: 2147483647, value: 2147483647 },
+   { category: 324234, credits: 324234, price: 23423423, value: 23423423 },
+]
+
 export default function BuyCredit() {
-   const [Radiovalue, setRadioValue] = useState('')
    const [allData, setAllData] = useState([])
+   const [handleFee, setHandleFee] = useState(123.23)
+   const [Radiovalue, setRadioValue] = useState(0)
+   const [total, setTotal] = useState(0)
+   const [stripeMethod, setStripeMethod] = useState(false)
+   const [term, setTerm] = useState(false)
 
    const handleChangeRadio = (event) => {
       setRadioValue(event.target.value)
@@ -43,6 +58,30 @@ export default function BuyCredit() {
             }
          })
    }
+
+   const buyCredit = () => {
+      if (Radiovalue === 0) {
+         toast.error('Choose the credit from category')
+         return
+      }
+      if (!stripeMethod) {
+         toast.error('Select the payment method')
+         return
+      }
+      if (!term) {
+         toast.error('Agree to the terms of service')
+         return
+      }
+   }
+
+   useEffect(() => {
+      if (Radiovalue === 0) {
+         setTotal(0)
+      } else {
+         const sum = Number(Radiovalue) + Number(handleFee)
+         setTotal(sum.toFixed(2))
+      }
+   }, [Radiovalue])
 
    useEffect(() => {
       getAllPriceList()
@@ -112,214 +151,63 @@ export default function BuyCredit() {
                         onChange={handleChangeRadio}
                         sx={{ my: 1 }}
                      >
-                        <RadioJoy
-                           sx={{ color: 'black', m: '15px 0px' }}
-                           value="female"
-                           label={
-                              <Grid
-                                 container
-                                 spacing={{ xs: 2, md: 3 }}
-                                 columns={{ xs: 4, sm: 8, md: 12 }}
-                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                 }}
-                              >
-                                 <Grid
-                                    item
-                                    xs={8}
-                                    sm={8}
-                                    md={8}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <Box
+                        {rows.map((item, ind) => {
+                           return (
+                              <RadioJoy
+                                 sx={{ color: 'black', m: '15px 0px' }}
+                                 value={item.value}
+                                 key={ind}
+                                 label={
+                                    <Grid
+                                       container
+                                       spacing={{ xs: 2, md: 3 }}
+                                       columns={{ xs: 4, sm: 8, md: 12 }}
                                        sx={{
                                           display: 'flex',
                                           alignItems: 'center',
                                        }}
                                     >
-                                       <LocalAtmIcon />
-                                       100
-                                    </Box>
-                                 </Grid>
-                                 <Grid item xs={2} sm={2} md={2}>
-                                    100
-                                 </Grid>
-                                 <Grid
-                                    item
-                                    xs={2}
-                                    sm={2}
-                                    md={2}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <EuroIcon sx={{ fontSize: '20px' }} /> 100
-                                 </Grid>
-                              </Grid>
-                           }
-                        />
-                        <Divider />
-                        <RadioJoy
-                           sx={{ color: 'black', m: '15px 0px' }}
-                           value="female2"
-                           label={
-                              <Grid
-                                 container
-                                 spacing={{ xs: 2, md: 3 }}
-                                 columns={{ xs: 4, sm: 8, md: 12 }}
-                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                 }}
-                              >
-                                 <Grid
-                                    item
-                                    xs={8}
-                                    sm={8}
-                                    md={8}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <Box
-                                       sx={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                       }}
-                                    >
-                                       <LocalAtmIcon />
-                                       100
-                                    </Box>
-                                 </Grid>
-                                 <Grid item xs={2} sm={2} md={2}>
-                                    100
-                                 </Grid>
-                                 <Grid
-                                    item
-                                    xs={2}
-                                    sm={2}
-                                    md={2}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <EuroIcon sx={{ fontSize: '20px' }} /> 100
-                                 </Grid>
-                              </Grid>
-                           }
-                        />
-                        <Divider />
-                        <RadioJoy
-                           sx={{ color: 'black', m: '15px 0px' }}
-                           value="mail"
-                           label={
-                              <Grid
-                                 container
-                                 spacing={{ xs: 2, md: 3 }}
-                                 columns={{ xs: 4, sm: 8, md: 12 }}
-                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                 }}
-                              >
-                                 <Grid
-                                    item
-                                    xs={8}
-                                    sm={8}
-                                    md={8}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <Box
-                                       sx={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                       }}
-                                    >
-                                       <LocalAtmIcon />
-                                       100
-                                    </Box>
-                                 </Grid>
-                                 <Grid item xs={2} sm={2} md={2}>
-                                    100
-                                 </Grid>
-                                 <Grid
-                                    item
-                                    xs={2}
-                                    sm={2}
-                                    md={2}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <EuroIcon sx={{ fontSize: '20px' }} /> 100
-                                 </Grid>
-                              </Grid>
-                           }
-                        />
-                        <Divider />
-                        <RadioJoy
-                           sx={{ color: 'black', m: '15px 0px' }}
-                           value="other"
-                           label={
-                              <Grid
-                                 container
-                                 spacing={{ xs: 2, md: 3 }}
-                                 columns={{ xs: 4, sm: 8, md: 12 }}
-                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                 }}
-                              >
-                                 <Grid
-                                    item
-                                    xs={8}
-                                    sm={8}
-                                    md={8}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <Box
-                                       sx={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                       }}
-                                    >
-                                       <LocalAtmIcon />
-                                       100
-                                    </Box>
-                                 </Grid>
-                                 <Grid item xs={2} sm={2} md={2}>
-                                    100
-                                 </Grid>
-                                 <Grid
-                                    item
-                                    xs={2}
-                                    sm={2}
-                                    md={2}
-                                    sx={{
-                                       display: 'flex',
-                                       alignItems: 'center',
-                                    }}
-                                 >
-                                    <EuroIcon sx={{ fontSize: '20px' }} /> 100
-                                 </Grid>
-                              </Grid>
-                           }
-                        />
-                        <Divider />
+                                       <Grid
+                                          item
+                                          xs={8}
+                                          sm={8}
+                                          md={8}
+                                          sx={{
+                                             display: 'flex',
+                                             alignItems: 'center',
+                                          }}
+                                       >
+                                          <Box
+                                             sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                             }}
+                                          >
+                                             <LocalAtmIcon />
+                                             {item.category}
+                                          </Box>
+                                       </Grid>
+                                       <Grid item xs={2} sm={2} md={2}>
+                                          {item.credits}
+                                       </Grid>
+                                       <Grid
+                                          item
+                                          xs={2}
+                                          sm={2}
+                                          md={2}
+                                          sx={{
+                                             display: 'flex',
+                                             alignItems: 'center',
+                                          }}
+                                       >
+                                          <EuroIcon sx={{ fontSize: '20px' }} />{' '}
+                                          {item.price}
+                                       </Grid>
+                                    </Grid>
+                                 }
+                              />
+                           )
+                        })}
                         <Grid
                            container
                            sx={{
@@ -358,7 +246,7 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> 50
+                              <EuroIcon sx={{ fontSize: '20px' }} /> {handleFee}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -400,7 +288,8 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> 100
+                              <EuroIcon sx={{ fontSize: '20px' }} />{' '}
+                              {Radiovalue}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -442,7 +331,7 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> 120
+                              <EuroIcon sx={{ fontSize: '20px' }} /> {total}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -481,9 +370,9 @@ export default function BuyCredit() {
 
                         <FormControlJoy sx={{ pl: '20px' }}>
                            <RadioGroupJoy
-                              defaultValue="stripe"
                               name="controlled-radio-buttons-group"
-                              onChange={handleChangeRadio}
+                              value={stripeMethod}
+                              onChange={(e) => setStripeMethod(e.target.value)}
                               sx={{
                                  display: 'flex',
                                  justifyContent: 'center',
@@ -518,7 +407,11 @@ export default function BuyCredit() {
                            </RadioGroupJoy>
                         </FormControlJoy>
                         <Box sx={{ pl: '10px' }}>
-                           <Checkbox {...label} />
+                           <Checkbox
+                              value={term}
+                              onChange={(e) => setTerm(e.target.value)}
+                              {...label}
+                           />
                            <a style={{ color: '#ffb100' }} href="#">
                               I have read the Privacy Policy and agree to the
                               Terms of Service.
@@ -530,6 +423,7 @@ export default function BuyCredit() {
                               className="btn_red"
                               endIcon={<ArrowForwardIcon />}
                               fullWidth
+                              onClick={buyCredit}
                            >
                               Continue to Payment
                            </Button>
@@ -587,6 +481,7 @@ export default function BuyCredit() {
                </TableContainer>
             </Grid>
          </Grid>
+         <Toaster />
       </Box>
    )
 }

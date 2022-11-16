@@ -183,10 +183,11 @@ export default function Overview() {
          >
             <Grid
                container
+               justifyContent={'space-between'}
                spacing={{ xs: 2, md: 3 }}
                columns={{ xs: 4, sm: 8, md: 12 }}
             >
-               <Grid item xs={12} sm={6} md={6}>
+               <Grid item xs={6} sm={6} md={6}>
                   <TextField
                      fullWidth
                      InputProps={{
@@ -202,10 +203,9 @@ export default function Overview() {
                      onChange={(e) => setOrderID(e.target.value)}
                   />
                </Grid>
-               <Grid item xs={12} sm={3} md={3}></Grid>
                <Grid
                   item
-                  xs={12}
+                  xs={3}
                   sm={3}
                   md={3}
                   sx={{ display: 'flex', justifyContent: 'flex-end' }}
