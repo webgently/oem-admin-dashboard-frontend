@@ -36,7 +36,7 @@ const columns = [
    { id: 'HP', label: 'HP', minWidth: 100 },
    { id: 'status', label: 'Status', minWidth: 50 },
    { id: 'tuningType', label: 'Tuning Type', minWidth: 100 },
-   { id: 'action', label: 'Action' },
+   { id: 'action', label: 'Action', align: 'center' },
 ]
 
 const style = {

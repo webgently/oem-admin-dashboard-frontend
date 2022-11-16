@@ -16,7 +16,6 @@ import {
     IconButton,
     Modal,
     TextField,
-    Typography,
 } from '@mui/material'
 import EuroIcon from '@mui/icons-material/Euro'
 import ClearIcon from '@mui/icons-material/Clear'
@@ -28,16 +27,16 @@ import axios from 'axios'
 import { useConfirm } from 'material-ui-confirm'
 
 const columns = [
-    { id: '_id', label: 'No', minWidth: 50 },
+    { id: 'id', label: 'No', minWidth: 50 },
     { id: 'profile', label: 'Profile', minWidth: 50 },
-    { id: 'name', label: 'Name', minWidth: 100 },
-    { id: 'email', label: 'Email', minWidth: 150 },
-    { id: 'note', label: 'Note', minWidth: 100 },
+    { id: 'name', label: 'Name', minWidth: 50 },
+    { id: 'email', label: 'Email', minWidth: 200 },
+    { id: 'note', label: 'Note', minWidth: 120 },
     { id: 'permission', label: 'Role', minWidth: 50 },
     { id: 'date', label: 'Date', minWidth: 100 },
     { id: 'credit', label: 'Credits', minWidth: 50 },
     { id: 'status', label: 'Status', minWidth: 50 },
-    { id: 'action', label: 'Action' },
+    { id: 'action', label: 'Action', minWidth: 50, align: 'center' },
 ]
 
 const style = {
@@ -247,7 +246,10 @@ export default function AdminRegister() {
                                             const value = row[column.id]
                                             return (
                                                 <TableCell key={k}>
-                                                    {column.id === 'profile' ? (
+
+                                                    {column.id === 'id' ? (
+                                                        ind + 1
+                                                    ) : column.id === 'profile' ? (
                                                         <Avatar
                                                             alt="Remy Sharp"
                                                             src={value}

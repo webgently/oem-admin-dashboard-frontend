@@ -26,11 +26,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import axios from 'axios'
 
 const columns = [
-   { id: '_id', label: 'ID', minWidth: 50 },
+   { id: 'id', label: 'ID', minWidth: 50 },
    { id: 'serviceType', label: 'Service Type', minWidth: 100 },
    { id: 'service', label: 'Service', minWidth: 150 },
    { id: 'credit', label: 'Credit', minWidth: 100 },
-   { id: 'action', label: 'Action', minWidth: 50 },
+   { id: 'action', label: 'Action', minWidth: 50, align: 'center' },
 ]
 
 const ServiceStyle = {
@@ -232,7 +232,7 @@ export default function AdminPricelist() {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                      )
-                     .map((row) => {
+                     .map((row, ind) => {
                         return (
                            <TableRow
                               hover
@@ -247,7 +247,9 @@ export default function AdminPricelist() {
                                        key={column.id}
                                        align={column.align}
                                     >
-                                       {column.id === 'action' ? (
+                                       {column.id === 'id' ? (
+                                           ind + 1
+                                       ) :column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"
                                              aria-label="outlined button group"

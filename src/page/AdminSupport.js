@@ -12,7 +12,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
-import DraftsIcon from '@mui/icons-material/Drafts'
+import Avatar from "@mui/material/Avatar";
 import axios from 'axios'
 import Badge from '@mui/material/Badge'
 import toast, { Toaster } from 'react-hot-toast'
@@ -262,7 +262,10 @@ export default function AdminSupport() {
                                     }}
                                  >
                                     <ListItemIcon>
-                                       <DraftsIcon />
+                                       <Avatar
+                                           alt="Remy Sharp"
+                                           src=''
+                                       />
                                     </ListItemIcon>
                                  </Badge>
                                  <ListItemText primary={`${item.name}`} />

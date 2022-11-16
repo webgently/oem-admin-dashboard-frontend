@@ -21,8 +21,8 @@ const columns = [
    { id: 'vat', label: 'Vat Number', minWidth: 150 },
    { id: 'credit', label: 'Credit', minWidth: 150 },
    { id: 'netamount', label: 'Net Amount', minWidth: 150 },
-   { id: 'invoice', label: 'Invoice', minWidth: 150 },
-   { id: 'action', label: 'Action', minWidth: 150 },
+   { id: 'invoice', label: 'Invoice', minWidth: 150, align: 'center' },
+   { id: 'action', label: 'Action', minWidth: 150, align: 'center' },
 ]
 
 function createData(id, name, email, vat, credit, netamount) {
@@ -141,7 +141,9 @@ export default function AdminInvoice() {
                                        key={column.id}
                                        align={column.align}
                                     >
-                                       {column.id === 'profile' ? (
+                                       {column.id === 'id' ? (
+                                           ind + 1
+                                       ) :column.id === 'profile' ? (
                                           <Avatar
                                              alt="Remy Sharp"
                                              src={value}

@@ -563,9 +563,11 @@ export default function UserSidebar() {
                                  <ErrorOutlineIcon />{' '}
                                  <span
                                     style={{
+                                       textAlign: "center",
                                        color: 'blue',
                                        fontWeight: 'bold',
                                     }}
+
                                  >
                                     {unreadCount}
                                  </span>

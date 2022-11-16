@@ -130,7 +130,7 @@ export default function Profile() {
             { label: 'Address:', value: account.address },
          ])
       }
-   }, [])
+   }, [account])
 
    return (
       <>

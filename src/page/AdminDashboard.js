@@ -10,6 +10,8 @@ import { IconButton } from '@mui/material'
 import axios from 'axios'
 import { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+import CloudUpload from "@mui/icons-material/CloudUpload";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -113,7 +115,7 @@ export default function AdminDashboard() {
                         }}
                      >
                         <IconButton size="large">
-                           <SupervisorAccountIcon />
+                            <BusinessCenterIcon />
                         </IconButton>
                      </Box>
                      <Box
@@ -147,7 +149,7 @@ export default function AdminDashboard() {
                         }}
                      >
                         <IconButton size="large">
-                           <SupervisorAccountIcon />
+                            <CloudUpload />
                         </IconButton>
                      </Box>
                      <Box

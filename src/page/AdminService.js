@@ -23,10 +23,10 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import axios from 'axios'
 
 const columns = [
-   { id: '_id', label: 'ID', minWidth: 50 },
-   { id: 'serviceType', label: 'Service Type', minWidth: 150 },
-   { id: 'status', label: 'Status', minWidth: 150 },
-   { id: 'action', label: 'Action', minWidth: 50 },
+   { id: 'id', label: 'ID', minWidth: 100, align: 'left' },
+   { id: 'serviceType', label: 'Service Type', minWidth: 240 },
+   { id: 'status', label: 'Status', minWidth: 100 },
+   { id: 'action', label: 'Action', minWidth: 50, align: 'center' },
 ]
 
 const ServiceStyle = {
@@ -45,16 +45,13 @@ const ServiceStyle = {
 export default function AdminService() {
    const [page, setPage] = useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
-
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
    }
-
    const handleChangeRowsPerPage = (event) => {
       setRowsPerPage(+event.target.value)
       setPage(0)
    }
-
    const [serviceType, setServiceType] = useState('')
    const [serviceData, setServiceData] = useState([])
    const [currentID, setCurrentID] = useState()
@@ -208,7 +205,7 @@ export default function AdminService() {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                      )
-                     .map((row) => {
+                     .map((row, ind) => {
                         return (
                            <TableRow
                               hover
@@ -223,7 +220,9 @@ export default function AdminService() {
                                        key={column.id}
                                        align={column.align}
                                     >
-                                       {column.id === 'action' ? (
+                                       {column.id === 'id' ? (
+                                           ind + 1
+                                       ) : column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"
                                              aria-label="outlined button group"

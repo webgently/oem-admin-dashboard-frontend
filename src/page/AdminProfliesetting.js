@@ -37,11 +37,11 @@ import LogoIcon from '../assets/img/OEMservice2.jpg'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
-   { id: 'day', label: 'Day', minWidth: 50 },
-   { id: 'open', label: 'Opening time', minWidth: 100 },
-   { id: 'close', label: 'Closing time', minWidth: 150 },
-   { id: 'holyday', label: 'Holiday', minWidth: 100 },
-   { id: 'action', label: 'Action' },
+   { id: 'day', label: 'Day', minWidth: 100, align: 'center' },
+   { id: 'open', label: 'Opening time', minWidth: 100, align: 'center' },
+   { id: 'close', label: 'Closing time', minWidth: 100, align: 'center' },
+   { id: 'holyday', label: 'Holiday', minWidth: 100, align: 'center' },
+   { id: 'action', label: 'Action', align: 'center' },
 ]
 
 const Item1 = styled(Paper)(({ theme }) => ({
@@ -172,22 +172,22 @@ export default function AdminProfliesetting() {
    }
    const updateDaily = async () => {
       let data = {}
-      if (!openTime) {
-         toast.error('Select an time')
-         return
-      }
-      if (!closeTime) {
-         toast.error('Select an time')
-         return
-      }
       if (holyDay) {
          data = {
             id: dayID,
             holyDay,
-            openTime: '',
-            closeTime: '',
+            openTime: '--:--:--',
+            closeTime: '--:--:--',
          }
       } else {
+         if (!openTime) {
+            toast.error('Select the time')
+            return
+         }
+         if (!closeTime) {
+            toast.error('Select the time')
+            return
+         }
          data = {
             id: dayID,
             holyDay,
@@ -195,6 +195,7 @@ export default function AdminProfliesetting() {
             closeTime,
          }
       }
+
       await axios
          .post(`${process.env.REACT_APP_API_Url}updateDaily`, {
             data,
@@ -214,7 +215,6 @@ export default function AdminProfliesetting() {
          })
          .then((result) => {
             if (result.data.status) {
-               console.log(result.data.data)
                setHolyDay(result.data.data.holyday)
                setOpenTimeFlag(result.data.data.holyday)
                setCloseTimeFlag(result.data.data.holyday)
@@ -626,32 +626,48 @@ export default function AdminProfliesetting() {
                                     key={`${row.id}` + ind}
                                  >
                                     {columns.map((column) => {
-                                       const value = row[column.id]
+                                       let value = ''
+                                       if(column.id === 'open' || column.id === 'close') {
+                                          if(row[column.id] === '--:--:--') {
+                                             value = '--:--:--'
+                                          } else {
+                                             const d = new Date(row[column.id])
+                                             let hour = d.getHours()
+                                             let minute = d.getMinutes()
+                                             let second = d.getSeconds()
+                                             if(hour < 10) hour = '0' + hour
+                                             if(minute < 10) minute = '0' + minute
+                                             if(second < 10) second = '0' + second
+                                             value = `${hour}:${minute}:${second}`
+                                          }
+                                       } else {
+                                          value = row[column.id]
+                                       }
                                        return (
                                           <TableCell
                                              key={column.id}
                                              align={column.align}
                                           >
-                                             {column.id === 'id' ? (
+                                             { column.id === 'id' ? (
                                                 ind + 1
-                                             ) : column.id === 'action' ? (
-                                                <ButtonGroup
-                                                   variant="outlined"
-                                                   aria-label="outlined button group"
-                                                   onClick={() =>
-                                                      handleOpen3(row._id)
-                                                   }
-                                                >
-                                                   <IconButton
-                                                      color="primary"
-                                                      aria-label="add to shopping cart"
-                                                   >
-                                                      <EditIcon />
-                                                   </IconButton>
-                                                </ButtonGroup>
                                              ) : column.id === 'holyday' &&
                                                value ? (
                                                 'holiday'
+                                             ) : column.id === 'action' ? (
+                                                 <ButtonGroup
+                                                     variant="outlined"
+                                                     aria-label="outlined button group"
+                                                     onClick={() =>
+                                                         handleOpen3(row._id)
+                                                     }
+                                                 >
+                                                    <IconButton
+                                                        color="primary"
+                                                        aria-label="add to shopping cart"
+                                                    >
+                                                       <EditIcon />
+                                                    </IconButton>
+                                                 </ButtonGroup>
                                              ) : (
                                                 value
                                              )}
@@ -713,7 +729,7 @@ export default function AdminProfliesetting() {
                   <Grid
                      item
                      xs={12}
-                     sm={4}
+                     sm={12}
                      md={4}
                      sx={{
                         display: 'flex',
@@ -782,7 +798,7 @@ export default function AdminProfliesetting() {
                   <Grid
                      item
                      xs={12}
-                     sm={8}
+                     sm={12}
                      md={8}
                      sx={{
                         display: 'flex',
@@ -836,7 +852,7 @@ export default function AdminProfliesetting() {
                   <Grid
                      item
                      xs={12}
-                     sm={6}
+                     sm={12}
                      md={6}
                      sx={{
                         display: 'flex',
@@ -846,10 +862,11 @@ export default function AdminProfliesetting() {
                   >
                      <img src={Key} />
                   </Grid>
+
                   <Grid
                      item
                      xs={12}
-                     sm={6}
+                     sm={12}
                      md={6}
                      sx={{
                         display: 'flex',
