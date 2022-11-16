@@ -73,7 +73,20 @@ const Item3 = styled(Paper)(({ theme }) => ({
 export default function Dashboard() {
    const account = useSelector((state) => state.account)
    const [allData, setAllData] = useState([])
+   const [openTime, setOpenTime] = useState('')
+   const [closeTime, setCloseTime] = useState('')
    const navigate = useNavigate()
+   const customTime = (date) => {
+      const d = new Date(date)
+      let hour = d.getHours()
+      let minute = d.getMinutes()
+      let second = d.getSeconds()
+      if (hour < 10) hour = '0' + hour
+      if (minute < 10) minute = '0' + minute
+      if (second < 10) second = '0' + second
+      return `${hour}:${minute}:${second}`
+   }
+
    const getDataByFilter = async (id) => {
       try {
          await axios
@@ -92,9 +105,44 @@ export default function Dashboard() {
          console.log(error)
       }
    }
+   const getServiceTime = async () => {
+      const weekdaylist = [
+         'Sunday',
+         'Monday',
+         'Tuesday',
+         'Wednesday',
+         'Thursday',
+         'Friday',
+         'Saturday',
+      ]
+      const d = new Date()
+      const day = weekdaylist[d.getDay()]
+
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getServiceTime`, { day })
+            .then((result) => {
+               if (result.data.status) {
+                  if (result.data.data.open === '--:--:--') {
+                     setOpenTime('Office Close Today')
+                     setCloseTime('Office Close Today')
+                  } else {
+                     setOpenTime(customTime(result.data.data.open))
+                     setCloseTime(customTime(result.data.data.close))
+                  }
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    useEffect(() => {
       if (account._id) {
          getDataByFilter(account._id)
+         getServiceTime()
       }
    }, [account])
 
@@ -130,7 +178,12 @@ export default function Dashboard() {
                            justifyContent: 'flex-start',
                         }}
                      >
-                        <Button variant="contained">Buy Now</Button>
+                        <Button
+                           variant="contained"
+                           onClick={() => navigate('/buyCredit')}
+                        >
+                           Buy Now
+                        </Button>
                      </Box>
                   </Item1>
                </Grid>
@@ -150,7 +203,7 @@ export default function Dashboard() {
                            justifyContent: 'flex-start',
                         }}
                      >
-                        <h2 style={{ margin: '0px' }}>09:00</h2>
+                        <h2 style={{ margin: '0px' }}>{openTime}</h2>
                      </Box>
                      <Box
                         sx={{
@@ -176,7 +229,7 @@ export default function Dashboard() {
                            justifyContent: 'flex-start',
                         }}
                      >
-                        <h2 style={{ margin: '0px' }}>17:00</h2>
+                        <h2 style={{ margin: '0px' }}>{closeTime}</h2>
                      </Box>
                      <Box
                         sx={{
