@@ -75,6 +75,7 @@ export default function Dashboard() {
    const [allData, setAllData] = useState([])
    const [openTime, setOpenTime] = useState('')
    const [closeTime, setCloseTime] = useState('')
+   const [creditAmount, setCreditAmount] = useState(0)
    const navigate = useNavigate()
    const customTime = (date) => {
       const d = new Date(date)
@@ -138,11 +139,26 @@ export default function Dashboard() {
          console.log(error)
       }
    }
-
+   const getSumCredit = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getSumCredit`, { id })
+            .then((result) => {
+               if (result.data.status) {
+                  setCreditAmount(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
    useEffect(() => {
       if (account._id) {
          getDataByFilter(account._id)
          getServiceTime()
+         getSumCredit(account._id)
       }
    }, [account])
 
@@ -170,7 +186,7 @@ export default function Dashboard() {
                            justifyContent: 'flex-start',
                         }}
                      >
-                        <h2 style={{ margin: '0px' }}>0</h2>
+                        <h2 style={{ margin: '0px' }}>{creditAmount}</h2>
                      </Box>
                      <Box
                         sx={{

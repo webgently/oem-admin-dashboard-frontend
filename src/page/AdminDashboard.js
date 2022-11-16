@@ -8,10 +8,10 @@ import Grid from '@mui/material/Grid'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import { IconButton } from '@mui/material'
 import axios from 'axios'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
-import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
-import CloudUpload from "@mui/icons-material/CloudUpload";
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
+import CloudUpload from '@mui/icons-material/CloudUpload'
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -31,34 +31,57 @@ export default function AdminDashboard() {
    const [serviceCount, setServiceCount] = useState(0)
    const [requestCount, setRequestCount] = useState(0)
    const [unreadCount, setUnreadCount] = useState(0)
+   const [requestAlert, setRequestAlert] = useState(true)
 
    const getDashBoardData = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getDashBoardData`)
-         .then((result) => {
-            setUserCount(result.data.userCount)
-            setServiceCount(result.data.serviceCount)
-            setRequestCount(result.data.requestCount)
-            setUnreadCount(result.data.supportCount)
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getDashBoardData`)
+            .then((result) => {
+               setUserCount(result.data.userCount)
+               setServiceCount(result.data.serviceCount)
+               setRequestCount(result.data.requestCount)
+               setUnreadCount(result.data.supportCount)
+               setRequestAlert(result.data.requestAlert)
+            })
+      } catch (error) {
+         console.log(error)
+      }
    }
 
-    useEffect(()=>{
-        if (account._id) {
-            socket.on(account._id, async (e) => {
-                setUnreadCount(unreadCount + 1)
-            })
-            return () => {
-                socket.off('connect')
-                socket.off('disconnect')
-                socket.off(account._id)
-            }
-        }
-    },[account, unreadCount])
+   const setRequestStatus = async () => {
+      navigate('/admin_upload')
 
-    useEffect(() => {
-        getDashBoardData()
-    }, [])
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}setRequestStatus`)
+            .then((result) => {
+               if (!result.data.status) toast.error(result.data.data)
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   useEffect(() => {
+      if (account._id) {
+         socket.on(account._id, async (e) => {
+            setUnreadCount(unreadCount + 1)
+         })
+         socket.on('request' + account._id, async () => {
+            setRequestCount(requestCount + 1)
+         })
+         return () => {
+            socket.off('connect')
+            socket.off('disconnect')
+            socket.off(account._id)
+         }
+      }
+   }, [account, unreadCount, requestCount])
+
+   useEffect(() => {
+      getDashBoardData()
+   }, [])
 
    return (
       <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>
@@ -105,7 +128,7 @@ export default function AdminDashboard() {
                <Grid item xs={12} sm={6} md={3}>
                   <Item
                      onClick={() => {
-                        navigate('/admin_user')
+                        navigate('/admin_service')
                      }}
                   >
                      <Box
@@ -115,7 +138,7 @@ export default function AdminDashboard() {
                         }}
                      >
                         <IconButton size="large">
-                            <BusinessCenterIcon />
+                           <BusinessCenterIcon />
                         </IconButton>
                      </Box>
                      <Box
@@ -138,9 +161,8 @@ export default function AdminDashboard() {
                </Grid>
                <Grid item xs={12} sm={6} md={3}>
                   <Item
-                     onClick={() => {
-                        navigate('/admin_upload')
-                     }}
+                     onClick={() => setRequestStatus()}
+                     className={requestAlert ? '' : 'shaking-animation'}
                   >
                      <Box
                         sx={{
@@ -149,7 +171,7 @@ export default function AdminDashboard() {
                         }}
                      >
                         <IconButton size="large">
-                            <CloudUpload />
+                           <CloudUpload />
                         </IconButton>
                      </Box>
                      <Box

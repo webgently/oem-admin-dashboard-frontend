@@ -35,6 +35,7 @@ import axios from 'axios'
 import MenuIcon from '@mui/icons-material/Menu'
 import { clearAccountData } from '../features/account/account'
 import io from 'socket.io-client'
+import toast from 'react-hot-toast'
 
 const drawerWidth = 240
 
@@ -96,6 +97,7 @@ export default function UserSidebar() {
    const [listopen, setListOpen] = useState(false)
    const [creditopen, setCreditOpen] = useState(false)
    const [unreadCount, setUnreadCount] = useState(0)
+   const [creditAmount, setCreditAmount] = useState(0)
 
    const handleOpenUserMenu = (event) => {
       setAnchorElUser(event.currentTarget)
@@ -156,6 +158,22 @@ export default function UserSidebar() {
       }
    }
 
+   const getSumCredit = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getSumCredit`, { id })
+            .then((result) => {
+               if (result.data.status) {
+                  setCreditAmount(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    useEffect(() => {
       const check = window.location.href.search('support')
       if (check > 0) {
@@ -168,6 +186,7 @@ export default function UserSidebar() {
       if (account._id) {
          setMyID(account._id)
          getUserUnreadCount(account._id)
+         getSumCredit(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
          })
@@ -216,7 +235,8 @@ export default function UserSidebar() {
                         alignItems: 'center',
                      }}
                   >
-                     <WalletIcon sx={{ color: 'red' }} />0 Credit
+                     <WalletIcon sx={{ color: 'red' }} />
+                     {creditAmount} Credit
                   </Box>
                   <Divider orientation="vertical" flexItem />
                   <Box
@@ -563,11 +583,10 @@ export default function UserSidebar() {
                                  <ErrorOutlineIcon />{' '}
                                  <span
                                     style={{
-                                       textAlign: "center",
+                                       textAlign: 'center',
                                        color: 'blue',
                                        fontWeight: 'bold',
                                     }}
-
                                  >
                                     {unreadCount}
                                  </span>

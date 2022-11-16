@@ -17,9 +17,13 @@ import RadioGroupJoy from '@mui/joy/RadioGroup'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+import io from 'socket.io-client'
 
 export default function Upload() {
+   const socket = io(process.env.REACT_APP_Base_Url)
    const account = useSelector((state) => state.account)
+   const [supportID, setSupportID] = useState('')
+
    const [userName, setUserName] = useState('')
    const [vehicleType, setVehicleType] = useState('')
    const [vehicleBrand, setVehicleBrand] = useState('')
@@ -44,12 +48,15 @@ export default function Upload() {
    const [userId, setUserID] = useState('')
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
+
    const handleFileload = () => {
       inputElement.current.click()
    }
+
    const getFile = async (e) => {
       setFileData(e.target.files[0])
    }
+
    const upload = async () => {
       if (!fileData.name) {
          toast.error('Select the file')
@@ -147,6 +154,7 @@ export default function Upload() {
          note: '',
          status: 'requested',
          createdAt: getCustomDate(),
+         readStatus: false,
       }
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
@@ -155,11 +163,42 @@ export default function Upload() {
          .post(`${process.env.REACT_APP_API_Url}uploadFile`, params)
          .then((result) => {
             if (result.data.status) {
+               socket.emit('request', { to: 'request' + supportID })
                toast.success(result.data.data)
+               setUserName('')
+               setVehicleType('')
+               setVehicleBrand('')
+               setVehicleSeries('')
+               setVehicleEngine('')
+               setHP('')
+               setKW('')
+               setBuildYear(new Date())
+               setTransmission('')
+               setChasis('')
+               setTuningType('')
+               setReadMethod('')
+               setECUProducer('')
+               setECUBuild('')
+               setUsedTool('')
+               setMessage('')
+               setTerm('')
+               setFileData({})
             } else {
                toast.error(result.data.data)
             }
          })
+   }
+
+   const getSupportID = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getSupportID`)
+            .then(async (result) => {
+               if (result.data.status) await setSupportID(result.data.data)
+            })
+      } catch (error) {
+         console.log(error)
+      }
    }
 
    const getCustomDate = () => {
@@ -176,6 +215,7 @@ export default function Upload() {
    }
 
    useEffect(() => {
+      getSupportID()
       if (account._id) {
          setUserName(account.name)
          setUserID(account._id)

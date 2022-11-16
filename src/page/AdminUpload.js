@@ -113,6 +113,7 @@ export default function AdminUpload() {
          toast.error('Field the credit')
          return
       }
+
       let params = new FormData()
       const data = {
          id: oneData._id,
@@ -153,12 +154,10 @@ export default function AdminUpload() {
 
    const [open, setOpen] = useState(false)
    const handleOpen = async (id) => {
-      console.log(id)
       await axios
          .post(`${process.env.REACT_APP_API_Url}getOneRequest`, { id })
          .then((result) => {
             if (result.data.status) {
-               console.log(result.data.data[0])
                setOneData(result.data.data[0])
                setOpen(true)
             } else {

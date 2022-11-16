@@ -35,6 +35,9 @@ export default function App() {
       socket.on(account._id, async (e) => {
          toast.success('New Message Received')
       })
+      socket.on('request' + account._id, async () => {
+         toast.success('New Request Received')
+      })
       return () => {
          socket.off('connect')
          socket.off('disconnect')

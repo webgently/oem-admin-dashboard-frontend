@@ -83,7 +83,7 @@ export default function OverviewCredit() {
             getCreditHistory(account._id)
          }
       }
-   }, [OrderID])
+   }, [account, OrderID])
 
    return (
       <Box
@@ -175,7 +175,9 @@ export default function OverviewCredit() {
                                                 key={column.id}
                                                 align={column.align}
                                              >
-                                                {value}
+                                                {column.id === 'credit'
+                                                   ? '-' + value
+                                                   : value}
                                              </TableCell>
                                           )
                                        })}
