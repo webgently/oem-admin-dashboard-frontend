@@ -39,6 +39,7 @@ export default function BuyCredit() {
    const [allData, setAllData] = useState([])
    const [handleFee, setHandleFee] = useState(0)
    const [Radiovalue, setRadioValue] = useState(0)
+   const [creditsData, setCreditsData] = useState([])
    const [total, setTotal] = useState(0)
    const [stripeMethod, setStripeMethod] = useState(false)
    const [term, setTerm] = useState(false)
@@ -94,6 +95,22 @@ export default function BuyCredit() {
       }
    }
 
+   const getAllCredit = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getAllCredit`)
+            .then((result) => {
+               if (result) {
+                  setCreditsData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    useEffect(() => {
       if (Radiovalue === 0) {
          setTotal(0)
@@ -106,6 +123,7 @@ export default function BuyCredit() {
    useEffect(() => {
       getAllPriceList()
       getHandlingFee()
+      getAllCredit()
    }, [])
 
    return (
@@ -172,12 +190,12 @@ export default function BuyCredit() {
                         onChange={handleChangeRadio}
                         sx={{ my: 1 }}
                      >
-                        {rows.map((item, ind) => {
+                        {creditsData.map((item) => {
                            return (
                               <RadioJoy
                                  sx={{ color: 'black', m: '15px 0px' }}
-                                 value={item.value}
-                                 key={ind}
+                                 value={item.price}
+                                 key={item._id}
                                  label={
                                     <Grid
                                        container
@@ -205,7 +223,7 @@ export default function BuyCredit() {
                                              }}
                                           >
                                              <LocalAtmIcon />
-                                             {item.category}
+                                             {item.credit}
                                           </Box>
                                        </Grid>
                                        <Grid item xs={2} sm={2} md={2}>

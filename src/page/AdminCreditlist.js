@@ -264,7 +264,7 @@ export default function AdminCreditlist() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                           ind + 1
+                                          ind + 1
                                        ) : column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"
@@ -346,6 +346,7 @@ export default function AdminCreditlist() {
                         id="outlined-number"
                         label="Credit"
                         type="number"
+                        size="small"
                         variant="outlined"
                         fullWidth
                         value={credit}
@@ -356,6 +357,7 @@ export default function AdminCreditlist() {
                      <TextField
                         id="outlined-number"
                         label="Price"
+                        size="small"
                         type="number"
                         variant="outlined"
                         fullWidth
@@ -436,6 +438,7 @@ export default function AdminCreditlist() {
                      <TextField
                         id="outlined-number"
                         label="Update Handling Fee"
+                        size="small"
                         type="number"
                         fullWidth
                         sx={{ flex: '1' }}
