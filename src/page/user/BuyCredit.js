@@ -37,7 +37,7 @@ const rows = [
 
 export default function BuyCredit() {
    const [allData, setAllData] = useState([])
-   const [handleFee, setHandleFee] = useState(123.23)
+   const [handleFee, setHandleFee] = useState(0)
    const [Radiovalue, setRadioValue] = useState(0)
    const [total, setTotal] = useState(0)
    const [stripeMethod, setStripeMethod] = useState(false)
@@ -48,15 +48,35 @@ export default function BuyCredit() {
    }
 
    const getAllPriceList = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getAllPrice`)
-         .then((result) => {
-            if (result) {
-               setAllData(result.data)
-            } else {
-               toast.error('Interanal server error')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getAllPrice`)
+            .then((result) => {
+               if (result) {
+                  setAllData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const getHandlingFee = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getFee`)
+            .then((result) => {
+               if (result) {
+                  setHandleFee(result.data.fee)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
    }
 
    const buyCredit = () => {
@@ -85,6 +105,7 @@ export default function BuyCredit() {
 
    useEffect(() => {
       getAllPriceList()
+      getHandlingFee()
    }, [])
 
    return (
