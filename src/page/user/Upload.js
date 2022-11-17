@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import { Button } from '@mui/material'
@@ -21,6 +22,7 @@ import io from 'socket.io-client'
 
 export default function Upload() {
    const socket = io(process.env.REACT_APP_Base_Url)
+   const navigate = useNavigate()
    const account = useSelector((state) => state.account)
    const [supportID, setSupportID] = useState('')
 
@@ -523,11 +525,20 @@ export default function Upload() {
                         value={term}
                         onChange={(e) => setTerm(e.target.value)}
                         sx={{ my: 1 }}
+                        style={{ display: 'flex' }}
                      >
-                        <RadioJoy
-                           value="true"
-                           label="I accept the terms and condition"
-                        />
+                        <p>
+                           <RadioJoy value="true" />
+                           &nbsp;I accept the{' '}
+                           <span
+                              style={{ color: 'red', cursor: 'pointer' }}
+                              onClick={() => {
+                                 navigate('/policy')
+                              }}
+                           >
+                              terms and condition
+                           </span>
+                        </p>
                      </RadioGroupJoy>
                   </FormControlJoy>
                </Grid>

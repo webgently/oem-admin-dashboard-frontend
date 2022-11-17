@@ -11,6 +11,7 @@ import OverviewCredit from './page/user/OverviewCredit'
 import BuyCredit from './page/user/BuyCredit'
 import Profile from './page/user/Profile'
 import Support from './page/user/Support'
+import Policy from './page/user/Policy'
 // --------admin------------
 import AdminSidebar from './component/AdminSidebar'
 import AdminDashboard from './page/AdminDashboard'
@@ -56,6 +57,7 @@ export default function App() {
                <Route path="/buyCredit" element={<BuyCredit />} />
                <Route path="/profile" element={<Profile />} />
                <Route path="/support" element={<Support />} />
+               <Route path="/policy" element={<Policy />} />
             </Route>
             <Route element={<AdminSidebar />}>
                <Route path="/admin_dashboard" element={<AdminDashboard />} />
