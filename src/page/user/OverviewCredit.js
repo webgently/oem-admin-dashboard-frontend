@@ -17,10 +17,16 @@ import SearchIcon from '@mui/icons-material/Search'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-const columns = [
+const columns1 = [
    { id: 'orderId', label: 'Id', minWidth: 200 },
    { id: 'credit', label: 'Credit', minWidth: 200 },
    { id: 'date', label: 'Date/Time', minWidth: 50 },
+]
+
+const columns2 = [
+   { id: 'credits', label: 'Credit', minWidth: 100, align: 'left' },
+   { id: 'netAmount', label: 'Price', minWidth: 100, align: 'center' },
+   { id: 'date', label: 'Date', minWidth: 100, align: 'center' },
 ]
 
 export default function OverviewCredit() {
@@ -31,6 +37,7 @@ export default function OverviewCredit() {
    const [userId, setUserId] = useState('')
    const [OrderID, setOrderID] = useState('')
    const [allData, setAllData] = useState([])
+   const [buyData, setBuyData] = useState([])
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -60,18 +67,40 @@ export default function OverviewCredit() {
    }
 
    const getCreditByOrderID = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getCreditByOrderID`, {
-            order: OrderID,
-            id: userId,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               setAllData(result.data.data)
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getCreditByOrderID`, {
+               order: OrderID,
+               id: userId,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setAllData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const getUserInvoiceHistory = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getUserInvoiceHistory`, {
+               id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setBuyData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -81,6 +110,7 @@ export default function OverviewCredit() {
             getCreditByOrderID()
          } else {
             getCreditHistory(account._id)
+            getUserInvoiceHistory(account._id)
          }
       }
    }, [account, OrderID])
@@ -144,7 +174,7 @@ export default function OverviewCredit() {
                      <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                            <TableRow>
-                              {columns.map((column) => (
+                              {columns1.map((column) => (
                                  <TableCell
                                     key={column.id}
                                     align={column.align}
@@ -168,7 +198,7 @@ export default function OverviewCredit() {
                               .map((row) => {
                                  return (
                                     <TableRow key={row._id}>
-                                       {columns.map((column) => {
+                                       {columns1.map((column) => {
                                           const value = row[column.id]
                                           return (
                                              <TableCell
@@ -237,24 +267,81 @@ export default function OverviewCredit() {
                         </h3>
                      </Grid>
                   </Grid>
-                  <Box
+                  <TableContainer
                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        m: '40px',
-                        alignItems: 'center',
+                        maxHeight: 440,
+                        mt: 2,
+                     }}
+                     style={{
+                        overflowY: 'auto',
+                        height: '400px',
                      }}
                   >
-                     <InsertDriveFileIcon
-                        sx={{ fontSize: '60px', color: 'gray' }}
-                     />
-                     No Credit History
-                  </Box>
+                     <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                           <TableRow>
+                              {columns2.map((column) => (
+                                 <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{
+                                       minWidth: column.minWidth,
+                                       color: 'black',
+                                    }}
+                                 >
+                                    {column.label}
+                                 </TableCell>
+                              ))}
+                           </TableRow>
+                        </TableHead>
+                        <TableBody>
+                           {buyData
+                              .slice(
+                                 page * rowsPerPage,
+                                 page * rowsPerPage + rowsPerPage
+                              )
+                              .map((row) => {
+                                 return (
+                                    <TableRow key={row._id}>
+                                       {columns2.map((column) => {
+                                          const value = row[column.id]
+                                          return (
+                                             <TableCell
+                                                key={column.id}
+                                                align={column.align}
+                                             >
+                                                {value}
+                                             </TableCell>
+                                          )
+                                       })}
+                                    </TableRow>
+                                 )
+                              })}
+                        </TableBody>
+                     </Table>
+                  </TableContainer>
+                  {buyData.length < 0 ? (
+                     <Box
+                        sx={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           m: '40px',
+                           alignItems: 'center',
+                        }}
+                     >
+                        <InsertDriveFileIcon
+                           sx={{ fontSize: '60px', color: 'gray' }}
+                        />
+                        No Credit History
+                     </Box>
+                  ) : (
+                     <></>
+                  )}
                   <Box>
                      <Button
                         fullWidth
                         className="btn_red"
-                        sx={{ color: 'white' }}
+                        sx={{ color: 'white', mt: 2 }}
                         size="small"
                         onClick={() => navigate('/buyCredit')}
                      >
