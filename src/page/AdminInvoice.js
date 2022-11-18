@@ -14,16 +14,16 @@ import toast, { Toaster } from 'react-hot-toast'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import DownloadIcon from '@mui/icons-material/Download'
 import axios from 'axios'
+import Pdf from 'react-to-pdf'
 
 const columns = [
-   { id: 'id', label: 'ID', minWidth: 50 },
-   { id: 'name', label: 'Name', minWidth: 50 },
-   { id: 'email', label: 'Email', minWidth: 100 },
+   { id: 'id', label: 'ID', minWidth: 100 },
+   { id: 'name', label: 'Name', minWidth: 150 },
+   { id: 'email', label: 'Email', minWidth: 150 },
    { id: 'vatNumber', label: 'Vat Number', minWidth: 150 },
-   { id: 'credits', label: 'Credit', minWidth: 150 },
-   { id: 'netAmount', label: 'Net Amount', minWidth: 150 },
-   { id: 'invoice', label: 'Invoice', minWidth: 150, align: 'center' },
-   { id: 'action', label: 'Action', minWidth: 150, align: 'center' },
+   { id: 'credits', label: 'Credit', minWidth: 100 },
+   { id: 'netAmount', label: 'Net Amount', minWidth: 100 },
+   { id: 'action', label: 'Invoice', minWidth: 100, align: 'center' },
 ]
 
 const ServiceStyle = {
@@ -31,7 +31,7 @@ const ServiceStyle = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: '70vw',
+   width: '800px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -40,6 +40,7 @@ const ServiceStyle = {
 }
 
 export default function AdminInvoice() {
+   const invoiceRef = React.createRef()
    const [page, setPage] = useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
 
@@ -57,7 +58,6 @@ export default function AdminInvoice() {
    const handleClose = () => setOpen(false)
 
    const [allData, setAllData] = useState([])
-   const [oneData, setOneData] = useState({})
    const [invoice, setInvoice] = useState({
       receipt: '',
       paidAmount: 0,
@@ -79,6 +79,7 @@ export default function AdminInvoice() {
       amountCharge: '',
       vatCharge: 0,
    })
+
    const getAllInvoice = async () => {
       try {
          await axios
@@ -220,13 +221,6 @@ export default function AdminInvoice() {
                                                 <RemoveRedEyeIcon />
                                              </IconButton>
                                           </ButtonGroup>
-                                       ) : column.id === 'invoice' ? (
-                                          <IconButton
-                                             color="primary"
-                                             aria-label="add to shopping cart"
-                                          >
-                                             <DownloadIcon />
-                                          </IconButton>
                                        ) : (
                                           value
                                        )}
@@ -269,6 +263,13 @@ export default function AdminInvoice() {
                   <Box>Invoice Details</Box>
                   <Box sx={{ flex: '1' }}></Box>
                   <Box>
+                     <Pdf targetRef={invoiceRef} filename="invoice.pdf">
+                        {({ toPdf }) => (
+                           <IconButton onClick={toPdf}>
+                              <DownloadIcon sx={{ color: 'white' }} />
+                           </IconButton>
+                        )}
+                     </Pdf>
                      <IconButton
                         onClick={() => {
                            handleClose()
@@ -278,7 +279,15 @@ export default function AdminInvoice() {
                      </IconButton>
                   </Box>
                </Box>
-               <Box sx={{ p: 3, overflowY: 'auto', height: '80vh' }}>
+               <Box
+                  sx={{
+                     px: 5,
+                     pt: 8,
+                     overflowY: 'auto',
+                     height: '98vh',
+                  }}
+                  ref={invoiceRef}
+               >
                   <Box
                      sx={{
                         textAlign: 'center',
@@ -291,116 +300,160 @@ export default function AdminInvoice() {
                   <Box sx={{ textAlign: 'center' }}>
                      Receipt #: {invoice.receipt}
                   </Box>
-                  <Box sx={{ display: 'flex', pt: 8 }}>
-                     <Box sx={{ flex: '1' }}>
-                        <Box
-                           sx={{
-                              fontSize: '15px',
-                              fontWeight: 'bold',
-                           }}
-                        >
-                           Amount Paid
+                  <Box sx={{ display: 'flex', pt: 2, fontSize: '14px' }}>
+                     <Box
+                        sx={{
+                           flex: '1',
+                           display: 'flex',
+                           justifyContent: 'center',
+                        }}
+                     >
+                        <Box>
+                           <Box
+                              sx={{
+                                 fontWeight: 'bold',
+                              }}
+                           >
+                              Amount Paid
+                           </Box>
+                           <Box>€ {invoice.paidAmount}</Box>
                         </Box>
-                        <Box>{invoice.paidAmount}</Box>
                      </Box>
-                     <Box sx={{ flex: '1' }}>
-                        <Box
-                           sx={{
-                              fontSize: '15px',
-                              fontWeight: 'bold',
-                           }}
-                        >
-                           Date Paid
+                     <Box
+                        sx={{
+                           flex: '1',
+                           display: 'flex',
+                           justifyContent: 'center',
+                        }}
+                     >
+                        <Box>
+                           <Box
+                              sx={{
+                                 fontWeight: 'bold',
+                              }}
+                           >
+                              Date Paid
+                           </Box>
+                           <Box>{invoice.paidDate}</Box>
                         </Box>
-                        <Box>{invoice.paidDate}</Box>
                      </Box>
-                     <Box sx={{ flex: '1' }}>
-                        <Box
-                           sx={{
-                              fontSize: '15px',
-                              fontWeight: 'bold',
-                           }}
-                        >
-                           Payment Method
+                     <Box
+                        sx={{
+                           flex: '1',
+                           display: 'flex',
+                           justifyContent: 'center',
+                        }}
+                     >
+                        <Box>
+                           <Box
+                              sx={{
+                                 fontWeight: 'bold',
+                              }}
+                           >
+                              Payment Method
+                           </Box>
+                           <Box>{invoice.paymentMethod}</Box>
                         </Box>
-                        <Box>{invoice.paymentMethod}</Box>
                      </Box>
                   </Box>
-                  <Box sx={{ pt: 5, fontSize: '20px', fontWeight: 'bold' }}>
+                  <Box sx={{ pt: 2, fontSize: '18px', fontWeight: 'bold' }}>
                      Customer Details
                   </Box>
-                  <Divider />
-                  <Box sx={{ display: 'flex', py: 3, px: 2 }}>
-                     <Box sx={{ flex: '1' }}>
-                        <Box sx={{ py: '5px' }}>Name:</Box>
-                        <Box sx={{ py: '5px' }}>Email:</Box>
-                        <Box sx={{ py: '5px' }}>Contact:</Box>
-                        <Box sx={{ py: '5px' }}>VAT Number:</Box>
-                        <Box sx={{ py: '5px' }}>Account Status:</Box>
-                        <Box sx={{ py: '5px' }}>Region:</Box>
-                        <Box sx={{ py: '5px' }}>Country:</Box>
-                        <Box sx={{ py: '5px' }}>City:</Box>
-                        <Box sx={{ py: '5px' }}>Address:</Box>
-                        <Box sx={{ py: '5px' }}>Zip Code:</Box>
+                  <Divider style={{ borderColor: 'black' }} />
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        py: 0.5,
+                        px: 2,
+                     }}
+                  >
+                     <Box sx={{ flex: '1', fontWeight: 'bold' }}>
+                        <Box>Name:</Box>
+                        <Box>Email:</Box>
+                        <Box>Contact:</Box>
+                        <Box>VAT Number:</Box>
+                        <Box>Account Status:</Box>
+                        <Box>Region:</Box>
+                        <Box>Country:</Box>
+                        <Box>City:</Box>
+                        <Box>Address:</Box>
+                        <Box>Zip Code:</Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
-                        <Box sx={{ py: '5px' }}>{invoice.name}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.email}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.contact}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.vatNumber}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.accountStatus}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.region}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.country}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.city}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.address}</Box>
-                        <Box sx={{ py: '5px' }}>{invoice.zipCode}</Box>
+                        <Box>{invoice.name}</Box>
+                        <Box>{invoice.email}</Box>
+                        <Box>{invoice.contact}</Box>
+                        <Box>{invoice.vatNumber}</Box>
+                        <Box>{invoice.accountStatus}</Box>
+                        <Box>{invoice.region}</Box>
+                        <Box>{invoice.country}</Box>
+                        <Box>{invoice.city}</Box>
+                        <Box>{invoice.address}</Box>
+                        <Box>{invoice.zipCode}</Box>
                      </Box>
                   </Box>
-                  <Box sx={{ pt: 2, fontSize: '20px', fontWeight: 'bold' }}>
+                  <Box sx={{ pt: 1, fontSize: '20px', fontWeight: 'bold' }}>
                      Summary
                   </Box>
-                  <Divider />
-                  <Box sx={{ display: 'flex', p: 4 }}>
+                  <Divider style={{ borderColor: 'black' }} />
+                  <Box sx={{ display: 'flex', px: 4, py: 2 }}>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
                            Bought {invoice.credits} Credits.
                         </Box>
-                        <Divider />
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
                         <Box sx={{ py: '5px' }}>Handling Fee</Box>
-                        <Divider />
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
                         <Box sx={{ py: '5px' }}>25% VAT Charges</Box>
-                        <Divider />
-                        <Box sx={{ py: '5px' }}>Amount Charged</Box>
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
+                        <Box sx={{ py: '5px', fontWeight: 'bold' }}>
+                           Amount Charged
+                        </Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           {invoice.paidAmount - invoice.handleFee}
+                           € {invoice.paidAmount - invoice.handleFee}
                         </Box>
-                        <Divider />
-                        <Box sx={{ py: '5px' }}>{invoice.handleFee}</Box>
-                        <Divider />
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
+                        <Box sx={{ py: '5px' }}>€ {invoice.handleFee}</Box>
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
                         <Box sx={{ py: '5px' }}>{invoice.vatCharge}</Box>
-                        <Divider />
-                        <Box sx={{ py: '5px' }}>{invoice.paidAmount}</Box>
+                        <Divider
+                           style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                        />
+                        <Box sx={{ py: '5px', fontWeight: 'bold' }}>
+                           € {invoice.paidAmount}
+                        </Box>
                      </Box>
                   </Box>
-                  <br />
-                  <br />
-                  <Divider />
+                  <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.5)' }} />
                   <Box
                      sx={{
-                        py: 2,
-                        fontSize: '20px',
+                        py: 1,
+                        fontSize: '16px',
                         textAlign: 'center',
                      }}
                   >
-                     If you have any questions, contact us at jonas@ecmtweaks.se
+                     If you have any questions, contact us at{' '}
+                     <span style={{ fontWeight: 'bold' }}>
+                        jonas@ecmtweaks.se
+                     </span>
                   </Box>
-                  <Divider />
+                  <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.5)' }} />
                   <Box
                      sx={{
-                        py: 4,
-                        fontSize: '20px',
+                        py: 2,
+                        fontSize: '16px',
                         textAlign: 'center',
                      }}
                   >
