@@ -65,30 +65,40 @@ export default function AdminCreditlist() {
 
    const [handleFee, setHandleFee] = useState(0)
    const [feeID, setFeeID] = useState('')
-   const [addservice, setaddservice] = useState(false)
+   const [handleFeeOpen, setHandleFeeOpen] = useState(false)
+
    const handleOpenGetFee = async () => {
-      setaddservice(true)
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getFee`)
-         .then((result) => {
-            setHandleFee(result.data.fee)
-            setFeeID(result.data._id)
-         })
+      setHandleFeeOpen(true)
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getFee`)
+            .then((result) => {
+               setHandleFee(result.data.fee)
+               setFeeID(result.data._id)
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
-   const handleCloseAddservice = () => setaddservice(false)
+
+   const handleCloseAddservice = () => setHandleFeeOpen(false)
 
    const updateFee = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateFee`, {
-            id: feeID,
-            handleFee,
-         })
-         .then((result) => {
-            if (result.status) {
-               setOpen(false)
-               toast.success('Handling Fee Updated Successfully')
-            } else toast.error('Interanal server error')
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateFee`, {
+               id: feeID,
+               handleFee,
+            })
+            .then((result) => {
+               if (result.status) {
+                  setHandleFeeOpen(false)
+                  toast.success('Handling Fee Updated Successfully')
+               } else toast.error('Interanal server error')
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const handleOpen = (flag, id) => {
@@ -119,70 +129,90 @@ export default function AdminCreditlist() {
 
    const addCredit = async () => {
       let data = { credit, price }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}createCredit`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.status) {
-               setCreditsData([...creditsData, result.data.data])
-               setOpen(false)
-               toast.success('Credit Category Create Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}createCredit`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.status) {
+                  setCreditsData([...creditsData, result.data.data])
+                  setOpen(false)
+                  toast.success('Credit Category Create Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const updateCredit = async (id) => {
       let data = { _id: id, credit, price }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateCredit`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllCredit()
-               setOpen(false)
-               toast.success('Credit Category Update Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateCredit`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllCredit()
+                  setOpen(false)
+                  toast.success('Credit Category Update Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const deleteCredit = async (row) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}deleteCredit`, {
-            _id: row._id,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllCredit()
-               toast.success('Credit Category Delete Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}deleteCredit`, {
+               _id: row._id,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllCredit()
+                  toast.success('Credit Category Delete Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getOneCredit = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getOneCredit`, {
-            _id: id,
-         })
-         .then((result) => {
-            if (result) {
-               setCredit(result.data.credit)
-               setPrice(result.data.price)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getOneCredit`, {
+               _id: id,
+            })
+            .then((result) => {
+               if (result) {
+                  setCredit(result.data.credit)
+                  setPrice(result.data.price)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getAllCredit = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getAllCredit`)
-         .then((result) => {
-            if (result) {
-               setCreditsData(result.data)
-            } else {
-               toast.error('Interanal server error')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAllCredit`)
+            .then((result) => {
+               if (result) {
+                  setCreditsData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -390,7 +420,7 @@ export default function AdminCreditlist() {
             </Box>
          </Modal>
          <Modal
-            open={addservice}
+            open={handleFeeOpen}
             onClose={handleCloseAddservice}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"

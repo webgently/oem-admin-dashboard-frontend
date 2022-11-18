@@ -102,7 +102,7 @@ export default function Overview() {
    const getDataByOrderID = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getDataByOrderID`, {
+            .post(`${process.env.REACT_APP_API_URL}getDataByOrderID`, {
                order: OrderID,
                id,
             })
@@ -114,14 +114,14 @@ export default function Overview() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getDataByFilter = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getDataByFilter`, {
+            .post(`${process.env.REACT_APP_API_URL}getDataByFilter`, {
                filter: filterSetting,
                id,
             })
@@ -133,7 +133,7 @@ export default function Overview() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -371,7 +371,7 @@ export default function Overview() {
                      <ul>
                         <li>
                            <a
-                              href={`${process.env.REACT_APP_Base_Url}/fileService/${downloadList?.rename[0]}`}
+                              href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList?.rename[0]}`}
                               download
                            >
                               {downloadList?.origin[0]}
@@ -388,7 +388,7 @@ export default function Overview() {
                               return (
                                  <li key={ind}>
                                     <a
-                                       href={`${process.env.REACT_APP_Base_Url}/fileService/${downloadList.rename[ind]}`}
+                                       href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList.rename[ind]}`}
                                        download
                                     >
                                        {item}

@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux'
 import io from 'socket.io-client'
 
 export default function Upload() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const navigate = useNavigate()
    const account = useSelector((state) => state.account)
    const [supportID, setSupportID] = useState('')
@@ -161,45 +161,49 @@ export default function Upload() {
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
 
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}uploadFile`, params)
-         .then((result) => {
-            if (result.data.status) {
-               socket.emit('request', { to: 'request' + supportID })
-               toast.success(result.data.data)
-               setUserName('')
-               setVehicleType('')
-               setVehicleBrand('')
-               setVehicleSeries('')
-               setVehicleEngine('')
-               setHP('')
-               setKW('')
-               setBuildYear(new Date())
-               setTransmission('')
-               setChasis('')
-               setTuningType('')
-               setReadMethod('')
-               setECUProducer('')
-               setECUBuild('')
-               setUsedTool('')
-               setMessage('')
-               setTerm('')
-               setFileData({})
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}uploadFile`, params)
+            .then((result) => {
+               if (result.data.status) {
+                  socket.emit('request', { to: 'request' + supportID })
+                  toast.success(result.data.data)
+                  setUserName('')
+                  setVehicleType('')
+                  setVehicleBrand('')
+                  setVehicleSeries('')
+                  setVehicleEngine('')
+                  setHP('')
+                  setKW('')
+                  setBuildYear(new Date())
+                  setTransmission('')
+                  setChasis('')
+                  setTuningType('')
+                  setReadMethod('')
+                  setECUProducer('')
+                  setECUBuild('')
+                  setUsedTool('')
+                  setMessage('')
+                  setTerm('')
+                  setFileData({})
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getSupportID = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getSupportID`)
+            .post(`${process.env.REACT_APP_API_URL}getSupportID`)
             .then(async (result) => {
                if (result.data.status) await setSupportID(result.data.data)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

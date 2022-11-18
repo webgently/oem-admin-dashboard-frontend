@@ -124,13 +124,17 @@ export default function PersistentDrawerLeft() {
    }
 
    const getLogo = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getLogo`)
-         .then((result) => {
-            if (result.data.status) {
-               setLogo(process.env.REACT_APP_Base_Url + result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getLogo`)
+            .then((result) => {
+               if (result.data.status) {
+                  setLogo(process.env.REACT_APP_BASE_URL + result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {

@@ -83,71 +83,91 @@ export default function AdminService() {
 
    const addService = async () => {
       let data = { serviceType }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}addService`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.status) {
-               setServiceData([...serviceData, result.data.data])
-               setOpen(false)
-               toast.success('Service Type Create Successfully')
-            } else {
-               toast.success(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}addService`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.status) {
+                  setServiceData([...serviceData, result.data.data])
+                  setOpen(false)
+                  toast.success('Service Type Create Successfully')
+               } else {
+                  toast.success(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const updateService = async (id) => {
       let data = { _id: id, serviceType: serviceType }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateService`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllService()
-               setOpen(false)
-               toast.success('Service Type Update Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateService`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllService()
+                  setOpen(false)
+                  toast.success('Service Type Update Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const deleteService = async (row) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}deleteService`, {
-            _id: row._id,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllService()
-               toast.success('Service Type Delete Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}deleteService`, {
+               _id: row._id,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllService()
+                  toast.success('Service Type Delete Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getOneService = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getOneService`, {
-            _id: id,
-         })
-         .then((result) => {
-            if (result) {
-               setServiceType(result.data.serviceType)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getOneService`, {
+               _id: id,
+            })
+            .then((result) => {
+               if (result) {
+                  setServiceType(result.data.serviceType)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getAllService = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getAllService`)
-         .then((result) => {
-            if (result) {
-               setServiceData(result.data)
-            } else {
-               toast.error('Interanal server error')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAllService`)
+            .then((result) => {
+               if (result) {
+                  setServiceData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -221,7 +241,7 @@ export default function AdminService() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                           ind + 1
+                                          ind + 1
                                        ) : column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"

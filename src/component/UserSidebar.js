@@ -85,7 +85,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }))
 
 export default function UserSidebar() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const theme = useTheme()
    const dispatch = useDispatch()
@@ -114,7 +114,7 @@ export default function UserSidebar() {
    const getUserUnreadCount = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getUserUnreadCount`, {
+            .post(`${process.env.REACT_APP_API_URL}getUserUnreadCount`, {
                id: id,
             })
             .then((result) => {
@@ -123,28 +123,28 @@ export default function UserSidebar() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getLogo = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getLogo`)
+            .post(`${process.env.REACT_APP_API_URL}getLogo`)
             .then((result) => {
                if (result.data.status) {
-                  setLogo(process.env.REACT_APP_Base_Url + result.data.data)
+                  setLogo(process.env.REACT_APP_BASE_URL + result.data.data)
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const checkMsg = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}updateUserReadStatus`, {
+            .post(`${process.env.REACT_APP_API_URL}updateUserReadStatus`, {
                id: myID,
             })
             .then((result) => {
@@ -154,14 +154,14 @@ export default function UserSidebar() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getSumCredit = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getSumCredit`, { id })
+            .post(`${process.env.REACT_APP_API_URL}getSumCredit`, { id })
             .then((result) => {
                if (result.data.status) {
                   setCreditAmount(result.data.data)
@@ -170,7 +170,7 @@ export default function UserSidebar() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

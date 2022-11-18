@@ -84,11 +84,15 @@ export default function AdminPricelist() {
    const handleClose = () => setOpen(false)
 
    const getServeType = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getServiceType`)
-         .then((result) => {
-            setServiceTypeData(result.data)
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getServiceType`)
+            .then((result) => {
+               setServiceTypeData(result.data)
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const savePriceType = (flag) => {
@@ -110,71 +114,91 @@ export default function AdminPricelist() {
 
    const addPrice = async () => {
       let data = { serviceType: currentServiceType, service, credit }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}addPrice`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.status) {
-               setPricesData([...pricesData, result.data.data])
-               setOpen(false)
-               toast.success('Price List Create Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}addPrice`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.status) {
+                  setPricesData([...pricesData, result.data.data])
+                  setOpen(false)
+                  toast.success('Price List Create Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const updatePrice = async (id) => {
       let data = { _id: id, serviceType: currentServiceType, service, credit }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updatePrice`, {
-            data: data,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllPrice()
-               setOpen(false)
-               toast.success('Price List Update Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updatePrice`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllPrice()
+                  setOpen(false)
+                  toast.success('Price List Update Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const deletePrice = async (row) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}deletePrice`, {
-            _id: row._id,
-         })
-         .then((result) => {
-            if (result.data === 'success') {
-               getAllPrice()
-               toast.success('Price List Delete Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}deletePrice`, {
+               _id: row._id,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getAllPrice()
+                  toast.success('Price List Delete Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getOnePrice = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getOnePrice`, {
-            _id: id,
-         })
-         .then((result) => {
-            if (result) {
-               setCredit(result.data.credit)
-               setService(result.data.service)
-               setCurrentServiceType(result.data.serviceType)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getOnePrice`, {
+               _id: id,
+            })
+            .then((result) => {
+               if (result) {
+                  setCredit(result.data.credit)
+                  setService(result.data.service)
+                  setCurrentServiceType(result.data.serviceType)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getAllPrice = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getAllPrice`)
-         .then((result) => {
-            if (result) {
-               setPricesData(result.data)
-            } else {
-               toast.error('Interanal server error')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAllPrice`)
+            .then((result) => {
+               if (result) {
+                  setPricesData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -248,8 +272,8 @@ export default function AdminPricelist() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                           ind + 1
-                                       ) :column.id === 'action' ? (
+                                          ind + 1
+                                       ) : column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"
                                              aria-label="outlined button group"

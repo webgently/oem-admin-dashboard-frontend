@@ -91,7 +91,7 @@ export default function Dashboard() {
    const getDataByFilter = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getDataByFilter`, {
+            .post(`${process.env.REACT_APP_API_URL}getDataByFilter`, {
                filter: 'all',
                id,
             })
@@ -103,7 +103,7 @@ export default function Dashboard() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
    const getServiceTime = async () => {
@@ -121,7 +121,7 @@ export default function Dashboard() {
 
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getServiceTime`, { day })
+            .post(`${process.env.REACT_APP_API_URL}getServiceTime`, { day })
             .then((result) => {
                if (result.data.status) {
                   if (result.data.data.open === '--:--:--') {
@@ -136,13 +136,13 @@ export default function Dashboard() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
    const getSumCredit = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getSumCredit`, { id })
+            .post(`${process.env.REACT_APP_API_URL}getSumCredit`, { id })
             .then((result) => {
                if (result.data.status) {
                   setCreditAmount(result.data.data)
@@ -151,7 +151,7 @@ export default function Dashboard() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
    useEffect(() => {

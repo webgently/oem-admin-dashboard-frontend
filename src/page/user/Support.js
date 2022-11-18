@@ -25,7 +25,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 export default function Support() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const [myID, setMyID] = useState('')
    const [supportID, setSupportID] = useState('')
@@ -44,12 +44,12 @@ export default function Support() {
    const getSupportID = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getSupportID`)
+            .post(`${process.env.REACT_APP_API_URL}getSupportID`)
             .then(async (result) => {
                if (result.data.status) await setSupportID(result.data.data)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -110,7 +110,7 @@ export default function Support() {
    const getChattingHistory = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getChattingHistory`, {
+            .post(`${process.env.REACT_APP_API_URL}getChattingHistory`, {
                id: id,
             })
             .then(async (result) => {
@@ -119,7 +119,7 @@ export default function Support() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -135,13 +135,13 @@ export default function Support() {
       socket.on(myID, async (e) => {
          await setAllMsg([...allMsg, e.data])
       })
+      setTimeout(() => {
+         scrollToBottom()
+      }, 100)
       return () => {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
-         setTimeout(() => {
-            scrollToBottom()
-         }, 100)
       }
    }, [allMsg])
 

@@ -20,20 +20,19 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
 export default function BuyCredit() {
-   const stripe_public_key = 'pk_test_4TbuO6qAW2XPuce1Q6ywrGP200NrDZ2233'
    const account = useSelector((state) => state.account)
+   const navigate = useNavigate()
    const [allData, setAllData] = useState([])
    const [stripeMethod, setStripeMethod] = useState(false)
    const [term, setTerm] = useState(false)
    const [open, setOpen] = useState(true)
    const [creditsData, setCreditsData] = useState([])
-
    const [selectIndex, setSelectIndex] = useState(0)
-
    const [handleFee, setHandleFee] = useState(0)
    const [credits, setCredits] = useState(0)
    const [price, setPrice] = useState(0)
@@ -46,7 +45,7 @@ export default function BuyCredit() {
    const getAllPriceList = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getAllPrice`)
+            .post(`${process.env.REACT_APP_API_URL}getAllPrice`)
             .then((result) => {
                if (result) {
                   setAllData(result.data)
@@ -55,14 +54,14 @@ export default function BuyCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getHandlingFee = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getFee`)
+            .post(`${process.env.REACT_APP_API_URL}getFee`)
             .then((result) => {
                if (result) {
                   setHandleFee(result.data.fee)
@@ -71,7 +70,7 @@ export default function BuyCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -94,16 +93,18 @@ export default function BuyCredit() {
       }
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}buyCredit`, { data })
+            .post(`${process.env.REACT_APP_API_URL}buyCredit`, { data })
             .then((result) => {
                if (result.data.stauts) {
-                  toast.success('Success!')
+                  toast.success(
+                     `You have bought ${credits} credits for €${total}`
+                  )
                } else {
                   toast.error('Something went wrong')
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -122,7 +123,7 @@ export default function BuyCredit() {
    const getAllCredit = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getAllCredit`)
+            .post(`${process.env.REACT_APP_API_URL}getAllCredit`)
             .then((result) => {
                if (result) {
                   setCreditsData(result.data)
@@ -131,7 +132,7 @@ export default function BuyCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -190,7 +191,7 @@ export default function BuyCredit() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
          >
-            <Grid item xs={12} sm={8} md={8}>
+            <Grid item xs={12} sm={12} md={8}>
                <Box
                   sx={{
                      mt: '10px',
@@ -424,7 +425,7 @@ export default function BuyCredit() {
                   </FormControlJoy>
                </Box>
             </Grid>
-            <Grid item xs={12} sm={4} md={4}>
+            <Grid item xs={12} sm={12} md={4}>
                <Box
                   sx={{
                      mt: '10px',
@@ -496,14 +497,22 @@ export default function BuyCredit() {
                               onChange={handleChange}
                               {...label}
                            />
-                           <a style={{ color: '#ffb100' }} href="#">
+                           <a
+                              style={{
+                                 color: '#ffb100',
+                                 textDecoration: 'underline',
+                              }}
+                              onClick={() => navigate('/policy')}
+                           >
                               I have read the Privacy Policy and agree to the
                               Terms of Service.
                            </a>
                         </Box>
                         <Box sx={{ mt: '20px' }}>
                            <StripeCheckout
-                              stripeKey={stripe_public_key}
+                              stripeKey={
+                                 process.env.REACT_APP_STRIPE_PUBLIC_KEY || ''
+                              }
                               token={handleToken}
                               amount={total * 100}
                               name="Product"

@@ -32,21 +32,18 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 export default function AdminSupport() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const [selectedIndex, setSelectedIndex] = React.useState(0)
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
-   const [unreadCount, setUnreadCount] = useState([])
+   const [unreadCount, setUnreadCount] = useState({})
    const [chattingMsg, setChattingMsg] = useState('')
    const [allMsg, setAllMsg] = useState([])
    const messagesEndRef = useRef(null)
    const inputRef = useRef(null)
 
-   const handleListItemClick = (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      index: number
-   ) => {
+   const handleListItemClick = (event, index) => {
       setSelectedIndex(index)
       setAllMsg([])
       getChattingHistory(index)
@@ -63,30 +60,26 @@ export default function AdminSupport() {
    const updateReadStatus = async (id, index) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}updateReadStatus`, {
+            .post(`${process.env.REACT_APP_API_URL}updateReadStatus`, {
                from: index,
                to: id,
             })
             .then((result) => {
                if (result.data.status) {
-                  allUserList.map((item, i) => {
-                     if (item._id === index) {
-                        let newArray = [...unreadCount]
-                        newArray[i] = 0
-                        setUnreadCount(newArray)
-                     }
-                  })
+                  const copy = { ...unreadCount }
+                  copy[index] = 0
+                  setUnreadCount(copy)
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getUserList = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getUserList`, { id: id })
+            .post(`${process.env.REACT_APP_API_URL}getUserList`, { id: id })
             .then((result) => {
                if (result.data.status) {
                   setUnreadCount(result.data.unreadCount)
@@ -94,7 +87,7 @@ export default function AdminSupport() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -159,14 +152,14 @@ export default function AdminSupport() {
    const getChattingHistory = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getChattingHistory`, {
+            .post(`${process.env.REACT_APP_API_URL}getChattingHistory`, {
                id: id,
             })
             .then((result) => {
                if (result.data.status) setAllMsg(result.data.data)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
@@ -183,23 +176,23 @@ export default function AdminSupport() {
             await setAllMsg([...allMsg, e.data])
             updateReadStatus(account._id, selectedIndex)
          }
-         allUserList.map((item, i) => {
-            if (item._id === e.data.from) {
-               let newArray = [...unreadCount]
-               newArray[i] += 1
-               setUnreadCount(newArray)
-            }
-         })
+         const copy = { ...unreadCount }
+         copy[e.data.from] += 1
+         setUnreadCount(copy)
       })
       return () => {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
+      }
+   }, [allUserList, unreadCount])
+
+   useEffect(() => {
+      if (selectedIndex > 0)
          setTimeout(() => {
             scrollToBottom()
          }, 100)
-      }
-   }, [allUserList, unreadCount])
+   }, [allMsg])
 
    return (
       <Box
@@ -244,6 +237,7 @@ export default function AdminSupport() {
                         return (
                            <div key={item._id}>
                               <ListItemButton
+                                 id={item._id}
                                  selected={selectedIndex === item._id}
                                  onClick={(event) =>
                                     handleListItemClick(event, item._id)
@@ -254,7 +248,7 @@ export default function AdminSupport() {
                                  }}
                               >
                                  <Badge
-                                    badgeContent={unreadCount[ind]}
+                                    badgeContent={unreadCount[item._id]}
                                     color="success"
                                     anchorOrigin={{
                                        vertical: 'top',

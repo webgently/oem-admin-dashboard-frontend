@@ -7,12 +7,12 @@ export default function Policy() {
    const getPrivacy = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getPrivacy`)
+            .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
             .then((result) => {
                setPolicy(result.data.privacy)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

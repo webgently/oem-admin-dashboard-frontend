@@ -86,12 +86,14 @@ export default function AdminUpload() {
    const [status, setStatus] = useState('')
    const [note, setNote] = useState('')
    const [credit, setCredit] = useState(0)
-
+   const [open, setOpen] = useState(false)
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
+
    const handleFileload = () => {
       inputElement.current.click()
    }
+
    const getFile = async (e) => {
       setFileData(e.target.files[0])
    }
@@ -126,21 +128,25 @@ export default function AdminUpload() {
       }
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateUpload`, params)
-         .then((result) => {
-            if (result.data.status) {
-               toast.success(result.data.data)
-               getRequests()
-               setOpen(false)
-               setFileData('')
-               setStatus('')
-               setNote('')
-               setCredit(0)
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateUpload`, params)
+            .then((result) => {
+               if (result.data.status) {
+                  toast.success(result.data.data)
+                  getRequests()
+                  setOpen(false)
+                  setFileData('')
+                  setStatus('')
+                  setNote('')
+                  setCredit(0)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const handleChangePage = (event, newPage) => {
@@ -152,44 +158,56 @@ export default function AdminUpload() {
       setPage(0)
    }
 
-   const [open, setOpen] = useState(false)
    const handleOpen = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getOneRequest`, { id })
-         .then((result) => {
-            if (result.data.status) {
-               setOneData(result.data.data[0])
-               setOpen(true)
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getOneRequest`, { id })
+            .then((result) => {
+               if (result.data.status) {
+                  setOneData(result.data.data[0])
+                  setOpen(true)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
+
    const handleClose = () => setOpen(false)
 
    const getRequests = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getRequests`)
-         .then((result) => {
-            if (result.data.status) {
-               setAllData(result.data.data)
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getRequests`)
+            .then((result) => {
+               if (result.data.status) {
+                  setAllData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const changeStatus = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}changeStatus`, { id })
-         .then((result) => {
-            if (result.data.status) {
-               toast.success(result.data.data)
-               getRequests()
-            } else {
-               toast.error(result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}changeStatus`, { id })
+            .then((result) => {
+               if (result.data.status) {
+                  toast.success(result.data.data)
+                  getRequests()
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    const getCustomDate = () => {
@@ -271,7 +289,18 @@ export default function AdminUpload() {
                               key={row._id}
                            >
                               {columns.map((column) => {
-                                 const value = row[column.id]
+                                 let value = ''
+                                 if (column.id === 'buildYear') {
+                                    const d = new Date(row[column.id])
+                                    let year = d.getFullYear()
+                                    let month = d.getMonth() + 1
+                                    let day = d.getDate()
+                                    if (month < 10) month = '0' + month
+                                    if (day < 10) day = '0' + day
+                                    value = `${day}-${month}-${year}`
+                                 } else {
+                                    value = row[column.id]
+                                 }
                                  return (
                                     <TableCell
                                        key={column.id}
@@ -759,7 +788,7 @@ export default function AdminUpload() {
                                     <ul>
                                        <li>
                                           <a
-                                             href={`${process.env.REACT_APP_Base_Url}/fileService/${oneData?.fileRename[0]}`}
+                                             href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[0]}`}
                                              download
                                           >
                                              {oneData?.fileName[0]}
@@ -789,7 +818,7 @@ export default function AdminUpload() {
                                           return (
                                              <li key={ind}>
                                                 <a
-                                                   href={`${process.env.REACT_APP_Base_Url}/fileService/${oneData?.fileRename[ind]}`}
+                                                   href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[ind]}`}
                                                    download
                                                 >
                                                    {item}

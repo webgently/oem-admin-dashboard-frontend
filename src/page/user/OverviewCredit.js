@@ -51,7 +51,7 @@ export default function OverviewCredit() {
    const getCreditHistory = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getCreditHistory`, {
+            .post(`${process.env.REACT_APP_API_URL}getCreditHistory`, {
                id,
             })
             .then((result) => {
@@ -62,14 +62,14 @@ export default function OverviewCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getCreditByOrderID = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getCreditByOrderID`, {
+            .post(`${process.env.REACT_APP_API_URL}getCreditByOrderID`, {
                order: OrderID,
                id: userId,
             })
@@ -81,14 +81,14 @@ export default function OverviewCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getUserInvoiceHistory = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getUserInvoiceHistory`, {
+            .post(`${process.env.REACT_APP_API_URL}getUserInvoiceHistory`, {
                id,
             })
             .then((result) => {
@@ -99,7 +99,7 @@ export default function OverviewCredit() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

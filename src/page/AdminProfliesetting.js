@@ -110,34 +110,38 @@ export default function AdminProfliesetting() {
          toast.error('Input city')
          return
       }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateProfile`, {
-            _id: userID,
-            contact,
-            address,
-            city,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               const data = result.data.result
-               delete data._v
-               setUserData([
-                  { label: 'Email:', value: data.email },
-                  { label: 'Contact:', value: data.phone },
-                  { label: 'VAT Number:', value: data.vatNumber },
-                  {
-                     label: 'Account Status:',
-                     value: data.status,
-                  },
-                  { label: 'Region:', value: data.country },
-                  { label: 'City:', value: data.city },
-                  { label: 'Address:', value: data.address },
-               ])
-               localStorage.setItem('user', JSON.stringify(data))
-               setOpen1(false)
-               toast.success('Details Updated Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateProfile`, {
+               _id: userID,
+               contact,
+               address,
+               city,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  const data = result.data.result
+                  delete data._v
+                  setUserData([
+                     { label: 'Email:', value: data.email },
+                     { label: 'Contact:', value: data.phone },
+                     { label: 'VAT Number:', value: data.vatNumber },
+                     {
+                        label: 'Account Status:',
+                        value: data.status,
+                     },
+                     { label: 'Region:', value: data.country },
+                     { label: 'City:', value: data.city },
+                     { label: 'Address:', value: data.address },
+                  ])
+                  localStorage.setItem('user', JSON.stringify(data))
+                  setOpen1(false)
+                  toast.success('Details Updated Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    // Store Timings
    const [open3, setOpen3] = useState(false)
@@ -160,14 +164,14 @@ export default function AdminProfliesetting() {
    const getAllDaily = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getAllDaily`)
+            .post(`${process.env.REACT_APP_API_URL}getAllDaily`)
             .then((result) => {
                if (result.data.status) {
                   setDailyTable(result.data.table)
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
    const updateDaily = async () => {
@@ -196,38 +200,46 @@ export default function AdminProfliesetting() {
          }
       }
 
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateDaily`, {
-            data,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               setDailyTable(result.data.result)
-               setOpen3(false)
-               toast.success('Timing Updated Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateDaily`, {
+               data,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setDailyTable(result.data.result)
+                  setOpen3(false)
+                  toast.success('Timing Updated Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    const getOneDaily = async (id) => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getOneDaily`, {
-            id,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               setHolyDay(result.data.data.holyday)
-               setOpenTimeFlag(result.data.data.holyday)
-               setCloseTimeFlag(result.data.data.holyday)
-               setDay(result.data.data.day)
-               if (holyDay) {
-                  setOpenTime(null)
-                  setCloseTime(null)
-               } else {
-                  setOpenTime(result.data.data.open)
-                  setCloseTime(result.data.data.close)
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getOneDaily`, {
+               id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setHolyDay(result.data.data.holyday)
+                  setOpenTimeFlag(result.data.data.holyday)
+                  setCloseTimeFlag(result.data.data.holyday)
+                  setDay(result.data.data.day)
+                  if (holyDay) {
+                     setOpenTime(null)
+                     setCloseTime(null)
+                  } else {
+                     setOpenTime(result.data.data.open)
+                     setCloseTime(result.data.data.close)
+                  }
                }
-            }
-         })
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    useEffect(() => {
       if (holyDay) {
@@ -252,27 +264,35 @@ export default function AdminProfliesetting() {
          toast.error('Input privacy policy Content')
          return
       }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}savePrivacy`, {
-            id: privacyID,
-            privacyMsg,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               setPrivacyContent(privacyMsg)
-               setOpen2(false)
-               toast.success('Content Updated Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}savePrivacy`, {
+               id: privacyID,
+               privacyMsg,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setPrivacyContent(privacyMsg)
+                  setOpen2(false)
+                  toast.success('Content Updated Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    const getPrivacy = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getPrivacy`)
-         .then((result) => {
-            setPrivacyMsg(result.data.privacy)
-            setPrivacyContent(result.data.privacy)
-            setPrivacyID(result.data._id)
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
+            .then((result) => {
+               setPrivacyMsg(result.data.privacy)
+               setPrivacyContent(result.data.privacy)
+               setPrivacyID(result.data._id)
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    // change password
    const [oldPassword, setOldPassword] = useState('')
@@ -296,25 +316,29 @@ export default function AdminProfliesetting() {
          toast.error('Please check Confirm password again')
          return
       }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}changePassword`, {
-            _id: userID,
-            oldPassword,
-            newPassword,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               const data = result.data.result
-               delete data._v
-               localStorage.setItem('user', JSON.stringify(data))
-               setNewPassword('')
-               setOldPassword('')
-               setConfirmPassword('')
-               toast.success('Password Updated Successfully')
-            } else {
-               toast.error('Old passoword is wrong')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}changePassword`, {
+               _id: userID,
+               oldPassword,
+               newPassword,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  const data = result.data.result
+                  delete data._v
+                  localStorage.setItem('user', JSON.stringify(data))
+                  setNewPassword('')
+                  setOldPassword('')
+                  setConfirmPassword('')
+                  toast.success('Password Updated Successfully')
+               } else {
+                  toast.error('Old passoword is wrong')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    // upload logo image
    const [logo, setLogo] = useState('')
@@ -346,30 +370,40 @@ export default function AdminProfliesetting() {
             fileData.type === 'image/gif' ||
             fileData.type === 'image/tiff'
          ) {
-            await axios
-               .post(`${process.env.REACT_APP_API_Url}uploadLogo`, params)
-               .then((result) => {
-                  if (result.data.status) {
-                     setFileData({})
-                     setLogo(process.env.REACT_APP_Base_Url + result.data.data)
-                     toast.success('Image Uploaded Successfully')
-                  } else {
-                     toast.error(result.data.data)
-                  }
-               })
+            try {
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}uploadLogo`, params)
+                  .then((result) => {
+                     if (result.data.status) {
+                        setFileData({})
+                        setLogo(
+                           process.env.REACT_APP_BASE_URL + result.data.data
+                        )
+                        toast.success('Image Uploaded Successfully')
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
+            } catch (error) {
+               if (process.env.REACT_APP_MODE) console.log(error)
+            }
          } else {
             toast.error('This isn`t an image')
          }
       }
    }
    const getLogo = async () => {
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}getLogo`)
-         .then((result) => {
-            if (result.data.status) {
-               setLogo(process.env.REACT_APP_Base_Url + result.data.data)
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getLogo`)
+            .then((result) => {
+               if (result.data.status) {
+                  setLogo(process.env.REACT_APP_BASE_URL + result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -455,7 +489,7 @@ export default function AdminProfliesetting() {
                                     height: '120px',
                                  }}
                               >
-                                 CA
+                                 {userName}
                               </Avatar>
                               <Box
                                  sx={{
@@ -627,17 +661,22 @@ export default function AdminProfliesetting() {
                                  >
                                     {columns.map((column) => {
                                        let value = ''
-                                       if(column.id === 'open' || column.id === 'close') {
-                                          if(row[column.id] === '--:--:--') {
+                                       if (
+                                          column.id === 'open' ||
+                                          column.id === 'close'
+                                       ) {
+                                          if (row[column.id] === '--:--:--') {
                                              value = '--:--:--'
                                           } else {
                                              const d = new Date(row[column.id])
                                              let hour = d.getHours()
                                              let minute = d.getMinutes()
                                              let second = d.getSeconds()
-                                             if(hour < 10) hour = '0' + hour
-                                             if(minute < 10) minute = '0' + minute
-                                             if(second < 10) second = '0' + second
+                                             if (hour < 10) hour = '0' + hour
+                                             if (minute < 10)
+                                                minute = '0' + minute
+                                             if (second < 10)
+                                                second = '0' + second
                                              value = `${hour}:${minute}:${second}`
                                           }
                                        } else {
@@ -648,26 +687,26 @@ export default function AdminProfliesetting() {
                                              key={column.id}
                                              align={column.align}
                                           >
-                                             { column.id === 'id' ? (
+                                             {column.id === 'id' ? (
                                                 ind + 1
                                              ) : column.id === 'holyday' &&
                                                value ? (
                                                 'holiday'
                                              ) : column.id === 'action' ? (
-                                                 <ButtonGroup
-                                                     variant="outlined"
-                                                     aria-label="outlined button group"
-                                                     onClick={() =>
-                                                         handleOpen3(row._id)
-                                                     }
-                                                 >
-                                                    <IconButton
-                                                        color="primary"
-                                                        aria-label="add to shopping cart"
-                                                    >
-                                                       <EditIcon />
-                                                    </IconButton>
-                                                 </ButtonGroup>
+                                                <ButtonGroup
+                                                   variant="outlined"
+                                                   aria-label="outlined button group"
+                                                   onClick={() =>
+                                                      handleOpen3(row._id)
+                                                   }
+                                                >
+                                                   <IconButton
+                                                      color="primary"
+                                                      aria-label="add to shopping cart"
+                                                   >
+                                                      <EditIcon />
+                                                   </IconButton>
+                                                </ButtonGroup>
                                              ) : (
                                                 value
                                              )}

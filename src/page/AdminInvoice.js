@@ -83,7 +83,7 @@ export default function AdminInvoice() {
    const getAllInvoice = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getAllInvoice`)
+            .post(`${process.env.REACT_APP_API_URL}getAllInvoice`)
             .then((result) => {
                if (result.data.stauts) {
                   setAllData(result.data.data)
@@ -92,14 +92,14 @@ export default function AdminInvoice() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const getOneInvoice = async (id, userId) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getOneInvoice`, {
+            .post(`${process.env.REACT_APP_API_URL}getOneInvoice`, {
                id,
                userId,
             })
@@ -134,7 +134,7 @@ export default function AdminInvoice() {
                }
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

@@ -28,7 +28,7 @@ import toast from 'react-hot-toast'
 import io from 'socket.io-client'
 
 export default function App() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const dispatch = useDispatch()
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))

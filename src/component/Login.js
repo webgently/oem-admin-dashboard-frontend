@@ -54,23 +54,27 @@ const Login = () => {
                mail,
                pass,
             }
-            await axios
-               .post(`${process.env.REACT_APP_API_Url}signin`, { data })
-               .then((result) => {
-                  const data = result.data
-                  delete data.__v
-                  if (data === 'not exist') {
-                     toast.error('This email is not exist!')
-                  } else if (data === 'password') {
-                     toast.error('Password Incorrect!')
-                  } else {
-                     if (data.permission === 'user') navigate('dashboard')
-                     else if (data.permission === 'admin')
-                        navigate('admin_dashboard')
-                     toast.success('Login Successed')
-                     dispatch(setAccountData(data))
-                  }
-               })
+            try {
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}signin`, { data })
+                  .then((result) => {
+                     const data = result.data
+                     delete data.__v
+                     if (data === 'not exist') {
+                        toast.error('This email is not exist!')
+                     } else if (data === 'password') {
+                        toast.error('Password Incorrect!')
+                     } else {
+                        if (data.permission === 'user') navigate('dashboard')
+                        else if (data.permission === 'admin')
+                           navigate('admin_dashboard')
+                        toast.success('Login Successed')
+                        dispatch(setAccountData(data))
+                     }
+                  })
+            } catch (error) {
+               if (process.env.REACT_APP_MODE) console.log(error)
+            }
          } else {
             toast.error('Please input password!')
          }
@@ -124,36 +128,40 @@ const Login = () => {
             checkflag,
             password,
          }
-         await axios
-            .post(`${process.env.REACT_APP_API_Url}signup`, { data })
-            .then((result) => {
-               if (result.data.status === false) {
-                  toast.error('Internal Server Error!')
-               } else if (
-                  result.data.status === true &&
-                  result.data.data === 'already exist'
-               ) {
-                  toast.error('Already Exist!')
-               } else {
-                  setMail('')
-                  setPass('')
-                  setName('')
-                  setEmail('')
-                  setPhone('')
-                  setAddress('')
-                  setCity('')
-                  setCountry('')
-                  setZcode('')
-                  setPassword('')
-                  setCPassword('')
-                  setCheck(false)
-                  setPageFlag('')
-                  setSubcontinent('')
-                  setVatNumber('')
-                  toast.success('Success Signup!')
-                  setPageFlag('signin')
-               }
-            })
+         try {
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}signup`, { data })
+               .then((result) => {
+                  if (result.data.status === false) {
+                     toast.error('Internal Server Error!')
+                  } else if (
+                     result.data.status === true &&
+                     result.data.data === 'already exist'
+                  ) {
+                     toast.error('Already Exist!')
+                  } else {
+                     setMail('')
+                     setPass('')
+                     setName('')
+                     setEmail('')
+                     setPhone('')
+                     setAddress('')
+                     setCity('')
+                     setCountry('')
+                     setZcode('')
+                     setPassword('')
+                     setCPassword('')
+                     setCheck(false)
+                     setPageFlag('')
+                     setSubcontinent('')
+                     setVatNumber('')
+                     toast.success('Success Signup!')
+                     setPageFlag('signin')
+                  }
+               })
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
+         }
       }
    }
 
@@ -175,7 +183,7 @@ const Login = () => {
             if (isTest) console.log('storage is emtry or broken')
          }
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }, [account])
 

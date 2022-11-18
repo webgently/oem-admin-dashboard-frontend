@@ -24,7 +24,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 export default function AdminDashboard() {
-   const socket = io(process.env.REACT_APP_Base_Url)
+   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const navigate = useNavigate()
    const [userCount, setUserCount] = useState(0)
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
    const getDashBoardData = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}getDashBoardData`)
+            .post(`${process.env.REACT_APP_API_URL}getDashBoardData`)
             .then((result) => {
                setUserCount(result.data.userCount)
                setServiceCount(result.data.serviceCount)
@@ -45,21 +45,20 @@ export default function AdminDashboard() {
                setRequestAlert(result.data.requestAlert)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 
    const setRequestStatus = async () => {
       navigate('/admin_upload')
-
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_Url}setRequestStatus`)
+            .post(`${process.env.REACT_APP_API_URL}setRequestStatus`)
             .then((result) => {
                if (!result.data.status) toast.error(result.data.data)
             })
       } catch (error) {
-         console.log(error)
+         if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
 

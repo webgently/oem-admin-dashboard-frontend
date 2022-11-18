@@ -83,34 +83,38 @@ export default function Profile() {
          toast.error('Input city')
          return
       }
-      await axios
-         .post(`${process.env.REACT_APP_API_Url}updateProfile`, {
-            _id: userID,
-            contact,
-            address,
-            city,
-         })
-         .then((result) => {
-            if (result.data.status) {
-               const data = result.data.result
-               delete data._v
-               setUserData([
-                  { label: 'Email:', value: data.email },
-                  { label: 'Contact:', value: data.phone },
-                  { label: 'VAT Number:', value: data.vatNumber },
-                  {
-                     label: 'Account Status:',
-                     value: data.status,
-                  },
-                  { label: 'Region:', value: data.country },
-                  { label: 'City:', value: data.city },
-                  { label: 'Address:', value: data.address },
-               ])
-               localStorage.setItem('user', JSON.stringify(data))
-               setOpen(false)
-               toast.success('Details Updated Successfully')
-            }
-         })
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updateProfile`, {
+               _id: userID,
+               contact,
+               address,
+               city,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  const data = result.data.result
+                  delete data._v
+                  setUserData([
+                     { label: 'Email:', value: data.email },
+                     { label: 'Contact:', value: data.phone },
+                     { label: 'VAT Number:', value: data.vatNumber },
+                     {
+                        label: 'Account Status:',
+                        value: data.status,
+                     },
+                     { label: 'Region:', value: data.country },
+                     { label: 'City:', value: data.city },
+                     { label: 'Address:', value: data.address },
+                  ])
+                  localStorage.setItem('user', JSON.stringify(data))
+                  setOpen(false)
+                  toast.success('Details Updated Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
 
    useEffect(() => {
@@ -177,7 +181,7 @@ export default function Profile() {
                                     height: '120px',
                                  }}
                               >
-                                 CA
+                                 {userName}
                               </Avatar>
                               <Box
                                  sx={{
