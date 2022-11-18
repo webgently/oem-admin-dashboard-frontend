@@ -12,7 +12,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
-import Avatar from "@mui/material/Avatar";
+import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
 import Badge from '@mui/material/Badge'
 import toast, { Toaster } from 'react-hot-toast'
@@ -63,21 +63,21 @@ export default function AdminSupport() {
    const updateReadStatus = async (id, index) => {
       try {
          await axios
-             .post(`${process.env.REACT_APP_API_Url}updateReadStatus`, {
-                from: index,
-                to: id,
-             })
-             .then((result) => {
-                if (result.data.status) {
-                   allUserList.map((item, i) => {
-                      if(item._id === index) {
-                         let newArray = [...unreadCount]
-                         newArray[i] = 0
-                         setUnreadCount(newArray)
-                      }
-                   })
-                }
-             })
+            .post(`${process.env.REACT_APP_API_Url}updateReadStatus`, {
+               from: index,
+               to: id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  allUserList.map((item, i) => {
+                     if (item._id === index) {
+                        let newArray = [...unreadCount]
+                        newArray[i] = 0
+                        setUnreadCount(newArray)
+                     }
+                  })
+               }
+            })
       } catch (error) {
          console.log(error)
       }
@@ -110,7 +110,7 @@ export default function AdminSupport() {
       if (chattingMsg.trim() === '') {
          toast.error('Write the message')
       } else {
-         if (selectedIndex != 0) {
+         if (selectedIndex !== 0) {
             socket.emit('sendToUser', data)
             await setAllMsg([...allMsg, data])
          } else {
@@ -139,14 +139,14 @@ export default function AdminSupport() {
          'Saturday',
       ]
       let year = d.getFullYear()
-      let month = d.getMonth()
+      let month = d.getMonth() + 1
       let day = d.getDate()
       let weekday = d.getDay()
       let hour = d.getHours()
       let minute = d.getMinutes()
       let second = d.getSeconds()
 
-      if (month < 10) month = '0' + (month + 1)
+      if (month < 10) month = '0' + month
       if (day < 10) day = '0' + day
       if (hour < 10) hour = '0' + hour
       if (minute < 10) minute = '0' + minute
@@ -177,14 +177,14 @@ export default function AdminSupport() {
       }
    }, [account])
 
-   useEffect(()=>{
+   useEffect(() => {
       socket.on(account._id, async (e) => {
          if (selectedIndex === e.data.from) {
             await setAllMsg([...allMsg, e.data])
             updateReadStatus(account._id, selectedIndex)
          }
          allUserList.map((item, i) => {
-            if(item._id === e.data.from) {
+            if (item._id === e.data.from) {
                let newArray = [...unreadCount]
                newArray[i] += 1
                setUnreadCount(newArray)
@@ -199,7 +199,7 @@ export default function AdminSupport() {
             scrollToBottom()
          }, 100)
       }
-   },[allUserList, unreadCount])
+   }, [allUserList, unreadCount])
 
    return (
       <Box
@@ -262,10 +262,7 @@ export default function AdminSupport() {
                                     }}
                                  >
                                     <ListItemIcon>
-                                       <Avatar
-                                           alt="Remy Sharp"
-                                           src=''
-                                       />
+                                       <Avatar alt="Remy Sharp" src="" />
                                     </ListItemIcon>
                                  </Badge>
                                  <ListItemText primary={`${item.name}`} />
@@ -312,7 +309,9 @@ export default function AdminSupport() {
                                        }
                                        key={ind}
                                     >
-                                       <p className='break-string'>{item.msg}</p>
+                                       <p className="break-string">
+                                          {item.msg}
+                                       </p>
                                        <p style={{ fontSize: '10px' }}>
                                           {item.date}
                                        </p>

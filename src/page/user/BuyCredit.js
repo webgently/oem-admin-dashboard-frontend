@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
-import { Button, Divider } from '@mui/material'
-
+import { Divider } from '@mui/material'
+import StripeCheckout from 'react-stripe-checkout'
 import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
 import EuroIcon from '@mui/icons-material/Euro'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import stripe from '../../assets/img/stripe.png'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import Checkbox from '@mui/material/Checkbox'
-
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -24,28 +23,24 @@ import toast, { Toaster } from 'react-hot-toast'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
-const rows = [
-   { category: 100, credits: 100, price: 120, value: 120 },
-   { category: 200, credits: 200, price: 220, value: 220 },
-   { category: 300, credits: 300, price: 300, value: 300 },
-   { category: 50, credits: 50, price: 65, value: 65 },
-   { category: 100, credits: 100, price: 50, value: 50 },
-   { category: 33234, credits: 33234, price: 23423423, value: 23423423 },
-   { category: 453, credits: 453, price: 2147483647, value: 2147483647 },
-   { category: 324234, credits: 324234, price: 23423423, value: 23423423 },
-]
-
 export default function BuyCredit() {
+   const stripe_public_key = 'pk_test_4TbuO6qAW2XPuce1Q6ywrGP200NrDZ2233'
+   const account = useSelector((state) => state.account)
    const [allData, setAllData] = useState([])
-   const [handleFee, setHandleFee] = useState(0)
-   const [Radiovalue, setRadioValue] = useState(0)
-   const [creditsData, setCreditsData] = useState([])
-   const [total, setTotal] = useState(0)
    const [stripeMethod, setStripeMethod] = useState(false)
    const [term, setTerm] = useState(false)
+   const [open, setOpen] = useState(true)
+   const [creditsData, setCreditsData] = useState([])
+
+   const [selectIndex, setSelectIndex] = useState(0)
+
+   const [handleFee, setHandleFee] = useState(0)
+   const [credits, setCredits] = useState(0)
+   const [price, setPrice] = useState(0)
+   const [total, setTotal] = useState(0)
 
    const handleChangeRadio = (event) => {
-      setRadioValue(event.target.value)
+      setSelectIndex(event.target.value)
    }
 
    const getAllPriceList = async () => {
@@ -80,19 +75,48 @@ export default function BuyCredit() {
       }
    }
 
-   const buyCredit = () => {
-      if (Radiovalue === 0) {
-         toast.error('Choose the credit from category')
-         return
+   const handleToken = async (token, addresses) => {
+      const data = {
+         token: token,
+         other: {
+            userId: account._id,
+            name: account.name,
+            email: account.email,
+            vatNumber: account.vatNumber,
+            receipt: '',
+            credits: credits,
+            netAmount: total,
+            date: getCustomDate(),
+            method: '',
+            fee: handleFee,
+            vatCharge: 0,
+         },
       }
-      if (!stripeMethod) {
-         toast.error('Select the payment method')
-         return
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}buyCredit`, { data })
+            .then((result) => {
+               if (result.data.stauts) {
+                  toast.success('Success!')
+               } else {
+                  toast.error('Something went wrong')
+               }
+            })
+      } catch (error) {
+         console.log(error)
       }
-      if (!term) {
-         toast.error('Agree to the terms of service')
-         return
-      }
+   }
+
+   const getCustomDate = () => {
+      const d = new Date()
+      let year = d.getFullYear()
+      let month = d.getMonth() + 1
+      let day = d.getDate()
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+
+      const result = `${day}-${month}-${year}`
+      return result
    }
 
    const getAllCredit = async () => {
@@ -111,14 +135,36 @@ export default function BuyCredit() {
       }
    }
 
+   const handleChange = () => {
+      if (term) setTerm(false)
+      else setTerm(true)
+   }
+
    useEffect(() => {
-      if (Radiovalue === 0) {
-         setTotal(0)
-      } else {
-         const sum = Number(Radiovalue) + Number(handleFee)
+      if (selectIndex > 0) {
+         const sum =
+            Number(creditsData[selectIndex - 1].price) + Number(handleFee)
          setTotal(sum.toFixed(2))
+         setCredits(creditsData[selectIndex - 1].credit)
+         setPrice(creditsData[selectIndex - 1].price)
       }
-   }, [Radiovalue])
+   }, [selectIndex, credits, price])
+
+   useEffect(() => {
+      if (selectIndex === 0) {
+         setOpen(true)
+         return
+      }
+      if (!stripeMethod) {
+         setOpen(true)
+         return
+      }
+      if (!term) {
+         setOpen(true)
+         return
+      }
+      setOpen(false)
+   }, [term, selectIndex, stripeMethod])
 
    useEffect(() => {
       getAllPriceList()
@@ -160,7 +206,7 @@ export default function BuyCredit() {
                      spacing={{ xs: 2, md: 3 }}
                      columns={{ xs: 4, sm: 8, md: 12 }}
                   >
-                     <Grid item xs={8} sm={8} md={8}>
+                     <Grid item xs={6} sm={6} md={6}>
                         <Box
                            sx={{
                               display: 'flex',
@@ -171,10 +217,10 @@ export default function BuyCredit() {
                            Choose Credit from Category
                         </Box>
                      </Grid>
-                     <Grid item xs={2} sm={2} md={2}>
+                     <Grid item xs={3.5} sm={3.5} md={3.5}>
                         Credits
                      </Grid>
-                     <Grid item xs={2} sm={2} md={2}>
+                     <Grid item xs={2.5} sm={2.5} md={2.5}>
                         Price
                      </Grid>
                   </Grid>
@@ -186,15 +232,15 @@ export default function BuyCredit() {
                      <RadioGroupJoy
                         defaultValue="female"
                         name="controlled-radio-buttons-group"
-                        value={Radiovalue}
+                        value={selectIndex}
                         onChange={handleChangeRadio}
                         sx={{ my: 1 }}
                      >
-                        {creditsData.map((item) => {
+                        {creditsData.map((item, index) => {
                            return (
                               <RadioJoy
                                  sx={{ color: 'black', m: '15px 0px' }}
-                                 value={item.price}
+                                 value={index + 1}
                                  key={item._id}
                                  label={
                                     <Grid
@@ -208,9 +254,9 @@ export default function BuyCredit() {
                                     >
                                        <Grid
                                           item
-                                          xs={8}
-                                          sm={8}
-                                          md={8}
+                                          xs={6}
+                                          sm={6}
+                                          md={6}
                                           sx={{
                                              display: 'flex',
                                              alignItems: 'center',
@@ -226,14 +272,14 @@ export default function BuyCredit() {
                                              {item.credit}
                                           </Box>
                                        </Grid>
-                                       <Grid item xs={2} sm={2} md={2}>
-                                          {item.credits}
+                                       <Grid item xs={3.5} sm={3.5} md={3.5}>
+                                          {item.credit}
                                        </Grid>
                                        <Grid
                                           item
-                                          xs={2}
-                                          sm={2}
-                                          md={2}
+                                          xs={2.5}
+                                          sm={2.5}
+                                          md={2.5}
                                           sx={{
                                              display: 'flex',
                                              alignItems: 'center',
@@ -247,10 +293,12 @@ export default function BuyCredit() {
                               />
                            )
                         })}
+
                         <Grid
                            container
                            sx={{
                               display: 'flex',
+                              justifyContent: 'space-between',
                               alignItems: 'center',
                               m: '15px 0px 15px 30px',
                            }}
@@ -274,12 +322,11 @@ export default function BuyCredit() {
                                  Handling Fee
                               </Box>
                            </Grid>
-                           <Grid item xs={2} sm={2} md={2}></Grid>
                            <Grid
                               item
-                              xs={2}
-                              sm={2}
-                              md={2}
+                              xs={2.5}
+                              sm={2.5}
+                              md={2.5}
                               sx={{
                                  display: 'flex',
                                  alignItems: 'center',
@@ -293,6 +340,7 @@ export default function BuyCredit() {
                            container
                            sx={{
                               display: 'flex',
+                              justifyContent: 'space-between',
                               alignItems: 'center',
                               m: '15px 0px 15px 30px',
                            }}
@@ -316,19 +364,17 @@ export default function BuyCredit() {
                                  Subtotal
                               </Box>
                            </Grid>
-                           <Grid item xs={2} sm={2} md={2}></Grid>
                            <Grid
                               item
-                              xs={2}
-                              sm={2}
-                              md={2}
+                              xs={2.5}
+                              sm={2.5}
+                              md={2.5}
                               sx={{
                                  display: 'flex',
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} />{' '}
-                              {Radiovalue}
+                              <EuroIcon sx={{ fontSize: '20px' }} /> {price}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -336,6 +382,7 @@ export default function BuyCredit() {
                            container
                            sx={{
                               display: 'flex',
+                              justifyContent: 'space-between',
                               alignItems: 'center',
                               m: '15px 0px 15px 30px',
                            }}
@@ -359,12 +406,11 @@ export default function BuyCredit() {
                                  Total
                               </Box>
                            </Grid>
-                           <Grid item xs={2} sm={2} md={2}></Grid>
                            <Grid
                               item
-                              xs={2}
-                              sm={2}
-                              md={2}
+                              xs={2.5}
+                              sm={2.5}
+                              md={2.5}
                               sx={{
                                  display: 'flex',
                                  alignItems: 'center',
@@ -406,7 +452,6 @@ export default function BuyCredit() {
                               Select Payment Method
                            </span>
                         </Box>
-
                         <FormControlJoy sx={{ pl: '20px' }}>
                            <RadioGroupJoy
                               name="controlled-radio-buttons-group"
@@ -448,7 +493,7 @@ export default function BuyCredit() {
                         <Box sx={{ pl: '10px' }}>
                            <Checkbox
                               value={term}
-                              onChange={(e) => setTerm(e.target.value)}
+                              onChange={handleChange}
                               {...label}
                            />
                            <a style={{ color: '#ffb100' }} href="#">
@@ -457,15 +502,21 @@ export default function BuyCredit() {
                            </a>
                         </Box>
                         <Box sx={{ mt: '20px' }}>
-                           <Button
-                              variant="contained"
-                              className="btn_red"
-                              endIcon={<ArrowForwardIcon />}
-                              fullWidth
-                              onClick={buyCredit}
+                           <StripeCheckout
+                              stripeKey={stripe_public_key}
+                              token={handleToken}
+                              amount={total * 100}
+                              name="Product"
                            >
-                              Continue to Payment
-                           </Button>
+                              <button
+                                 className={
+                                    open ? 'btn-disable' : 'btn-primary'
+                                 }
+                                 disabled={open}
+                              >
+                                 Continue to Payment
+                              </button>
+                           </StripeCheckout>
                         </Box>
                      </Grid>
                   </Grid>

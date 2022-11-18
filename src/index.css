@@ -60,3 +60,27 @@ p {
     6%, 15%, 24%, 33%, 42%, 51%, 60%, 68%, 77%, 86%, 95% { transform: translateX(3px) }
     9%, 18%, 27%, 36%, 45%, 54%, 63%, 71%, 80%, 89%, 98% { transform: translateX(-5px) }
 }
+
+.btn-primary {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    padding: 12px 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-disable {
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    padding: 12px 4px;
+    font-size: 16px;
+    cursor: auto;
+}
+
+

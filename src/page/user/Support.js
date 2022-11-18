@@ -46,8 +46,7 @@ export default function Support() {
          await axios
             .post(`${process.env.REACT_APP_API_Url}getSupportID`)
             .then(async (result) => {
-               if (result.data.status)
-                  await setSupportID(result.data.data)
+               if (result.data.status) await setSupportID(result.data.data)
             })
       } catch (error) {
          console.log(error)
@@ -91,14 +90,14 @@ export default function Support() {
          'Saturday',
       ]
       let year = d.getFullYear()
-      let month = d.getMonth()
+      let month = d.getMonth() + 1
       let day = d.getDate()
       let weekday = d.getDay()
       let hour = d.getHours()
       let minute = d.getMinutes()
       let second = d.getSeconds()
 
-      if (month < 10) month = '0' + (month + 1)
+      if (month < 10) month = '0' + month
       if (day < 10) day = '0' + day
       if (hour < 10) hour = '0' + hour
       if (minute < 10) minute = '0' + minute

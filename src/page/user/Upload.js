@@ -206,10 +206,10 @@ export default function Upload() {
    const getCustomDate = () => {
       const d = new Date()
       let year = d.getFullYear()
-      let month = d.getMonth()
+      let month = d.getMonth() + 1
       let day = d.getDate()
 
-      if (month < 10) month = '0' + (month + 1)
+      if (month < 10) month = '0' + month
       if (day < 10) day = '0' + day
 
       const result = `${day}-${month}-${year}`

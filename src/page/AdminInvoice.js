@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -13,38 +13,17 @@ import CloseIcon from '@mui/icons-material/Close'
 import toast, { Toaster } from 'react-hot-toast'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import DownloadIcon from '@mui/icons-material/Download'
+import axios from 'axios'
 
 const columns = [
    { id: 'id', label: 'ID', minWidth: 50 },
    { id: 'name', label: 'Name', minWidth: 50 },
    { id: 'email', label: 'Email', minWidth: 100 },
-   { id: 'vat', label: 'Vat Number', minWidth: 150 },
-   { id: 'credit', label: 'Credit', minWidth: 150 },
-   { id: 'netamount', label: 'Net Amount', minWidth: 150 },
+   { id: 'vatNumber', label: 'Vat Number', minWidth: 150 },
+   { id: 'credits', label: 'Credit', minWidth: 150 },
+   { id: 'netAmount', label: 'Net Amount', minWidth: 150 },
    { id: 'invoice', label: 'Invoice', minWidth: 150, align: 'center' },
    { id: 'action', label: 'Action', minWidth: 150, align: 'center' },
-]
-
-function createData(id, name, email, vat, credit, netamount) {
-   return { id, name, email, vat, credit, netamount }
-}
-
-const rows = [
-   createData('India', 'IN', 1324171354, 3287263, 1324171354, 3287263),
-   createData('China', 'CN', 1403500365, 9596961, 1324171354, 3287263),
-   createData('Italy', 'IT', 60483973, 301340, 1324171354, 3287263),
-   createData('United States', 'US', 327167434, 9833520, 1324171354, 3287263),
-   createData('Canada', 'CA', 37602103, 9984670, 1324171354, 3287263),
-   createData('Australia', 'AU', 25475400, 7692024, 1324171354, 3287263),
-   createData('Germany', 'DE', 83019200, 357578, 1324171354, 3287263),
-   createData('Ireland', 'IE', 4857000, 70273, 1324171354, 3287263),
-   createData('Mexico', 'MX', 126577691, 1972550, 1324171354, 3287263),
-   createData('Japan', 'JP', 126317000, 377973, 1324171354, 3287263),
-   createData('France', 'FR', 67022000, 640679, 1324171354, 3287263),
-   createData('United Kingdom', 'GB', 67545757, 242495, 1324171354, 3287263),
-   createData('Russia', 'RU', 146793744, 17098246, 1324171354, 3287263),
-   createData('Nigeria', 'NG', 200962417, 923768, 1324171354, 3287263),
-   createData('Brazil', 'BR', 210147125, 8515767, 1324171354, 3287263),
 ]
 
 const ServiceStyle = {
@@ -63,12 +42,6 @@ const ServiceStyle = {
 export default function AdminInvoice() {
    const [page, setPage] = useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
-   const [creditAddFlag, setCreditAddFlag] = useState(true)
-   const [age, setAge] = useState('')
-
-   const handleChange = (event) => {
-      setAge(event.target.value)
-   }
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -80,12 +53,93 @@ export default function AdminInvoice() {
    }
 
    const [open, setOpen] = useState(false)
-   const handleOpen = () => setOpen(true)
+
    const handleClose = () => setOpen(false)
 
-   const [addservice, setaddservice] = useState(false)
-   const handleOpenAddservice = () => setaddservice(true)
-   const handleCloseAddservice = () => setaddservice(false)
+   const [allData, setAllData] = useState([])
+   const [oneData, setOneData] = useState({})
+   const [invoice, setInvoice] = useState({
+      receipt: '',
+      paidAmount: 0,
+      paidDate: '',
+      paymentMethod: '',
+      name: '',
+      email: '',
+      contact: '',
+      vatNumber: '',
+      accountStatus: '',
+      region: '',
+      country: '',
+      city: '',
+      address: '',
+      zipCode: '',
+      credits: '',
+      price: '',
+      handleFee: '',
+      amountCharge: '',
+      vatCharge: 0,
+   })
+   const getAllInvoice = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getAllInvoice`)
+            .then((result) => {
+               if (result.data.stauts) {
+                  setAllData(result.data.data)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const getOneInvoice = async (id, userId) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_Url}getOneInvoice`, {
+               id,
+               userId,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  const result1 = result.data.result1
+                  const result2 = result.data.result2
+                  setInvoice({
+                     receipt: result1.receipt,
+                     paidAmount: result1.netAmount,
+                     paidDate: result1.date,
+                     paymentMethod: result1.method,
+                     name: result2.name,
+                     email: result2.email,
+                     contact: result2.phone,
+                     vatNumber: result2.vatNumber,
+                     accountStatus: result2.status,
+                     region: result2.subcontinent,
+                     country: result2.country,
+                     city: result2.city,
+                     address: result2.address,
+                     zipCode: result2.zcode,
+                     credits: result1.credits,
+                     price: result1.netAmount - result1.fee,
+                     handleFee: result1.fee,
+                     vatCharge: result1.vatCharge,
+                     amountCharge: result1.netAmount,
+                  })
+                  setOpen(true)
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   useEffect(() => {
+      getAllInvoice()
+   }, [])
 
    return (
       <Paper
@@ -121,7 +175,7 @@ export default function AdminInvoice() {
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {rows
+                  {allData
                      .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -142,8 +196,8 @@ export default function AdminInvoice() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                           ind + 1
-                                       ) :column.id === 'profile' ? (
+                                          ind + 1
+                                       ) : column.id === 'profile' ? (
                                           <Avatar
                                              alt="Remy Sharp"
                                              src={value}
@@ -154,7 +208,12 @@ export default function AdminInvoice() {
                                              aria-label="outlined button group"
                                           >
                                              <IconButton
-                                                onClick={handleOpen}
+                                                onClick={() =>
+                                                   getOneInvoice(
+                                                      row._id,
+                                                      row.userId
+                                                   )
+                                                }
                                                 color="primary"
                                                 aria-label="add to shopping cart"
                                              >
@@ -183,7 +242,7 @@ export default function AdminInvoice() {
          <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={allData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -198,7 +257,7 @@ export default function AdminInvoice() {
             <Box sx={ServiceStyle}>
                <Box
                   sx={{
-                     px: 3,
+                     px: 4,
                      py: 1,
                      bgcolor: '#1976d2',
                      borderRadius: 1,
@@ -219,7 +278,7 @@ export default function AdminInvoice() {
                      </IconButton>
                   </Box>
                </Box>
-               <Box sx={{ p: 3 }}>
+               <Box sx={{ p: 3, overflowY: 'auto', height: '80vh' }}>
                   <Box
                      sx={{
                         textAlign: 'center',
@@ -229,8 +288,10 @@ export default function AdminInvoice() {
                   >
                      Receipt from ZipTuning Team
                   </Box>
-                  <Box sx={{ textAlign: 'center' }}>Receipt #: 1</Box>
-                  <Box sx={{ display: 'flex' }}>
+                  <Box sx={{ textAlign: 'center' }}>
+                     Receipt #: {invoice.receipt}
+                  </Box>
+                  <Box sx={{ display: 'flex', pt: 8 }}>
                      <Box sx={{ flex: '1' }}>
                         <Box
                            sx={{
@@ -240,7 +301,7 @@ export default function AdminInvoice() {
                         >
                            Amount Paid
                         </Box>
-                        <Box>300.00</Box>
+                        <Box>{invoice.paidAmount}</Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box
@@ -251,7 +312,7 @@ export default function AdminInvoice() {
                         >
                            Date Paid
                         </Box>
-                        <Box>2022-10-02</Box>
+                        <Box>{invoice.paidDate}</Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box
@@ -262,42 +323,73 @@ export default function AdminInvoice() {
                         >
                            Payment Method
                         </Box>
-                        <Box>mastercard-4444</Box>
+                        <Box>{invoice.paymentMethod}</Box>
                      </Box>
                   </Box>
-                  <Divider />
-                  <Box sx={{ py: 3, fontSize: '20px', fontWeight: 'bold' }}>
+                  <Box sx={{ pt: 5, fontSize: '20px', fontWeight: 'bold' }}>
                      Customer Details
                   </Box>
                   <Divider />
-                  <Box sx={{ display: 'flex', py: 3 }}>
+                  <Box sx={{ display: 'flex', py: 3, px: 2 }}>
                      <Box sx={{ flex: '1' }}>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
+                        <Box sx={{ py: '5px' }}>Name:</Box>
+                        <Box sx={{ py: '5px' }}>Email:</Box>
+                        <Box sx={{ py: '5px' }}>Contact:</Box>
+                        <Box sx={{ py: '5px' }}>VAT Number:</Box>
+                        <Box sx={{ py: '5px' }}>Account Status:</Box>
+                        <Box sx={{ py: '5px' }}>Region:</Box>
+                        <Box sx={{ py: '5px' }}>Country:</Box>
+                        <Box sx={{ py: '5px' }}>City:</Box>
+                        <Box sx={{ py: '5px' }}>Address:</Box>
+                        <Box sx={{ py: '5px' }}>Zip Code:</Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
-                        <Box sx={{ py: '5px' }}>Name</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.name}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.email}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.contact}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.vatNumber}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.accountStatus}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.region}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.country}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.city}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.address}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.zipCode}</Box>
                      </Box>
                   </Box>
+                  <Box sx={{ pt: 2, fontSize: '20px', fontWeight: 'bold' }}>
+                     Summary
+                  </Box>
+                  <Divider />
+                  <Box sx={{ display: 'flex', p: 4 }}>
+                     <Box sx={{ flex: '1' }}>
+                        <Box sx={{ py: '5px' }}>
+                           Bought {invoice.credits} Credits.
+                        </Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>Handling Fee</Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>25% VAT Charges</Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>Amount Charged</Box>
+                     </Box>
+                     <Box sx={{ flex: '1' }}>
+                        <Box sx={{ py: '5px' }}>
+                           {invoice.paidAmount - invoice.handleFee}
+                        </Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>{invoice.handleFee}</Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>{invoice.vatCharge}</Box>
+                        <Divider />
+                        <Box sx={{ py: '5px' }}>{invoice.paidAmount}</Box>
+                     </Box>
+                  </Box>
+                  <br />
+                  <br />
                   <Divider />
                   <Box
                      sx={{
-                        py: 4,
+                        py: 2,
                         fontSize: '20px',
                         textAlign: 'center',
                      }}

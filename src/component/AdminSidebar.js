@@ -152,6 +152,7 @@ export default function PersistentDrawerLeft() {
                         height: '50px',
                         borderRadius: '5px',
                      }}
+                     alt="logo image"
                   />
                )}
                <IconButton
@@ -219,6 +220,7 @@ export default function PersistentDrawerLeft() {
                <img
                   src={logo === '' ? LogoIcon : logo}
                   style={{ width: '120px', height: '60px' }}
+                  alt="logo image"
                />
                <div style={{ flex: '1' }}></div>
                <IconButton onClick={handleDrawerClose}>
