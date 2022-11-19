@@ -371,9 +371,8 @@ export default function AdminUpload() {
                               {columns.map((column) => {
                                  let value = ''
                                  if (column.id === 'buildYear') {
-                                    value = new Date(
-                                       oneData?.buildYear
-                                    ).getFullYear()
+                                    const d = new Date(row.buildYear)
+                                    value = d.getFullYear()
                                  } else {
                                     value = row[column.id]
                                  }
