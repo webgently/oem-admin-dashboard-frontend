@@ -5,6 +5,8 @@ import Grid from '@mui/material/Grid'
 import { Button } from '@mui/material'
 import Textarea from '@mui/joy/Textarea'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
@@ -50,6 +52,8 @@ export default function Upload() {
    const [userId, setUserID] = useState('')
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
+   /* file modal */
+   const [fileOpen, setFileOpen] = useState(false)
 
    const handleFileload = () => {
       inputElement.current.click()
@@ -221,6 +225,16 @@ export default function Upload() {
       return result
    }
 
+   const deleteFile = () => {
+      setFileData({})
+      setFileOpen(false)
+   }
+
+   useEffect(() => {
+      if (fileData?.name) setFileOpen(true)
+      else setFileOpen(false)
+   }, [fileData])
+
    useEffect(() => {
       getSupportID()
       if (account._id) {
@@ -255,9 +269,9 @@ export default function Upload() {
             <Grid
                container
                spacing={{ xs: 2, md: 3 }}
-               columns={{ xs: 4, sm: 8, md: 12 }}
+               columns={{ xs: 4, sm: 6, md: 12 }}
             >
-               <Grid item xs={12} sm={6} md={6}>
+               <Grid item xs={12} sm={6} md={7}>
                   <Box
                      sx={{
                         display: 'flex',
@@ -298,7 +312,33 @@ export default function Upload() {
                      </Box>
                   </Box>
                </Grid>
-               <Grid item xs={12} sm={6} md={6}></Grid>
+               <Grid item xs={12} sm={6} md={5}>
+                  {fileOpen ? (
+                     <Box className="select-file" mt={4}>
+                        <Box className="file-group-box">
+                           <Box className="upload-img-box">
+                              <UploadFileIcon className="upload-img-icon" />
+                           </Box>
+                           <Box className="file-info">
+                              <Box>
+                                 <Box>{fileData?.name}</Box>
+                                 <Box>
+                                    {(fileData?.size / 1000000).toFixed(2)} MB
+                                 </Box>
+                              </Box>
+                           </Box>
+                        </Box>
+                        <Box className="close-img-box">
+                           <HighlightOffIcon
+                              className="close-img-icon"
+                              onClick={() => deleteFile()}
+                           />
+                        </Box>
+                     </Box>
+                  ) : (
+                     <></>
+                  )}
+               </Grid>
 
                <Grid item xs={12} sm={6} md={6}>
                   Vehicle type
@@ -522,14 +562,13 @@ export default function Upload() {
                      onChange={(e) => setMessage(e.target.value)}
                   />
                </Grid>
-               <Grid item xs={12} sm={12} md={12}>
+               <Grid item xs={12} sm={12} md={12} className="term-check-box">
                   <FormControlJoy>
                      <RadioGroupJoy
                         defaultValue="false"
                         name="controlled-radio-buttons-group"
                         value={term}
                         onChange={(e) => setTerm(e.target.value)}
-                        sx={{ my: 1 }}
                         style={{ display: 'flex' }}
                      >
                         <p>
@@ -547,7 +586,7 @@ export default function Upload() {
                      </RadioGroupJoy>
                   </FormControlJoy>
                </Grid>
-               <Grid item xs={12} sm={4} md={4}>
+               <Grid item xs={12} sm={4} md={4} className="upload-btn-box">
                   <Button
                      variant="contained"
                      className="btn_red"

@@ -30,6 +30,7 @@ const columns = [
       id: 'status',
       label: 'Status',
       minWidth: 50,
+      align: 'center',
    },
 ]
 
@@ -87,7 +88,6 @@ export default function Dashboard() {
       if (second < 10) second = '0' + second
       return `${hour}:${minute}:${second}`
    }
-
    const getDataByFilter = async (id) => {
       try {
          await axios
@@ -388,10 +388,25 @@ export default function Dashboard() {
                                                    {row.vehicleType}
                                                 </TableCell>
                                                 <TableCell align="left">
-                                                   {row.createAt}
+                                                   {row.createdAt}
                                                 </TableCell>
-                                                <TableCell align="left">
-                                                   {row.status}
+                                                <TableCell align="center">
+                                                   <span
+                                                      className={
+                                                         row.status ===
+                                                         'requested'
+                                                            ? 'request-status'
+                                                            : row.status ===
+                                                              'completed'
+                                                            ? 'success-status'
+                                                            : 'progress-status'
+                                                      }
+                                                      onClick={() =>
+                                                         navigate('/overview')
+                                                      }
+                                                   >
+                                                      {row.status}
+                                                   </span>
                                                 </TableCell>
                                              </TableRow>
                                           ))}

@@ -26,9 +26,11 @@ import toast from 'react-hot-toast'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 import axios from 'axios'
 import io from 'socket.io-client'
 import { useSelector } from 'react-redux'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 
 const columns = [
    { id: 'orderId', label: 'ID', minWidth: 50 },
@@ -98,6 +100,8 @@ export default function AdminUpload() {
    const [open, setOpen] = useState(false)
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
+   /* file modal */
+   const [fileOpen, setFileOpen] = useState(false)
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -131,7 +135,7 @@ export default function AdminUpload() {
          return
       }
       if (!creditBtnFlag)
-         if (credit <= 0) {
+         if (credit < 0) {
             toast.error('Field the credit')
             return
          }
@@ -287,6 +291,11 @@ export default function AdminUpload() {
       return result
    }
 
+   const deleteFile = () => {
+      setFileData({})
+      setFileOpen(false)
+   }
+
    useEffect(() => {
       getRequests()
    }, [])
@@ -306,6 +315,11 @@ export default function AdminUpload() {
          setMyID(account._id)
       }
    }, [account])
+
+   useEffect(() => {
+      if (fileData?.name) setFileOpen(true)
+      else setFileOpen(false)
+   }, [fileData])
 
    return (
       <Paper
@@ -493,16 +507,46 @@ export default function AdminUpload() {
                                  alignItems: 'center',
                               }}
                            >
-                              <Box>
-                                 <CloudUploadIcon
-                                    sx={{
-                                       color: 'red',
-                                       fontSize: '70px',
-                                    }}
-                                 />
-                              </Box>
-                              <Box>Drag amd Drop your File here</Box>
-                              <Box>Or</Box>
+                              {fileOpen ? (
+                                 <Box className="select-file" mt={4}>
+                                    <Box className="file-group-box">
+                                       <Box className="upload-img-box">
+                                          <UploadFileIcon className="upload-img-icon" />
+                                       </Box>
+                                       <Box className="file-info">
+                                          <Box>
+                                             <Box>{fileData?.name}</Box>
+                                             <Box>
+                                                {(
+                                                   fileData?.size / 1000000
+                                                ).toFixed(2)}{' '}
+                                                MB
+                                             </Box>
+                                          </Box>
+                                       </Box>
+                                    </Box>
+                                    <Box className="close-img-box">
+                                       <HighlightOffIcon
+                                          className="close-img-icon"
+                                          onClick={() => deleteFile()}
+                                       />
+                                    </Box>
+                                 </Box>
+                              ) : (
+                                 <>
+                                    <Box>
+                                       <CloudUploadIcon
+                                          sx={{
+                                             color: 'red',
+                                             fontSize: '70px',
+                                          }}
+                                       />
+                                    </Box>
+                                    <Box>Drag amd Drop your File here</Box>
+                                    <Box>Or</Box>
+                                 </>
+                              )}
+
                               <Box>
                                  <input
                                     ref={inputElement}
@@ -595,7 +639,7 @@ export default function AdminUpload() {
                                     fontWeight: 'bold',
                                  }}
                               >
-                                 Request From(Herman Performance)
+                                 Request From ({oneData?.client})
                               </Box>
                               <Divider />
                               <Grid lineHeight={'4px'}>

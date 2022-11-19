@@ -98,6 +98,7 @@ export default function UserSidebar() {
    const [creditopen, setCreditOpen] = useState(false)
    const [unreadCount, setUnreadCount] = useState(0)
    const [creditAmount, setCreditAmount] = useState(0)
+   const [mobileFlag, setMobileFlag] = useState(false)
 
    const handleOpenUserMenu = (event) => {
       setAnchorElUser(event.currentTarget)
@@ -175,6 +176,15 @@ export default function UserSidebar() {
    }
 
    useEffect(() => {
+      const width = window.innerWidth
+      if (width < 560) {
+         setMobileFlag(true)
+      } else {
+         setMobileFlag(false)
+      }
+   }, [window.innerWidth])
+
+   useEffect(() => {
       const check = window.location.href.search('support')
       if (check > 0) {
          checkMsg()
@@ -249,7 +259,7 @@ export default function UserSidebar() {
                      }}
                      onClick={() => navigate('support')}
                   >
-                     Chat with
+                     {mobileFlag ? '' : 'Chat with'}
                      <GroupsIcon />{' '}
                   </Box>
                </Box>
@@ -268,7 +278,7 @@ export default function UserSidebar() {
                   }}
                   variant="outlined"
                >
-                  <ListIcon /> Price List
+                  <ListIcon /> {mobileFlag ? '' : 'Price List'}
                </Button>
                <Button
                   sx={{
@@ -282,13 +292,13 @@ export default function UserSidebar() {
                   }}
                   variant="outlined"
                >
-                  <UploadIcon /> Upload File
+                  <UploadIcon /> {mobileFlag ? '' : 'Upload File'}
                </Button>
                <Button
                   sx={{ bgcolor: 'transparent', color: 'black' }}
                   onClick={handleOpenUserMenu}
                >
-                  <PersonIcon /> Dashboard
+                  <PersonIcon /> {mobileFlag ? '' : 'Dashboard'}
                </Button>
                <Menu
                   sx={{ mt: '45px' }}

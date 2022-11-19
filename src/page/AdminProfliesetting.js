@@ -34,6 +34,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import LogoIcon from '../assets/img/OEMservice2.jpg'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -405,6 +407,13 @@ export default function AdminProfliesetting() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
+   /* file modal */
+   const [fileOpen, setFileOpen] = useState(false)
+
+   const deleteFile = () => {
+      setFileData({})
+      setFileOpen(false)
+   }
 
    useEffect(() => {
       if (account._id) {
@@ -430,6 +439,11 @@ export default function AdminProfliesetting() {
       getAllDaily()
       getLogo()
    }, [])
+
+   useEffect(() => {
+      if (fileData?.name) setFileOpen(true)
+      else setFileOpen(false)
+   }, [fileData])
 
    return (
       <>
@@ -788,16 +802,46 @@ export default function AdminProfliesetting() {
                            alignItems: 'center',
                         }}
                      >
-                        <Box>
-                           <CloudUploadIcon
-                              sx={{
-                                 color: 'red',
-                                 fontSize: '70px',
-                              }}
-                           />
-                        </Box>
-                        <Box>Drag amd Drop your File here</Box>
-                        <Box>Or</Box>
+                        {fileOpen ? (
+                           <Box className="select-file" mt={4}>
+                              <Box className="file-group-box">
+                                 <Box className="upload-img-box">
+                                    <UploadFileIcon className="upload-img-icon" />
+                                 </Box>
+                                 <Box className="file-info">
+                                    <Box>
+                                       <Box>{fileData?.name}</Box>
+                                       <Box>
+                                          {(fileData?.size / 1000000).toFixed(
+                                             2
+                                          )}{' '}
+                                          MB
+                                       </Box>
+                                    </Box>
+                                 </Box>
+                              </Box>
+                              <Box className="close-img-box">
+                                 <HighlightOffIcon
+                                    className="close-img-icon"
+                                    onClick={() => deleteFile()}
+                                 />
+                              </Box>
+                           </Box>
+                        ) : (
+                           <>
+                              <Box>
+                                 <CloudUploadIcon
+                                    sx={{
+                                       color: 'red',
+                                       fontSize: '70px',
+                                    }}
+                                 />
+                              </Box>
+                              <Box>Drag amd Drop your File here</Box>
+                              <Box>Or</Box>
+                           </>
+                        )}
+
                         <Box sx={{ display: 'flex' }} gap={1}>
                            <Box>
                               <input

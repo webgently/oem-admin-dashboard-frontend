@@ -91,6 +91,79 @@ p {
     width: 300px;
 }
 
+.request-status {
+    color: rgb(2 136 209);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.progress-status {
+    padding: 5px 10px;
+    border-radius: 8px;
+    background-color: rgb(255 214 157);
+    color: rgb(239 121 11);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.success-status {
+    padding: 5px 10px;
+    border-radius: 8px;
+    background-color: rgb(196 230 162);
+    color: rgb(46 125 78);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.select-file {
+    display: flex;
+    justify-content: space-between;
+    padding: 1vh 1vw;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    border-radius: 8px;
+    height: 8vh;
+}
+
+.file-group-box {
+    display: flex;
+    gap: 5px;
+}
+
+.file-info {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+
+.upload-img-icon {
+    font-size: 28px!important;
+    color: rgb(255 0 0);
+}
+
+.close-img-box {
+    display: flex;
+    align-items: center;
+}
+
+.close-img-icon {
+    color: rgb(255 0 0);
+    cursor: pointer;
+}
+
+.upload-img-box {
+    display: flex;
+    width: 50px;
+    padding: 10px;
+    background-color: rgb(242 188 188);
+
+    border-radius: 4px;
+}
+
+.term-check-box, .upload-btn-box {
+    padding-top: 0px!important;
+}
+
 @media only screen and (max-width: 900px) {
     .login-container {
         background-image: url("./assets/img/bg-login.png");
@@ -120,5 +193,3 @@ p {
         width: 250px!important;
     }
 }
-
-
