@@ -813,7 +813,7 @@ export default function AdminProfliesetting() {
                                        <Box>{fileData?.name}</Box>
                                        <Box>
                                           {(fileData?.size / 1000000).toFixed(
-                                             2
+                                             4
                                           )}{' '}
                                           MB
                                        </Box>

@@ -323,7 +323,7 @@ export default function Upload() {
                               <Box>
                                  <Box>{fileData?.name}</Box>
                                  <Box>
-                                    {(fileData?.size / 1000000).toFixed(2)} MB
+                                    {(fileData?.size / 1000000).toFixed(4)} MB
                                  </Box>
                               </Box>
                            </Box>

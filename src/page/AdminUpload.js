@@ -519,7 +519,7 @@ export default function AdminUpload() {
                                              <Box>
                                                 {(
                                                    fileData?.size / 1000000
-                                                ).toFixed(2)}{' '}
+                                                ).toFixed(4)}{' '}
                                                 MB
                                              </Box>
                                           </Box>
