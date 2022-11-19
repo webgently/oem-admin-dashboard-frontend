@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import toast from 'react-hot-toast'
 import bgLogin from '../assets/img/bg-login.png'
-import logo from '../assets/img/logo.jpg'
+import logo from '../assets/img/logo.png'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,6 +18,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
 const Login = () => {
    const account = useSelector((state) => state.account)
+   const navigate = useNavigate()
+   const dispatch = useDispatch()
    const [mail, setMail] = useState('')
    const [pass, setPass] = useState('')
    const [name, setName] = useState('')
@@ -33,9 +35,6 @@ const Login = () => {
    const [pageFlag, setPageFlag] = useState('signin')
    const [subcontinent, setSubcontinent] = useState('')
    const [vatNumber, setVatNumber] = useState('')
-
-   const navigate = useNavigate()
-   const dispatch = useDispatch()
 
    const handleChangeSubcontinent = () => {
       if (subcontinent === 'europe') {
@@ -167,7 +166,7 @@ const Login = () => {
 
    useEffect(() => {
       try {
-         if (account._id) {
+         if (account) {
             switch (account.permission) {
                case 'admin':
                   navigate('admin_dashboard')
@@ -188,14 +187,14 @@ const Login = () => {
    }, [account])
 
    return (
-      <Box sx={{ flexGrow: 1 }}>
-         <Toaster />
+      <Box>
          <Grid
+            className="login-container"
             container
             spacing={2}
             sx={{ display: 'flex', alignItems: 'center' }}
          >
-            <Grid item xs={0} md={6}>
+            <Grid item xs={12} md={6} lg={6} className="left-bg">
                <img
                   alt="backgraound"
                   src={bgLogin}
@@ -203,12 +202,7 @@ const Login = () => {
                />
             </Grid>
 
-            <Grid
-               item
-               xs={12}
-               md={6}
-               sx={{ height: '100%', overflowY: 'overlay' }}
-            >
+            <Grid className="right-bg" item xs={12} md={6} lg={6}>
                {pageFlag === 'signin' ? (
                   <Box
                      sx={{
@@ -219,18 +213,19 @@ const Login = () => {
                         flexDirection: 'column',
                         gap: '20px',
                      }}
+                     className="login-form"
                   >
-                     <Box sx={{ flexGrow: 1 }}>
+                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <img
                            alt="logo"
                            src={logo}
                            style={{ width: '200px', height: '90px' }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            type="email"
                            fullWidth
@@ -241,10 +236,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            type="password"
                            placeholder="Input the password"
@@ -255,7 +250,7 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <Button
                            variant="contained"
                            size="small"
@@ -265,11 +260,9 @@ const Login = () => {
                            Sign In
                         </Button>
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}></Box>
+                     <Box></Box>
                      <Box
                         sx={{
-                           flexGrow: 1,
-                           width: '25vw',
                            display: 'flex',
                         }}
                      >
@@ -301,11 +294,10 @@ const Login = () => {
                         height: '100vh',
                         overflowY: 'overlay',
                      }}
+                     className="register-form"
                   >
                      <Box
                         sx={{
-                           flexGrow: 1,
-                           width: '25vw',
                            display: 'flex',
                            justifyContent: 'center',
                         }}
@@ -316,10 +308,10 @@ const Login = () => {
                            style={{ width: '200px', height: '90px' }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            type="string"
                            fullWidth
@@ -330,10 +322,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            type="email"
                            fullWidth
@@ -344,10 +336,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            placeholder="Mobile Number*"
                            fullWidth
@@ -357,10 +349,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            placeholder="Address*"
@@ -370,10 +362,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            placeholder="City*"
@@ -383,10 +375,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            placeholder="Country*"
@@ -396,10 +388,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            placeholder="Zip Code*"
@@ -409,10 +401,7 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <FormControl
-                        variant="filled"
-                        sx={{ m: 1, minWidth: 120, width: '25vw' }}
-                     >
+                     <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
                         <InputLabel id="demo-simple-select-filled-label">
                            Sub Continent
                         </InputLabel>
@@ -426,10 +415,10 @@ const Login = () => {
                            <MenuItem value={'other'}>Other</MenuItem>
                         </Select>
                      </FormControl>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            type="string"
@@ -441,7 +430,7 @@ const Login = () => {
                            disabled={subcontinent === 'europe' ? false : true}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <Checkbox
                            {...label}
                            value={checkflag}
@@ -452,10 +441,10 @@ const Login = () => {
                         />{' '}
                         No VAT?
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            type="password"
@@ -466,10 +455,10 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <TextField
                            hiddenLabel
-                           id="filled-hidden-label-normal"
+                           id="outlined-basic"
                            variant="filled"
                            fullWidth
                            placeholder="Confirm Password*"
@@ -480,7 +469,7 @@ const Login = () => {
                            }}
                         />
                      </Box>
-                     <Box sx={{ flexGrow: 1, width: '25vw' }}>
+                     <Box>
                         <Button
                            variant="contained"
                            size="small"

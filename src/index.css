@@ -83,4 +83,42 @@ p {
     cursor: auto;
 }
 
+.login-form div {
+    width: 300px;
+}
+
+.register-form div {
+    width: 300px;
+}
+
+@media only screen and (max-width: 900px) {
+    .login-container {
+        background-image: url("./assets/img/bg-login.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        margin-top: 0!important;
+    }
+    .left-bg {
+        display: none!important;
+    }
+    .right-bg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .right-bg *{
+        color: white!important;
+    }
+}
+
+@media only screen and (max-width: 310px) {
+    .login-form div {
+        width: 250px!important;
+    }
+    .register-form div {
+        width: 250px!important;
+    }
+}
+
 
