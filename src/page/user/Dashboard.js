@@ -163,7 +163,14 @@ export default function Dashboard() {
    }, [account])
 
    return (
-      <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>
+      <Box
+         sx={{
+            flexGrow: 1,
+            p: 3,
+            bgcolor: 'rgb(229, 229, 229)',
+            overflowY: 'auto',
+         }}
+      >
          <Box sx={{ mt: '80px' }}>
             <Grid
                container
@@ -270,7 +277,7 @@ export default function Dashboard() {
                         spacing={{ xs: 2, md: 3 }}
                         columns={{ xs: 4, sm: 8, md: 12 }}
                      >
-                        <Grid item xs={6} sm={6} md={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                            <Box
                               sx={{
                                  display: 'flex',
@@ -315,7 +322,7 @@ export default function Dashboard() {
                               </Box>
                            </Box>
                         </Grid>
-                        <Grid item xs={6} sm={6} md={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                            <Box
                               sx={{
                                  display: 'flex',

@@ -34,7 +34,13 @@ export default function App() {
       const account = JSON.parse(localStorage.getItem('user'))
       if (account) dispatch(setAccountData(account))
       socket.on(account._id, async (e) => {
-         toast.success(e.msg)
+         toast.success(e.alertMsg)
+      })
+      socket.on('request' + account._id, async (e) => {
+         toast.success(e.alertMsg)
+      })
+      socket.on('answer' + account._id, async (e) => {
+         toast.success(e.alertMsg)
       })
       return () => {
          socket.off('connect')
