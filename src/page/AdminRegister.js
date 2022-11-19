@@ -22,7 +22,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import CheckIcon from '@mui/icons-material/Check'
 import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useConfirm } from 'material-ui-confirm'
 
@@ -586,7 +586,6 @@ export default function AdminRegister() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </Paper>
    )
 }

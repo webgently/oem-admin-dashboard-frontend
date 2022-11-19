@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import bgCar from '../../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
@@ -396,7 +396,6 @@ export default function Profile() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </>
    )
 }

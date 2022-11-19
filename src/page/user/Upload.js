@@ -15,7 +15,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import io from 'socket.io-client'
@@ -166,7 +166,7 @@ export default function Upload() {
             .post(`${process.env.REACT_APP_API_URL}uploadFile`, params)
             .then((result) => {
                if (result.data.status) {
-                  socket.emit('request', { to: 'request' + supportID })
+                  socket.emit('request', { to: supportID })
                   toast.success(result.data.data)
                   setUserName('')
                   setVehicleType('')
@@ -186,6 +186,7 @@ export default function Upload() {
                   setMessage('')
                   setTerm('')
                   setFileData({})
+                  navigate('/dashboard')
                } else {
                   toast.error(result.data.data)
                }
@@ -558,7 +559,6 @@ export default function Upload() {
                </Grid>
             </Grid>
          </Box>
-         <Toaster />
       </Box>
    )
 }

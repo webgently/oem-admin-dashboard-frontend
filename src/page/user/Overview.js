@@ -18,7 +18,7 @@ import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import SearchIcon from '@mui/icons-material/Search'
 import TablePagination from '@mui/material/TablePagination'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
 
@@ -404,7 +404,6 @@ export default function Overview() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </Box>
    )
 }

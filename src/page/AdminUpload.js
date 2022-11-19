@@ -22,11 +22,13 @@ import {
    TextField,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import axios from 'axios'
+import io from 'socket.io-client'
+import { useSelector } from 'react-redux'
 
 const columns = [
    { id: 'orderId', label: 'ID', minWidth: 50 },
@@ -53,8 +55,13 @@ const style = {
 }
 
 export default function AdminUpload() {
+   const socket = io(process.env.REACT_APP_BASE_URL)
+   const account = useSelector((state) => state.account)
    const [page, setPage] = useState(0)
+   const [myID, setMyID] = useState('')
    const [rowsPerPage, setRowsPerPage] = useState(10)
+   const [uploadBtnFlag, setUploadBtnFlag] = useState(true)
+   const [creditBtnFlag, setCreditBtnFlag] = useState(true)
    const [allData, setAllData] = useState([])
    const [oneData, setOneData] = useState({
       ECUBuild: '',
@@ -82,6 +89,8 @@ export default function AdminUpload() {
       vehicleEngine: '',
       vehicleSeries: '',
       vehicleType: '',
+      availableCredit: 0,
+      chargedCredit: 0,
    })
    const [status, setStatus] = useState('')
    const [note, setNote] = useState('')
@@ -89,65 +98,6 @@ export default function AdminUpload() {
    const [open, setOpen] = useState(false)
    const [fileData, setFileData] = useState({})
    const inputElement = useRef('fileInput')
-
-   const handleFileload = () => {
-      inputElement.current.click()
-   }
-
-   const getFile = async (e) => {
-      setFileData(e.target.files[0])
-   }
-
-   const upload = async () => {
-      if (!fileData.name) {
-         toast.error('Select the file')
-         return
-      }
-      if (!status) {
-         toast.error('Select the status')
-         return
-      }
-      if (!note) {
-         toast.error('Field the note')
-         return
-      }
-      if (credit <= 0) {
-         toast.error('Field the credit')
-         return
-      }
-
-      let params = new FormData()
-      const data = {
-         id: oneData._id,
-         userId: oneData.userId,
-         orderId: oneData.orderId,
-         status,
-         note,
-         credit,
-         date: getCustomDate(),
-      }
-      params.append('file', fileData)
-      params.append('data', JSON.stringify(data))
-      try {
-         await axios
-            .post(`${process.env.REACT_APP_API_URL}updateUpload`, params)
-            .then((result) => {
-               if (result.data.status) {
-                  toast.success(result.data.data)
-                  getRequests()
-                  setOpen(false)
-                  setFileData('')
-                  setStatus('')
-                  setNote('')
-                  setCredit(0)
-               } else {
-                  toast.error(result.data.data)
-               }
-            })
-      } catch (error) {
-         if (process.env.REACT_APP_MODE) console.log(error)
-      }
-   }
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -158,13 +108,109 @@ export default function AdminUpload() {
       setPage(0)
    }
 
-   const handleOpen = async (id) => {
+   const handleFileload = () => {
+      inputElement.current.click()
+   }
+
+   const getFile = async (e) => {
+      setFileData(e.target.files[0])
+   }
+
+   const upload = async () => {
+      if (!uploadBtnFlag)
+         if (!fileData.name) {
+            toast.error('Select the file')
+            return
+         }
+      if (!status) {
+         toast.error('Select the status')
+         return
+      }
+      if (!note) {
+         toast.error('Field the note')
+         return
+      }
+      if (!creditBtnFlag)
+         if (credit <= 0) {
+            toast.error('Field the credit')
+            return
+         }
+      try {
+         if (status !== 'completed') {
+            const data = {
+               id: oneData._id,
+               status,
+               note,
+            }
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
+                  data,
+               })
+               .then((result) => {
+                  if (result.data.status) {
+                     toast.success(result.data.data)
+                     getRequests()
+                     setOpen(false)
+                     setStatus('')
+                     setNote('')
+                     socket.emit('replyAboutRequest', {
+                        from: myID,
+                        to: oneData.userId,
+                     })
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } else {
+            let params = new FormData()
+            const data = {
+               id: oneData._id,
+               userId: oneData.userId,
+               orderId: oneData.orderId,
+               status,
+               note,
+               credit,
+               date: getCustomDate(),
+            }
+            params.append('file', fileData)
+            params.append('data', JSON.stringify(data))
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}updateUpload`, params)
+               .then((result) => {
+                  if (result.data.status) {
+                     toast.success(result.data.data)
+                     getRequests()
+                     setOpen(false)
+                     setFileData('')
+                     setStatus('')
+                     setNote('')
+                     setCredit(0)
+                     socket.emit('replyAboutRequest', {
+                        from: myID,
+                        to: oneData.userId,
+                     })
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         }
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   const getOneRequest = async (id) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getOneRequest`, { id })
             .then((result) => {
                if (result.data.status) {
-                  setOneData(result.data.data[0])
+                  let data = result.data.data
+                  data.availableCredit = result.data.available
+                  data.chargedCredit = result.data.charged
+                  setOneData(data)
+                  if (result.data.charged > 0) setCredit(result.data.charged)
+                  setNote(data.note)
                   setOpen(true)
                } else {
                   toast.error(result.data.data)
@@ -193,13 +239,17 @@ export default function AdminUpload() {
       }
    }
 
-   const changeStatus = async (id) => {
+   const changeStatus = async (id, userId) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_URL}changeStatus`, { id })
             .then((result) => {
                if (result.data.status) {
                   toast.success(result.data.data)
+                  socket.emit('replyAboutRequest', {
+                     from: myID,
+                     to: userId,
+                  })
                   getRequests()
                } else {
                   toast.error(result.data.data)
@@ -240,6 +290,22 @@ export default function AdminUpload() {
    useEffect(() => {
       getRequests()
    }, [])
+
+   useEffect(() => {
+      if (status === 'completed') {
+         setUploadBtnFlag(false)
+         setCreditBtnFlag(false)
+      } else {
+         setUploadBtnFlag(true)
+         setCreditBtnFlag(true)
+      }
+   }, [status])
+
+   useEffect(() => {
+      if (account._id) {
+         setMyID(account._id)
+      }
+   }, [account])
 
    return (
       <Paper
@@ -314,7 +380,10 @@ export default function AdminUpload() {
                                              {row.status === 'requested' ? (
                                                 <IconButton
                                                    onClick={() =>
-                                                      changeStatus(row._id)
+                                                      changeStatus(
+                                                         row._id,
+                                                         row.userId
+                                                      )
                                                    }
                                                    color="primary"
                                                    aria-label="add to shopping cart"
@@ -326,7 +395,7 @@ export default function AdminUpload() {
                                              )}
                                              <IconButton
                                                 onClick={() =>
-                                                   handleOpen(row._id)
+                                                   getOneRequest(row._id)
                                                 }
                                                 color="primary"
                                                 aria-label="add to shopping cart"
@@ -448,14 +517,17 @@ export default function AdminUpload() {
                                        borderRadius: '12px',
                                        color: 'red',
                                     }}
+                                    disabled={uploadBtnFlag}
                                     onClick={handleFileload}
                                  >
                                     Browse File
                                  </Button>
                               </Box>
                            </Box>
-                           <Box>Available Credits: 1000000</Box>
-                           <Box>Charged Credits: 0</Box>
+                           <Box>
+                              Available Credits: {oneData.availableCredit}
+                           </Box>
+                           <Box>Charged Credits: {oneData.chargedCredit}</Box>
                            <Box>
                               Update Status
                               <FormControl fullWidth size="small">
@@ -478,7 +550,11 @@ export default function AdminUpload() {
                               Note
                               <TextField
                                  id="outlined-basic"
-                                 placeholder="X-node : Tar 100 span till"
+                                 placeholder={
+                                    oneData.chargedCredit > 0
+                                       ? `X-note : ${oneData.note}`
+                                       : 'Add a short note'
+                                 }
                                  variant="outlined"
                                  size="small"
                                  fullWidth
@@ -491,10 +567,10 @@ export default function AdminUpload() {
                               <TextField
                                  id="outlined-basic"
                                  type="number"
-                                 placeholder=""
                                  variant="outlined"
                                  size="small"
                                  fullWidth
+                                 disabled={creditBtnFlag}
                                  value={credit}
                                  onChange={(e) => setCredit(e.target.value)}
                               />
@@ -836,7 +912,6 @@ export default function AdminUpload() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </Paper>
    )
 }

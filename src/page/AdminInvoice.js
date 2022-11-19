@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow'
 import Avatar from '@mui/material/Avatar'
 import { Box, ButtonGroup, Divider, IconButton, Modal } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import DownloadIcon from '@mui/icons-material/Download'
 import axios from 'axios'
@@ -463,7 +463,6 @@ export default function AdminInvoice() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </Paper>
    )
 }

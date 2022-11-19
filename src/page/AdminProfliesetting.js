@@ -23,7 +23,7 @@ import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
 import TablePagination from '@mui/material/TablePagination'
 import { ButtonGroup } from '@mui/material'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import Key from '../assets/img/changepassword.png'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
@@ -1187,7 +1187,6 @@ export default function AdminProfliesetting() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </>
    )
 }

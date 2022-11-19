@@ -19,7 +19,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import axios from 'axios'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
@@ -580,7 +580,6 @@ export default function BuyCredit() {
                </TableContainer>
             </Grid>
          </Grid>
-         <Toaster />
       </Box>
    )
 }

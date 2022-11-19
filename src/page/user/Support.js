@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper'
 import Fab from '@mui/material/Fab'
 import SendIcon from '@mui/icons-material/Send'
 import { experimentalStyled as styled } from '@mui/material/styles'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import TextField from '@mui/material/TextField'
 import axios from 'axios'
 import io from 'socket.io-client'
@@ -236,7 +236,6 @@ export default function Support() {
                </Grid>
             </Grid>
          </Box>
-         <Toaster />
       </Box>
    )
 }

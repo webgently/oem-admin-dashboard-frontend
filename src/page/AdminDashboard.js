@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 import { IconButton } from '@mui/material'
 import axios from 'axios'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import io from 'socket.io-client'
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
 import CloudUpload from '@mui/icons-material/CloudUpload'
@@ -228,7 +228,6 @@ export default function AdminDashboard() {
                </Grid>
             </Grid>
          </Box>
-         <Toaster />
       </Box>
    )
 }

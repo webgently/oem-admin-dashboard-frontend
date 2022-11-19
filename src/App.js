@@ -24,7 +24,7 @@ import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 import AdminSupport from './page/AdminSupport'
 import { setAccountData } from './features/account/account'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
 
 export default function App() {
@@ -34,10 +34,7 @@ export default function App() {
       const account = JSON.parse(localStorage.getItem('user'))
       if (account) dispatch(setAccountData(account))
       socket.on(account._id, async (e) => {
-         toast.success('New Message Received')
-      })
-      socket.on('request' + account._id, async () => {
-         toast.success('New Request Received')
+         toast.success(e.msg)
       })
       return () => {
          socket.off('connect')
@@ -71,6 +68,7 @@ export default function App() {
                <Route path="/admin_support" element={<AdminSupport />} />
             </Route>
          </Routes>
+         <Toaster />
       </Router>
    )
 }

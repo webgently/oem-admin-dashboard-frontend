@@ -15,7 +15,7 @@ import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
 import Badge from '@mui/material/Badge'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import io from 'socket.io-client'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -145,8 +145,7 @@ export default function AdminSupport() {
       if (minute < 10) minute = '0' + minute
       if (second < 10) second = '0' + second
 
-      const result = `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
-      return result
+      return `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
    }
 
    const getChattingHistory = async (id) => {
@@ -188,11 +187,11 @@ export default function AdminSupport() {
    }, [allUserList, unreadCount])
 
    useEffect(() => {
-      if (selectedIndex > 0)
+      if (selectedIndex !== 0)
          setTimeout(() => {
             scrollToBottom()
          }, 100)
-   }, [allMsg])
+   }, [allMsg, selectedIndex])
 
    return (
       <Box
@@ -355,7 +354,6 @@ export default function AdminSupport() {
                </Grid>
             </Grid>
          </Box>
-         <Toaster />
       </Box>
    )
 }

@@ -19,7 +19,7 @@ import {
    TextField,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -420,7 +420,6 @@ export default function AdminPricelist() {
                </Box>
             </Box>
          </Modal>
-         <Toaster />
       </Paper>
    )
 }
