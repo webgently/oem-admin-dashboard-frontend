@@ -33,10 +33,10 @@ import { useSelector } from 'react-redux'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 
 const columns = [
-   { id: 'orderId', label: 'ID', minWidth: 50 },
-   { id: 'client', label: 'Client', minWidth: 50 },
-   { id: 'vehicleType', label: 'Vehicle Type', minWidth: 100 },
-   { id: 'buildYear', label: 'Build Year', minWidth: 150 },
+   { id: 'orderId', label: 'ID', minWidth: 100 },
+   { id: 'client', label: 'Client', minWidth: 100 },
+   { id: 'vehicleType', label: 'Vehicle Type', minWidth: 150 },
+   { id: 'buildYear', label: 'Build Year', minWidth: 100 },
    { id: 'HP', label: 'HP', minWidth: 100 },
    { id: 'status', label: 'Status', minWidth: 50 },
    { id: 'tuningType', label: 'Tuning Type', minWidth: 100 },
@@ -371,13 +371,9 @@ export default function AdminUpload() {
                               {columns.map((column) => {
                                  let value = ''
                                  if (column.id === 'buildYear') {
-                                    const d = new Date(row[column.id])
-                                    let year = d.getFullYear()
-                                    let month = d.getMonth() + 1
-                                    let day = d.getDate()
-                                    if (month < 10) month = '0' + month
-                                    if (day < 10) day = '0' + day
-                                    value = `${day}-${month}-${year}`
+                                    value = new Date(
+                                       oneData?.buildYear
+                                    ).getFullYear()
                                  } else {
                                     value = row[column.id]
                                  }
@@ -745,7 +741,9 @@ export default function AdminUpload() {
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          {oneData?.buildYear}
+                                          {new Date(
+                                             oneData?.buildYear
+                                          ).getFullYear()}
                                        </Box>
                                     </Grid>
                                  </Grid>

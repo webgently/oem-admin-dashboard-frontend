@@ -16,7 +16,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAccountData } from '../../features/account/account'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -46,7 +47,7 @@ const ServiceStyle = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
-   height: '50vh',
+   height: '92vh',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -56,45 +57,82 @@ const ServiceStyle = {
 
 export default function Profile() {
    const account = useSelector((state) => state.account)
+   const dispatch = useDispatch()
    const [userData, setUserData] = useState([])
    const [userName, setUserName] = useState('')
    const [userID, setUserID] = useState('')
+   const [name, setName] = useState('')
+   const [email, setEmail] = useState('')
    const [contact, setContact] = useState('')
-   const [address, setAddress] = useState('')
+   const [vatNumber, setVatNumber] = useState('')
+   const [region, setRegion] = useState('')
+   const [country, setCountry] = useState('')
    const [city, setCity] = useState('')
+   const [address, setAddress] = useState('')
    const [open, setOpen] = useState(false)
    const handleOpen1 = () => {
-      setContact(userData[1].value)
-      setAddress(userData[6].value)
-      setCity(userData[5].value)
+      setName(account.name)
+      setEmail(account.email)
+      setContact(account.phone)
+      setVatNumber(account.vatNumber)
+      setRegion(account.subcontinent)
+      setCountry(account.country)
+      setCity(account.city)
+      setAddress(account.address)
       setOpen(true)
    }
    const handleClose = () => setOpen(false)
    const saveProfile = async () => {
-      if (!contact) {
-         toast.error('Input contact')
+      if (!name) {
+         toast.error('Input the name')
          return
       }
-      if (!address) {
-         toast.error('Input address')
+      if (!email) {
+         toast.error('Input the email')
+         return
+      }
+      if (!contact) {
+         toast.error('Input the contact')
+         return
+      }
+      if (!vatNumber) {
+         toast.error('Input the VAT Number')
+         return
+      }
+      if (!region) {
+         toast.error('Input the region')
+         return
+      }
+      if (!country) {
+         toast.error('Input the country')
          return
       }
       if (!city) {
-         toast.error('Input city')
+         toast.error('Input the city')
+         return
+      }
+      if (!address) {
+         toast.error('Input the address')
          return
       }
       try {
          await axios
             .post(`${process.env.REACT_APP_API_URL}updateProfile`, {
                _id: userID,
+               name,
+               email,
                contact,
-               address,
+               vatNumber,
+               region,
+               country,
                city,
+               address,
             })
             .then((result) => {
                if (result.data.status) {
                   const data = result.data.result
                   delete data._v
+                  setName(data.name)
                   setUserData([
                      { label: 'Email:', value: data.email },
                      { label: 'Contact:', value: data.phone },
@@ -103,11 +141,14 @@ export default function Profile() {
                         label: 'Account Status:',
                         value: data.status,
                      },
-                     { label: 'Region:', value: data.country },
+                     { label: 'Region:', value: data.subcontinent },
+                     { label: 'Country:', value: data.country },
                      { label: 'City:', value: data.city },
                      { label: 'Address:', value: data.address },
                   ])
                   localStorage.setItem('user', JSON.stringify(data))
+                  const account = JSON.parse(localStorage.getItem('user'))
+                  dispatch(setAccountData(account))
                   setOpen(false)
                   toast.success('Details Updated Successfully')
                }
@@ -121,19 +162,20 @@ export default function Profile() {
       if (account._id) {
          setUserName(account.name)
          setUserID(account._id)
-         setUserData([
-            { label: 'Email:', value: account.email },
-            { label: 'Contact:', value: account.phone },
-            { label: 'VAT Number:', value: account.vatNumber },
-            {
-               label: 'Account Status:',
-               value: account.status,
-            },
-            { label: 'Region:', value: account.country },
-            { label: 'City:', value: account.city },
-            { label: 'Address:', value: account.address },
-         ])
       }
+      setUserData([
+         { label: 'Email:', value: account.email },
+         { label: 'Contact:', value: account.phone },
+         { label: 'VAT Number:', value: account.vatNumber },
+         {
+            label: 'Account Status:',
+            value: account.status,
+         },
+         { label: 'Region:', value: account.subcontinent },
+         { label: 'Country:', value: account.country },
+         { label: 'City:', value: account.city },
+         { label: 'Address:', value: account.address },
+      ])
    }, [account])
 
    return (
@@ -341,6 +383,28 @@ export default function Profile() {
                   <Box sx={{ mt: '30px' }}>
                      <TextField
                         id="outlined-basic"
+                        label="Name"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                     />
+                  </Box>
+                  <Box sx={{ mt: '30px' }}>
+                     <TextField
+                        id="outlined-basic"
+                        label="Email"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                     />
+                  </Box>
+                  <Box sx={{ mt: '30px' }}>
+                     <TextField
+                        id="outlined-basic"
                         label="Contact"
                         variant="outlined"
                         size="small"
@@ -352,12 +416,34 @@ export default function Profile() {
                   <Box sx={{ mt: '30px' }}>
                      <TextField
                         id="outlined-basic"
-                        label="Address"
+                        label="VAT Number"
                         variant="outlined"
                         size="small"
                         fullWidth
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        value={vatNumber}
+                        onChange={(e) => setVatNumber(e.target.value)}
+                     />
+                  </Box>
+                  <Box sx={{ mt: '30px' }}>
+                     <TextField
+                        id="outlined-basic"
+                        label="Region"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                     />
+                  </Box>
+                  <Box sx={{ mt: '30px' }}>
+                     <TextField
+                        id="outlined-basic"
+                        label="Country"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
                      />
                   </Box>
                   <Box sx={{ mt: '30px' }}>
@@ -369,6 +455,17 @@ export default function Profile() {
                         fullWidth
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
+                     />
+                  </Box>
+                  <Box sx={{ mt: '30px' }}>
+                     <TextField
+                        id="outlined-basic"
+                        label="Address"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                      />
                   </Box>
 
