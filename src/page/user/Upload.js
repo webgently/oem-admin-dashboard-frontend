@@ -34,8 +34,8 @@ export default function Upload() {
    const [vehicleSeries, setVehicleSeries] = useState('')
    const [vehicleEngine, setVehicleEngine] = useState('')
 
-   const [HP, setHP] = useState('')
-   const [KW, setKW] = useState('')
+   const [HP, setHP] = useState(0)
+   const [KW, setKW] = useState(0)
    const [buildYear, setBuildYear] = useState(new Date())
    const [transmission, setTransmission] = useState('')
 
@@ -231,6 +231,10 @@ export default function Upload() {
    }
 
    useEffect(() => {
+      setKW(HP * 0.7457)
+   }, [HP])
+
+   useEffect(() => {
       if (fileData?.name) setFileOpen(true)
       else setFileOpen(false)
    }, [fileData])
@@ -417,7 +421,7 @@ export default function Upload() {
                         size="small"
                         type="number"
                         value={KW}
-                        onChange={(e) => setKW(e.target.value)}
+                        readOnly
                      />
                   </FormControl>
                </Grid>

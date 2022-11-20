@@ -155,10 +155,11 @@ p {
   }
   &:hover {
     cursor: pointer;
-    background-color: rgb(189, 189, 189, 0.9);
+    background-color: rgb(0, 0, 0, 0.5);
     .edit-btn {
       display: block;
       position: absolute;
+      color: black;
     }
   }
 }

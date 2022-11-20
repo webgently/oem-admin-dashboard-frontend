@@ -190,7 +190,11 @@ export default function AdminProfliesetting() {
             .post(`${process.env.REACT_APP_API_URL}getAvatar`, { userId })
             .then((result) => {
                if (result.data.status) {
-                  setAvatar(process.env.REACT_APP_BASE_URL + result.data.data)
+                  if (result.data.data === 'logo/') setAvatar('')
+                  else
+                     setAvatar(
+                        process.env.REACT_APP_BASE_URL + result.data.data
+                     )
                }
             })
       } catch (error) {
