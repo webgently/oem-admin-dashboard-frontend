@@ -29,6 +29,7 @@
         "react-scripts": "5.0.1",
         "react-stripe-checkout": "^2.6.3",
         "react-to-pdf": "^0.0.14",
+        "sass": "^1.56.1",
         "socket.io-client": "^4.5.3",
         "web-vitals": "^2.1.4"
     },

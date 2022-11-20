@@ -530,8 +530,8 @@ export default function Upload() {
                         value={ECUBuild}
                         onChange={(e) => setECUBuild(e.target.value)}
                      >
-                        <MenuItem value="Gems">BOSCH</MenuItem>
-                        <MenuItem value="Hella">MSB100960</MenuItem>
+                        <MenuItem value="BOSCH">BOSCH</MenuItem>
+                        <MenuItem value="MSB100960">MSB100960</MenuItem>
                      </Select>
                   </FormControl>
                </Grid>

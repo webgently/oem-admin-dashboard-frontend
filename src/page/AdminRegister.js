@@ -267,7 +267,16 @@ export default function AdminRegister() {
                               key={ind}
                            >
                               {columns.map((column, k) => {
-                                 const value = row[column.id]
+                                 let value = row[column.id]
+                                 if (column.id === 'date') {
+                                    const d = new Date(row[column.id])
+                                    let year = d.getFullYear()
+                                    let month = d.getMonth() + 1
+                                    let day = d.getDate()
+                                    if (month < 10) month = '0' + month
+                                    if (day < 10) day = '0' + day
+                                    value = `${day}-${month}-${year}`
+                                 }
                                  return (
                                     <TableCell key={k}>
                                        {column.id === 'id' ? (
@@ -326,12 +335,6 @@ export default function AdminRegister() {
                                           value.slice(0, 5) +
                                           '...' +
                                           value.slice(-5)
-                                       ) : column.id === 'date' ? (
-                                          `${Math.floor(
-                                             (new Date().valueOf() - value) /
-                                                1000 /
-                                                60
-                                          )} mins ago`
                                        ) : (
                                           value
                                        )}

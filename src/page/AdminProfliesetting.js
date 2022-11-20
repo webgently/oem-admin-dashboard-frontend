@@ -21,6 +21,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
+import PersonIcon from '@mui/icons-material/Person'
 import TablePagination from '@mui/material/TablePagination'
 import { ButtonGroup } from '@mui/material'
 import toast from 'react-hot-toast'
@@ -80,7 +81,21 @@ const ServiceStyle1 = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
-   height: '92vh',
+   height: '93vh',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+
+const ServiceStyle4 = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '380px',
+   height: '330px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -99,6 +114,88 @@ export default function AdminProfliesetting() {
    const handleChangeRowsPerPage = (event) => {
       setRowsPerPage(+event.target.value)
       setPage(0)
+   }
+   // Avatar setting
+   const [avatar, setAvatar] = useState('')
+   const [open4, setOpen4] = useState(false)
+   const [avatarFile, setAvatarFile] = useState({})
+   const [avatarPreview, setAvatarPreview] = useState('')
+   const avatarInputElement = useRef('fileInput')
+   const changeAvatar = async () => {
+      setOpen4(true)
+      setAvatarPreview(avatar)
+   }
+   const handleClose4 = async () => {
+      setOpen4(false)
+   }
+   const avatarHandleFileload = () => {
+      avatarInputElement.current.click()
+   }
+   const avatarGetFile = async (e) => {
+      const file = e.target.files[0]
+      if (
+         file?.type === 'image/jpeg' ||
+         file?.type === 'image/png' ||
+         file?.type === 'image/svg' ||
+         file?.type === 'image/gif' ||
+         file?.type === 'image/tiff'
+      ) {
+         setAvatarFile(e.target.files[0])
+         setAvatarPreview(URL.createObjectURL(e.target.files[0]))
+      } else {
+         setAvatarFile({})
+         setAvatarPreview('')
+      }
+   }
+   const avatarHandleFileUpload = async () => {
+      let params = new FormData()
+      params.append('file', avatarFile)
+      params.append('userId', JSON.stringify(account._id))
+      if (!avatarFile.name) {
+         toast.error('Please select an image')
+      } else {
+         if (
+            avatarFile.type === 'image/jpeg' ||
+            avatarFile.type === 'image/png' ||
+            avatarFile.type === 'image/svg' ||
+            avatarFile.type === 'image/gif' ||
+            avatarFile.type === 'image/tiff'
+         ) {
+            try {
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}uploadAvatar`, params)
+                  .then((result) => {
+                     if (result.data.status) {
+                        setAvatarFile({})
+                        setAvatar(
+                           process.env.REACT_APP_BASE_URL + result.data.data
+                        )
+                        toast.success('Image Uploaded Successfully')
+                        setOpen4(false)
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
+            } catch (error) {
+               if (process.env.REACT_APP_MODE) console.log(error)
+            }
+         } else {
+            toast.error('This isn`t an image')
+         }
+      }
+   }
+   const getAvatar = async (userId) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAvatar`, { userId })
+            .then((result) => {
+               if (result.data.status) {
+                  setAvatar(process.env.REACT_APP_BASE_URL + result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    // profile setting
    const [userData, setUserData] = useState([])
@@ -201,7 +298,6 @@ export default function AdminProfliesetting() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
-
    // Store Timings
    const [open3, setOpen3] = useState(false)
    const [dailyTable, setDailyTable] = useState([])
@@ -476,6 +572,7 @@ export default function AdminProfliesetting() {
       if (account._id) {
          setUserName(account.name)
          setUserID(account._id)
+         getAvatar(account._id)
       }
       setUserData([
          { label: 'Email:', value: account.email },
@@ -560,8 +657,21 @@ export default function AdminProfliesetting() {
                                     width: '120px',
                                     height: '120px',
                                  }}
+                                 className="user-avata"
+                                 onClick={changeAvatar}
                               >
-                                 {userName}
+                                 <IconButton className="edit-btn">
+                                    <EditIcon />
+                                 </IconButton>
+                                 {avatar === '' ? (
+                                    <PersonIcon style={{ fontSize: '80px' }} />
+                                 ) : (
+                                    <img
+                                       src={avatar}
+                                       alt="Avatar"
+                                       width="120px"
+                                    />
+                                 )}
                               </Avatar>
                               <Box
                                  sx={{
@@ -841,7 +951,7 @@ export default function AdminProfliesetting() {
                      item
                      xs={12}
                      sm={12}
-                     md={4}
+                     md={6}
                      sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -940,7 +1050,7 @@ export default function AdminProfliesetting() {
                      item
                      xs={12}
                      sm={12}
-                     md={8}
+                     md={6}
                      sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -1184,6 +1294,97 @@ export default function AdminProfliesetting() {
                         >
                            Update Profile
                         </Button>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Modal>
+
+         <Modal
+            open={open4}
+            onClose={handleClose4}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle4}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Avatar</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose4()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Avatar
+                        sx={{
+                           width: '140px',
+                           height: '140px',
+                        }}
+                     >
+                        {avatarPreview === '' ? (
+                           <PersonIcon style={{ fontSize: '100px' }} />
+                        ) : (
+                           <img
+                              src={avatarPreview}
+                              alt="Avatar"
+                              width="140px"
+                           />
+                        )}
+                     </Avatar>
+                  </Box>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
+                        <Box>
+                           <input
+                              ref={avatarInputElement}
+                              type="file"
+                              style={{ display: 'none' }}
+                              onChange={(e) => avatarGetFile(e)}
+                           />
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileload}
+                           >
+                              Browse File
+                           </Button>
+                        </Box>
+                        <Box>
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileUpload}
+                           >
+                              Upload Avatar
+                           </Button>
+                        </Box>
                      </Box>
                   </Box>
                </Box>

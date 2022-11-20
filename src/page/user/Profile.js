@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import bgCar from '../../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
+import PersonIcon from '@mui/icons-material/Person'
 import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
@@ -41,13 +42,27 @@ const Item1 = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary,
 }))
 
-const ServiceStyle = {
+const ServiceStyle1 = {
    position: 'absolute',
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
    height: '92vh',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+
+const ServiceStyle2 = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '380px',
+   height: '330px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -69,7 +84,94 @@ export default function Profile() {
    const [country, setCountry] = useState('')
    const [city, setCity] = useState('')
    const [address, setAddress] = useState('')
-   const [open, setOpen] = useState(false)
+   const [open1, setOpen1] = useState(false)
+   // Avatar setting
+   const [avatar, setAvatar] = useState('')
+   const [open2, setOpen2] = useState(false)
+   const [avatarFile, setAvatarFile] = useState({})
+   const [avatarPreview, setAvatarPreview] = useState('')
+   const avatarInputElement = useRef('fileInput')
+   const changeAvatar = async () => {
+      setOpen2(true)
+      setAvatarPreview(avatar)
+   }
+   const handleClose2 = async () => {
+      setOpen2(false)
+   }
+   const avatarHandleFileload = () => {
+      avatarInputElement.current.click()
+   }
+   const avatarGetFile = async (e) => {
+      const file = e.target.files[0]
+      if (
+         file?.type === 'image/jpeg' ||
+         file?.type === 'image/png' ||
+         file?.type === 'image/svg' ||
+         file?.type === 'image/gif' ||
+         file?.type === 'image/tiff'
+      ) {
+         setAvatarFile(e.target.files[0])
+         setAvatarPreview(URL.createObjectURL(e.target.files[0]))
+      } else {
+         setAvatarFile({})
+         setAvatarPreview('')
+      }
+   }
+   const avatarHandleFileUpload = async () => {
+      let params = new FormData()
+      params.append('file', avatarFile)
+      params.append('userId', JSON.stringify(account._id))
+      if (!avatarFile.name) {
+         toast.error('Please select an image')
+      } else {
+         if (
+            avatarFile.type === 'image/jpeg' ||
+            avatarFile.type === 'image/png' ||
+            avatarFile.type === 'image/svg' ||
+            avatarFile.type === 'image/gif' ||
+            avatarFile.type === 'image/tiff'
+         ) {
+            try {
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}uploadAvatar`, params)
+                  .then((result) => {
+                     if (result.data.status) {
+                        setAvatarFile({})
+                        setAvatar(
+                           process.env.REACT_APP_BASE_URL + result.data.data
+                        )
+                        toast.success('Image Uploaded Successfully')
+                        setOpen2(false)
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
+            } catch (error) {
+               if (process.env.REACT_APP_MODE) console.log(error)
+            }
+         } else {
+            toast.error('This isn`t an image')
+         }
+      }
+   }
+   const getAvatar = async (userId) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAvatar`, { userId })
+            .then((result) => {
+               if (result.data.status) {
+                  if (result.data.data === 'logo/') setAvatar('')
+                  else
+                     setAvatar(
+                        process.env.REACT_APP_BASE_URL + result.data.data
+                     )
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
    const handleOpen1 = () => {
       setName(account.name)
       setEmail(account.email)
@@ -79,9 +181,9 @@ export default function Profile() {
       setCountry(account.country)
       setCity(account.city)
       setAddress(account.address)
-      setOpen(true)
+      setOpen1(true)
    }
-   const handleClose = () => setOpen(false)
+   const handleClose1 = () => setOpen1(false)
    const saveProfile = async () => {
       if (!name) {
          toast.error('Input the name')
@@ -149,7 +251,7 @@ export default function Profile() {
                   localStorage.setItem('user', JSON.stringify(data))
                   const account = JSON.parse(localStorage.getItem('user'))
                   dispatch(setAccountData(account))
-                  setOpen(false)
+                  setOpen1(false)
                   toast.success('Details Updated Successfully')
                }
             })
@@ -162,6 +264,7 @@ export default function Profile() {
       if (account._id) {
          setUserName(account.name)
          setUserID(account._id)
+         getAvatar(account._id)
       }
       setUserData([
          { label: 'Email:', value: account.email },
@@ -222,8 +325,21 @@ export default function Profile() {
                                     width: '120px',
                                     height: '120px',
                                  }}
+                                 className="user-avata"
+                                 onClick={changeAvatar}
                               >
-                                 {userName}
+                                 <IconButton className="edit-btn">
+                                    <EditIcon />
+                                 </IconButton>
+                                 {avatar === '' ? (
+                                    <PersonIcon style={{ fontSize: '80px' }} />
+                                 ) : (
+                                    <img
+                                       src={avatar}
+                                       alt="Avatar"
+                                       width="120px"
+                                    />
+                                 )}
                               </Avatar>
                               <Box
                                  sx={{
@@ -350,12 +466,12 @@ export default function Profile() {
             </Box>
          </Box>
          <Modal
-            open={open}
-            onClose={handleClose}
+            open={open1}
+            onClose={handleClose1}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
          >
-            <Box sx={ServiceStyle}>
+            <Box sx={ServiceStyle1}>
                <Box
                   sx={{
                      px: 3,
@@ -372,7 +488,7 @@ export default function Profile() {
                   <Box>
                      <IconButton
                         onClick={() => {
-                           handleClose()
+                           handleClose1()
                         }}
                      >
                         <CloseIcon sx={{ color: 'white' }} />
@@ -476,7 +592,7 @@ export default function Profile() {
                            size="small"
                            variant="contained"
                            onClick={() => {
-                              handleClose()
+                              handleClose1()
                            }}
                         >
                            Close
@@ -488,6 +604,96 @@ export default function Profile() {
                         >
                            Update Profile
                         </Button>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Modal>
+         <Modal
+            open={open2}
+            onClose={handleClose2}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle2}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Avatar</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose2()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Avatar
+                        sx={{
+                           width: '140px',
+                           height: '140px',
+                        }}
+                     >
+                        {avatarPreview === '' ? (
+                           <PersonIcon style={{ fontSize: '100px' }} />
+                        ) : (
+                           <img
+                              src={avatarPreview}
+                              alt="Avatar"
+                              width="140px"
+                           />
+                        )}
+                     </Avatar>
+                  </Box>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
+                        <Box>
+                           <input
+                              ref={avatarInputElement}
+                              type="file"
+                              style={{ display: 'none' }}
+                              onChange={(e) => avatarGetFile(e)}
+                           />
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileload}
+                           >
+                              Browse File
+                           </Button>
+                        </Box>
+                        <Box>
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileUpload}
+                           >
+                              Upload Avatar
+                           </Button>
+                        </Box>
                      </Box>
                   </Box>
                </Box>

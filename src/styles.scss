@@ -1,0 +1,194 @@
+.btn_red {
+  background: red !important;
+}
+
+::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+  width: 6px;
+  height: 6px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background-color: gray;
+  border: 2px solid gray;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-mulish {
+  font-family: 'Mulish', sans-serif;
+}
+
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+p {
+  font-family: 'Mulish', sans-serif;
+}
+
+.shaking-animation {
+  animation: horizontalShake infinite 1.5s linear!important;
+}
+
+@keyframes horizontalShake {
+  3%, 12%, 21%, 30%, 39%, 48%, 57%, 65%, 74%, 83%, 92% { transform: translateX(5px) }
+  6%, 15%, 24%, 33%, 42%, 51%, 60%, 68%, 77%, 86%, 95% { transform: translateX(3px) }
+  9%, 18%, 27%, 36%, 45%, 54%, 63%, 71%, 80%, 89%, 98% { transform: translateX(-5px) }
+}
+
+.btn-primary {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-disable {
+  background-color: gray;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px 4px;
+  font-size: 16px;
+  cursor: auto;
+}
+
+.login-form div {
+  width: 300px;
+}
+
+.register-form div {
+  width: 300px;
+}
+
+.request-status {
+  color: rgb(2 136 209);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.progress-status {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: rgb(255 214 157);
+  color: rgb(239 121 11);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.success-status {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: rgb(196 230 162);
+  color: rgb(46 125 78);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.select-file {
+  display: flex;
+  justify-content: space-between;
+  padding: 1vh 1vw;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  border-radius: 8px;
+  height: 8vh;
+}
+
+.file-group-box {
+  display: flex;
+  gap: 5px;
+}
+
+.file-info {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.upload-img-icon {
+  font-size: 28px!important;
+  color: rgb(255 0 0);
+}
+
+.close-img-box {
+  display: flex;
+  align-items: center;
+}
+
+.close-img-icon {
+  color: rgb(255 0 0);
+  cursor: pointer;
+}
+
+.upload-img-box {
+  display: flex;
+  width: 50px;
+  padding: 10px;
+  background-color: rgb(242 188 188);
+  border-radius: 4px;
+}
+
+.term-check-box, .upload-btn-box {
+  padding-top: 0px!important;
+}
+
+.user-avata {
+  position: relative;
+  .edit-btn{
+    display: none;
+  }
+  &:hover {
+    cursor: pointer;
+    background-color: rgb(189, 189, 189, 0.9);
+    .edit-btn {
+      display: block;
+      position: absolute;
+    }
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .login-container {
+    background-image: url("./assets/img/bg-login.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    margin-top: 0!important;
+  }
+  .left-bg {
+    display: none!important;
+  }
+  .right-bg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .right-bg *{
+    color: white!important;
+  }
+}
+
+@media only screen and (max-width: 310px) {
+  .login-form div {
+    width: 250px!important;
+  }
+  .register-form div {
+    width: 250px!important;
+  }
+}
