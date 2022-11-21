@@ -77,6 +77,15 @@ p {
   width: 300px;
 }
 
+.cancel-status {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: rgb(219 158 167);
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .request-status {
   color: rgb(2 136 209);
   font-weight: bold;

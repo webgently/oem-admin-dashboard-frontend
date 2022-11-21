@@ -19,6 +19,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setAccountData } from '../../features/account/account'
+import Key from '../../assets/img/changepassword.png'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -171,7 +172,6 @@ export default function Profile() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
-
    const handleOpen1 = () => {
       setName(account.name)
       setEmail(account.email)
@@ -253,6 +253,53 @@ export default function Profile() {
                   dispatch(setAccountData(account))
                   setOpen1(false)
                   toast.success('Details Updated Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   // change password
+   const [oldPassword, setOldPassword] = useState('')
+   const [newPassword, setNewPassword] = useState('')
+   const [confirmPassword, setConfirmPassword] = useState('')
+   const changePassword = async () => {
+      if (!oldPassword) {
+         toast.error('Input Old Password')
+         return
+      }
+      if (!newPassword) {
+         toast.error('Input New Password')
+         return
+      }
+      if (!confirmPassword) {
+         toast.error('Input Confirm Password')
+         return
+      }
+
+      if (confirmPassword !== newPassword) {
+         toast.error('Please check Confirm password again')
+         return
+      }
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}changePassword`, {
+               _id: userID,
+               oldPassword,
+               newPassword,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  const data = result.data.result
+                  delete data._v
+                  localStorage.setItem('user', JSON.stringify(data))
+                  setNewPassword('')
+                  setOldPassword('')
+                  setConfirmPassword('')
+                  toast.success('Password Updated Successfully')
+               } else {
+                  toast.error('Old passoword is wrong')
                }
             })
       } catch (error) {
@@ -461,6 +508,88 @@ export default function Profile() {
                            </Grid>
                         </Box>
                      </Item1>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12}>
+                     <Box sx={{ pt: '20px', fontSize: '25px' }}>
+                        Change Password
+                     </Box>
+                     <Box
+                        sx={{
+                           p: 4,
+                           my: 3,
+                           borderRadius: '12px',
+                           bgcolor: 'white',
+                        }}
+                     >
+                        <Grid
+                           container
+                           spacing={{ xs: 2, md: 3 }}
+                           columns={{
+                              xs: 4,
+                              sm: 8,
+                              md: 12,
+                           }}
+                        >
+                           <Grid
+                              item
+                              xs={12}
+                              sm={12}
+                              md={6}
+                              sx={{
+                                 display: 'flex',
+                                 gap: '20px',
+                                 justifyContent: 'center',
+                              }}
+                           >
+                              <img src={Key} />
+                           </Grid>
+
+                           <Grid
+                              item
+                              xs={12}
+                              sm={12}
+                              md={6}
+                              sx={{
+                                 display: 'flex',
+                                 flexDirection: 'column',
+                                 gap: '20px',
+                              }}
+                           >
+                              <TextField
+                                 type="password"
+                                 placeholder="Old password"
+                                 value={oldPassword}
+                                 onChange={(e) =>
+                                    setOldPassword(e.target.value)
+                                 }
+                              />
+                              <TextField
+                                 type="password"
+                                 placeholder="New password"
+                                 value={newPassword}
+                                 onChange={(e) =>
+                                    setNewPassword(e.target.value)
+                                 }
+                              />
+                              <TextField
+                                 type="password"
+                                 placeholder="Confirm password"
+                                 value={confirmPassword}
+                                 onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                 }
+                              />
+                              <Button
+                                 variant="contained"
+                                 onClick={() => {
+                                    changePassword()
+                                 }}
+                              >
+                                 Change Password
+                              </Button>
+                           </Grid>
+                        </Grid>
+                     </Box>
                   </Grid>
                </Grid>
             </Box>

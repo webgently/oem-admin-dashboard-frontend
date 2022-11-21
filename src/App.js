@@ -32,26 +32,32 @@ export default function App() {
    const dispatch = useDispatch()
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
+      let deleteId = ''
       if (account) dispatch(setAccountData(account))
       socket.on(account._id, async (e) => {
          toast.success(e.alertMsg)
-      })
-
-      socket.on('request' + account._id, async (e) => {
-         toast.success(e.alertMsg)
-      })
-
-      socket.on('answer' + account._id, async (e) => {
-         toast.success(e.alertMsg)
+         deleteId = account._id
       })
 
       socket.on('fileReply' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         deleteId = 'fileReply' + account._id
       })
+
+      socket.on('request' + account._id, async (e) => {
+         toast.success(e.alertMsg)
+         deleteId = 'request' + account._id
+      })
+
+      socket.on('answer' + account._id, async (e) => {
+         toast.success(e.alertMsg)
+         deleteId = 'answer' + account._id
+      })
+
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(account._id)
+         socket.off(deleteId)
       }
    }, [])
    return (

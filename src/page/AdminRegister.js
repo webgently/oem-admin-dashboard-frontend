@@ -283,8 +283,15 @@ export default function AdminRegister() {
                                           ind + 1
                                        ) : column.id === 'profile' ? (
                                           <Avatar
-                                             alt="Remy Sharp"
-                                             src={value}
+                                             alt="avatar"
+                                             src={
+                                                value === ''
+                                                   ? row[column.id].name
+                                                   : process.env
+                                                        .REACT_APP_BASE_URL +
+                                                     'logo/' +
+                                                     value
+                                             }
                                           />
                                        ) : column.id === 'action' ? (
                                           <ButtonGroup

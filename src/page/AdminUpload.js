@@ -140,32 +140,7 @@ export default function AdminUpload() {
             return
          }
       try {
-         if (status !== 'completed') {
-            const data = {
-               id: oneData._id,
-               status,
-               note,
-            }
-            await axios
-               .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
-                  data,
-               })
-               .then((result) => {
-                  if (result.data.status) {
-                     toast.success(result.data.data)
-                     getRequests()
-                     setOpen(false)
-                     setStatus('')
-                     setNote('')
-                     socket.emit('replyAboutRequest', {
-                        from: myID,
-                        to: oneData.userId,
-                     })
-                  } else {
-                     toast.error(result.data.data)
-                  }
-               })
-         } else {
+        if(status === 'completed'){
             let params = new FormData()
             const data = {
                id: oneData._id,
@@ -189,14 +164,43 @@ export default function AdminUpload() {
                      setStatus('')
                      setNote('')
                      setCredit(0)
-                     socket.emit('replyAboutRequest', {
+                     socket.emit('reply', {
                         from: myID,
                         to: oneData.userId,
+                        orderId: oneData.orderId,
                      })
                   } else {
                      toast.error(result.data.data)
                   }
                })
+         } else {
+            const data = {
+               id: oneData._id,
+               userId: oneData.userId,
+               status,
+               note,
+               credit,
+               orderId: oneData.orderId,
+            }
+            await axios
+                .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
+                   data,
+                })
+                .then((result) => {
+                   if (result.data.status) {
+                      toast.success(result.data.data)
+                      getRequests()
+                      setOpen(false)
+                      setStatus('')
+                      setNote('')
+                      socket.emit('reply', {
+                         from: myID,
+                         to: oneData.userId,
+                      })
+                   } else {
+                      toast.error(result.data.data)
+                   }
+                })
          }
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -243,16 +247,17 @@ export default function AdminUpload() {
       }
    }
 
-   const changeStatus = async (id, userId) => {
+   const changeStatus = async (id, userId, orderId) => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_URL}changeStatus`, { id })
             .then((result) => {
                if (result.data.status) {
                   toast.success(result.data.data)
-                  socket.emit('replyAboutRequest', {
+                  socket.emit('reply', {
                      from: myID,
                      to: userId,
+                     orderId,
                   })
                   getRequests()
                } else {
@@ -287,8 +292,7 @@ export default function AdminUpload() {
       if (minute < 10) minute = '0' + minute
       const ampm = hour >= 12 ? 'pm' : 'am'
 
-      const result = `${day}-${month}-${year} ${hour}:${minute} ${ampm}`
-      return result
+      return `${day}-${month}-${year} ${hour}:${minute} ${ampm}`
    }
 
    const deleteFile = () => {
@@ -304,6 +308,9 @@ export default function AdminUpload() {
       if (status === 'completed') {
          setUploadBtnFlag(false)
          setCreditBtnFlag(false)
+      } else if(status === 'in-progress'){
+         setUploadBtnFlag(true)
+         setCreditBtnFlag(true)
       } else {
          setUploadBtnFlag(true)
          setCreditBtnFlag(true)
@@ -391,7 +398,8 @@ export default function AdminUpload() {
                                                    onClick={() =>
                                                       changeStatus(
                                                          row._id,
-                                                         row.userId
+                                                         row.userId,
+                                                         row.orderId
                                                       )
                                                    }
                                                    color="primary"
@@ -579,8 +587,11 @@ export default function AdminUpload() {
                                     <MenuItem value="completed">
                                        Completed
                                     </MenuItem>
-                                    <MenuItem value="in-prograss">
-                                       In Process
+                                    <MenuItem value="in-progress">
+                                       In Progress
+                                    </MenuItem>
+                                    <MenuItem value="cancelled">
+                                       Cancelled
                                     </MenuItem>
                                  </Select>
                               </FormControl>

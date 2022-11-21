@@ -399,6 +399,9 @@ export default function Dashboard() {
                                                             : row.status ===
                                                               'completed'
                                                             ? 'success-status'
+                                                            : row.status ===
+                                                              'cancelled'
+                                                            ? 'cancel-status'
                                                             : 'progress-status'
                                                       }
                                                       onClick={() =>
