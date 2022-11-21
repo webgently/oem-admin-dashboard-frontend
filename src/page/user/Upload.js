@@ -22,8 +22,9 @@ import axios from 'axios'
 import { useSelector } from 'react-redux'
 import io from 'socket.io-client'
 
+const socket = io(process.env.REACT_APP_BASE_URL)
+
 export default function Upload() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const navigate = useNavigate()
    const account = useSelector((state) => state.account)
    const [supportID, setSupportID] = useState('')
@@ -170,7 +171,7 @@ export default function Upload() {
             .post(`${process.env.REACT_APP_API_URL}uploadFile`, params)
             .then((result) => {
                if (result.data.status) {
-                  socket.emit('request', { to: supportID })
+                  socket.emit('request', { to: supportID, name: userName })
                   toast.success(result.data.data)
                   setUserName('')
                   setVehicleType('')

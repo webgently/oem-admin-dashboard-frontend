@@ -83,9 +83,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
    ...theme.mixins.toolbar,
    justifyContent: 'flex-end',
 }))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function UserSidebar() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const theme = useTheme()
    const dispatch = useDispatch()
@@ -98,7 +98,7 @@ export default function UserSidebar() {
    const [creditopen, setCreditOpen] = useState(false)
    const [unreadCount, setUnreadCount] = useState(0)
    const [creditAmount, setCreditAmount] = useState(0)
-   const [mobileFlag, setMobileFlag] = useState(false)
+   const [mobileView, setMobileView] = useState(false)
 
    const handleOpenUserMenu = (event) => {
       setAnchorElUser(event.currentTarget)
@@ -176,12 +176,13 @@ export default function UserSidebar() {
    }
 
    useEffect(() => {
-      const width = window.innerWidth
-      if (width < 560) {
-         setMobileFlag(true)
-      } else {
-         setMobileFlag(false)
+      const setResponsiveness = () => {
+         return window.innerWidth < 600
+            ? setMobileView(true)
+            : setMobileView(false)
       }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
    }, [window.innerWidth])
 
    useEffect(() => {
@@ -259,7 +260,7 @@ export default function UserSidebar() {
                      }}
                      onClick={() => navigate('support')}
                   >
-                     {mobileFlag ? '' : 'Chat with'}
+                     {mobileView ? '' : 'Chat with'}
                      <GroupsIcon />{' '}
                   </Box>
                </Box>
@@ -278,7 +279,7 @@ export default function UserSidebar() {
                   }}
                   variant="outlined"
                >
-                  <ListIcon /> {mobileFlag ? '' : 'Price List'}
+                  <ListIcon /> {mobileView ? '' : 'Price List'}
                </Button>
                <Button
                   sx={{
@@ -292,13 +293,13 @@ export default function UserSidebar() {
                   }}
                   variant="outlined"
                >
-                  <UploadIcon /> {mobileFlag ? '' : 'Upload File'}
+                  <UploadIcon /> {mobileView ? '' : 'Upload File'}
                </Button>
                <Button
                   sx={{ bgcolor: 'transparent', color: 'black' }}
                   onClick={handleOpenUserMenu}
                >
-                  <PersonIcon /> {mobileFlag ? '' : 'Dashboard'}
+                  <PersonIcon /> {mobileView ? '' : 'Dashboard'}
                </Button>
                <Menu
                   sx={{ mt: '45px' }}

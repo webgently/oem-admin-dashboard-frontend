@@ -26,9 +26,9 @@ import AdminSupport from './page/AdminSupport'
 import { setAccountData } from './features/account/account'
 import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function App() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const dispatch = useDispatch()
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
@@ -36,10 +36,16 @@ export default function App() {
       socket.on(account._id, async (e) => {
          toast.success(e.alertMsg)
       })
+
       socket.on('request' + account._id, async (e) => {
          toast.success(e.alertMsg)
       })
+
       socket.on('answer' + account._id, async (e) => {
+         toast.success(e.alertMsg)
+      })
+
+      socket.on('fileReply' + account._id, async (e) => {
          toast.success(e.alertMsg)
       })
       return () => {

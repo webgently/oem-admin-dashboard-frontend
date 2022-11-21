@@ -164,6 +164,28 @@ p {
   }
 }
 
+.chatting-group {
+  position: relative;
+  padding-top: 0.5px;
+  .chatting-msg {
+    display: inline-block;
+    overflow-wrap: break-word;
+    line-height: 20px;
+  }
+  .chatting-right-date {
+    position: absolute;
+    bottom: -12px;
+    right: 0;
+    font-size: 11px;
+  }
+  .chatting-left-date {
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    font-size: 11px;
+  }
+}
+
 @media only screen and (max-width: 900px) {
   .login-container {
     background-image: url("./assets/img/bg-login.png");

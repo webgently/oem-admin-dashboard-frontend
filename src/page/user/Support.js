@@ -23,16 +23,18 @@ const Item = styled(Paper)(({ theme }) => ({
    borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function Support() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
+   const messagesEndRef = useRef(null)
+   const inputRef = useRef(null)
    const [myID, setMyID] = useState('')
+   const [name, setName] = useState('')
    const [supportID, setSupportID] = useState('')
    const [chattingMsg, setChattingMsg] = useState('')
    const [allMsg, setAllMsg] = useState([])
-   const messagesEndRef = useRef(null)
-   const inputRef = useRef(null)
+   const [chatBoxWidth, setChatBoxWidth] = useState(null)
 
    const scrollToBottom = () => {
       messagesEndRef.current.scrollIntoView({
@@ -65,7 +67,7 @@ export default function Support() {
       if (chattingMsg.trim() === '') {
          toast.error('Write the message')
       } else {
-         socket.emit('sendToSupport', data)
+         socket.emit('sendToSupport', { data, name })
          await setAllMsg([...allMsg, data])
       }
       setChattingMsg('')
@@ -103,8 +105,7 @@ export default function Support() {
       if (minute < 10) minute = '0' + minute
       if (second < 10) second = '0' + second
 
-      const result = `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
-      return result
+      return `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
    }
 
    const getChattingHistory = async (id) => {
@@ -124,8 +125,17 @@ export default function Support() {
    }
 
    useEffect(() => {
+      const setResponsiveness = () => {
+         return setChatBoxWidth(window.innerWidth - window.innerWidth / 2)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
+   useEffect(() => {
       if (account._id) {
          setMyID(account._id)
+         setName(account.name)
          getChattingHistory(account._id)
          getSupportID()
       }
@@ -181,21 +191,32 @@ export default function Support() {
                         <Grid item lg={12} md={12} sm={12} xs={12}>
                            {allMsg.map((item, ind) => (
                               <Box
+                                 key={ind}
                                  textAlign={
                                     myID === item.from ? 'right' : 'left'
                                  }
-                                 lineHeight={'2px'}
-                                 paddingTop={'0.5px'}
                                  color={
                                     myID === item.from ? '#1976d2' : '#e10000'
                                  }
-                                 key={ind}
+                                 className="chatting-group"
+                                 position={'relative'}
                               >
                                  <Box>
-                                    <p>{item.msg}</p>
-                                    <p style={{ fontSize: '10px' }}>
-                                       {item.date}
+                                    <p
+                                       className="chatting-msg"
+                                       style={{ width: chatBoxWidth }}
+                                    >
+                                       {item.msg}
                                     </p>
+                                    {myID === item.from ? (
+                                       <p className="chatting-right-date">
+                                          {item.date}
+                                       </p>
+                                    ) : (
+                                       <p className="chatting-left-date">
+                                          {item.date}
+                                       </p>
+                                    )}
                                  </Box>
                               </Box>
                            ))}

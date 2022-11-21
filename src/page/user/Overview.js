@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -15,12 +14,17 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
+import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
 import SearchIcon from '@mui/icons-material/Search'
 import TablePagination from '@mui/material/TablePagination'
 import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
+import Fab from '@mui/material/Fab'
+import SendIcon from '@mui/icons-material/Send'
+import { experimentalStyled as styled } from '@mui/material/styles'
+import io from 'socket.io-client'
 
 const columns = [
    { id: 'orderId', label: 'Order Id', minWidth: 100 },
@@ -61,8 +65,7 @@ const columns = [
       format: (value) => value.toLocaleString('en-US'),
    },
 ]
-
-const ServiceStyle = {
+const ServiceStyle1 = {
    position: 'absolute',
    top: '50%',
    left: '50%',
@@ -75,10 +78,35 @@ const ServiceStyle = {
    boxShadow: 24,
    p: 0,
 }
+const ServiceStyle2 = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '60vw',
+   height: '80vh',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+const Item = styled(Paper)(({ theme }) => ({
+   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+   ...theme.typography.body2,
+   padding: '20px 20px 20px 20px',
+   height: '70vh',
+   display: 'flex',
+   flexDirection: 'column',
+   gap: '10px',
+   textAlign: 'center',
+   borderLeft: '5px solid #1976d2',
+   color: theme.palette.text.secondary,
+}))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function Overview() {
    const account = useSelector((state) => state.account)
-   const navigate = useNavigate()
    const [page, setPage] = React.useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const [allData, setAllData] = useState([])
@@ -89,6 +117,48 @@ export default function Overview() {
       rename: [],
    })
    const [open1, setOpen1] = useState(false)
+   const [open2, setOpen2] = useState(false)
+
+   /* chatting */
+   const [myID, setMyID] = useState('')
+   const [name, setName] = useState('')
+   const [dataId, setDataId] = useState('')
+   const [orderId, setOrderId] = useState('')
+   const [supportID, setSupportID] = useState('')
+   const [chattingMsg, setChattingMsg] = useState('')
+   const [allMsg, setAllMsg] = useState([])
+   const [chatBoxWidth, setChatBoxWidth] = useState(null)
+   const messagesEndRef = useRef(null)
+   const inputRef = useRef(null)
+
+   const sendChatting = async () => {
+      const date = await getCustomDate()
+      const data = {
+         from: myID + dataId + orderId,
+         to: supportID,
+         msg: chattingMsg,
+         date: date,
+         status: false,
+      }
+      if (chattingMsg.trim() === '') {
+         toast.error('Write the message')
+      } else {
+         socket.emit('sendToSupportPerFile', {
+            data,
+            orderId,
+            name,
+         })
+         await setAllMsg([...allMsg, data])
+      }
+      setChattingMsg('')
+      inputRef.current.focus()
+   }
+
+   const getKeyCode = async (e) => {
+      if (e === 13) {
+         await sendChatting()
+      }
+   }
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -149,15 +219,125 @@ export default function Overview() {
       setOpen1(false)
    }
 
+   const getChattingHistory = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getChattingHistory`, {
+               id: id,
+            })
+            .then(async (result) => {
+               if (result.data.status) {
+                  await setAllMsg(result.data.data)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   const handleOpen2 = async (userId, dataId, orderId) => {
+      setOpen2(true)
+      getChattingHistory(userId + dataId + orderId)
+      setMyID(userId)
+      setDataId(dataId)
+      setOrderId(orderId)
+      const data = {
+         _id: userId + dataId + orderId,
+         to: supportID,
+         userId,
+         dataId,
+         orderId,
+         name: `${account.name}/R-ID: ${orderId}`,
+         profile: 'file',
+      }
+      socket.emit('addChattingListPerFile', data)
+   }
+
+   const handleClose2 = () => {
+      setOpen2(false)
+   }
+
+   const getSupportID = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getSupportID`)
+            .then(async (result) => {
+               if (result.data.status) await setSupportID(result.data.data)
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   const getCustomDate = () => {
+      const d = new Date()
+      const weekdaylist = [
+         'Sunday',
+         'Monday',
+         'Tuesday',
+         'Wednesday',
+         'Thursday',
+         'Friday',
+         'Saturday',
+      ]
+      let year = d.getFullYear()
+      let month = d.getMonth() + 1
+      let day = d.getDate()
+      let weekday = d.getDay()
+      let hour = d.getHours()
+      let minute = d.getMinutes()
+      let second = d.getSeconds()
+
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+      if (hour < 10) hour = '0' + hour
+      if (minute < 10) minute = '0' + minute
+      if (second < 10) second = '0' + second
+      return `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
+   }
+
+   const scrollToBottom = () => {
+      messagesEndRef.current.scrollIntoView({
+         behavior: 'smooth',
+         block: 'start',
+      })
+   }
+
+   useEffect(() => {
+      const setResponsiveness = () => {
+         return setChatBoxWidth(window.innerWidth - window.innerWidth / 2 - 50)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
    useEffect(() => {
       if (account._id) {
+         setMyID(account._id)
+         setName(account.name)
          if (!OrderID) {
             getDataByFilter(account._id)
          } else {
             getDataByOrderID(account._id)
          }
+         getSupportID()
       }
    }, [OrderID, filterSetting, account])
+
+   useEffect(() => {
+      socket.on(myID + dataId + orderId, async (e) => {
+         await setAllMsg([...allMsg, e.data])
+      })
+      if (dataId && orderId && myID)
+         setTimeout(() => {
+            scrollToBottom()
+         }, 100)
+      return () => {
+         socket.off('connect')
+         socket.off('disconnect')
+         socket.off(myID + dataId + orderId)
+      }
+   }, [allMsg])
 
    return (
       <Box
@@ -276,9 +456,13 @@ export default function Overview() {
                                              <ButtonGroup
                                                 variant="outlined"
                                                 aria-label="outlined button group"
-                                                onClick={() => {
-                                                   navigate('/support')
-                                                }}
+                                                onClick={() =>
+                                                   handleOpen2(
+                                                      row.userId,
+                                                      row._id,
+                                                      row.orderId
+                                                   )
+                                                }
                                              >
                                                 <IconButton
                                                    color="primary"
@@ -340,7 +524,7 @@ export default function Overview() {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
          >
-            <Box sx={ServiceStyle}>
+            <Box sx={ServiceStyle1}>
                <Box
                   sx={{
                      px: 3,
@@ -401,6 +585,123 @@ export default function Overview() {
                   ) : (
                      <></>
                   )}
+               </Box>
+            </Box>
+         </Modal>
+
+         <Modal
+            open={open2}
+            onClose={handleClose2}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle2}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Chat Section</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose2()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ px: 3 }}>
+                  <Item>
+                     <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="flex-end"
+                        paddingX={'2vw'}
+                        height={'94%'}
+                        fontSize={'16px'}
+                        style={{
+                           overflowY: 'auto',
+                        }}
+                     >
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
+                           {allMsg.map((item, ind) => (
+                              <Box
+                                 key={ind}
+                                 textAlign={
+                                    item.from.search(myID) >= 0
+                                       ? 'right'
+                                       : 'left'
+                                 }
+                                 color={
+                                    item.from.search(myID) >= 0
+                                       ? '#1976d2'
+                                       : '#e10000'
+                                 }
+                                 className="chatting-group"
+                                 position={'relative'}
+                              >
+                                 <Box>
+                                    <p
+                                       className="chatting-msg"
+                                       style={{ width: chatBoxWidth }}
+                                    >
+                                       {item.msg}
+                                    </p>
+                                    {item.from.search(myID) >= 0 ? (
+                                       <p className="chatting-right-date">
+                                          {item.date}
+                                       </p>
+                                    ) : (
+                                       <p className="chatting-left-date">
+                                          {item.date}
+                                       </p>
+                                    )}
+                                 </Box>
+                              </Box>
+                           ))}
+                           <div ref={messagesEndRef} />
+                        </Grid>
+                     </Grid>
+                     <Grid
+                        container
+                        justifyContent={'space-between'}
+                        paddingX={'2vw'}
+                     >
+                        <Grid item xs={10.8}>
+                           <TextField
+                              id="filled-multiline-flexible"
+                              ref={inputRef}
+                              label="Type Something"
+                              multiline
+                              variant="filled"
+                              minRows={1}
+                              maxRows={3}
+                              fullWidth
+                              value={chattingMsg}
+                              onKeyUp={(e) => getKeyCode(e.keyCode)}
+                              onChange={(e) => setChattingMsg(e.target.value)}
+                           />
+                        </Grid>
+                        <Grid item xs={1}>
+                           <Fab
+                              color="secondary"
+                              aria-label="edit"
+                              onClick={() => sendChatting()}
+                           >
+                              <SendIcon />
+                           </Fab>
+                        </Grid>
+                     </Grid>
+                  </Item>
                </Box>
             </Box>
          </Modal>

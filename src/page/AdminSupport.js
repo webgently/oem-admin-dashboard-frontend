@@ -10,6 +10,7 @@ import { experimentalStyled as styled } from '@mui/material/styles'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
+import DescriptionIcon from '@mui/icons-material/Description'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
@@ -30,15 +31,16 @@ const Item = styled(Paper)(({ theme }) => ({
    borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminSupport() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const [selectedIndex, setSelectedIndex] = React.useState(0)
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
    const [unreadCount, setUnreadCount] = useState({})
    const [chattingMsg, setChattingMsg] = useState('')
+   const [chatBoxWidth, setChatBoxWidth] = useState(null)
    const [allMsg, setAllMsg] = useState([])
    const messagesEndRef = useRef(null)
    const inputRef = useRef(null)
@@ -100,11 +102,16 @@ export default function AdminSupport() {
          date: date,
          status: false,
       }
+      const userIndex = allUserList.map((e) => e._id).indexOf(selectedIndex)
+      const orderId = allUserList[userIndex].name.split(': ')[1]
+
       if (chattingMsg.trim() === '') {
          toast.error('Write the message')
       } else {
          if (selectedIndex !== 0) {
-            socket.emit('sendToUser', data)
+            if (selectedIndex.length > 30)
+               socket.emit('sendToUserPerFile', { data, orderId })
+            else socket.emit('sendToUser', data)
             await setAllMsg([...allMsg, data])
          } else {
             toast.error('Select the user')
@@ -163,6 +170,14 @@ export default function AdminSupport() {
    }
 
    useEffect(() => {
+      const setResponsiveness = () => {
+         return setChatBoxWidth(window.innerWidth - window.innerWidth / 2)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
+   useEffect(() => {
       if (account._id) {
          setMyID(account._id)
          getUserList(account._id)
@@ -170,7 +185,7 @@ export default function AdminSupport() {
    }, [account])
 
    useEffect(() => {
-      socket.on(account._id, async (e) => {
+      socket.on(myID, async (e) => {
          if (selectedIndex === e.data.from) {
             await setAllMsg([...allMsg, e.data])
             updateReadStatus(account._id, selectedIndex)
@@ -179,12 +194,21 @@ export default function AdminSupport() {
          copy[e.data.from] += 1
          setUnreadCount(copy)
       })
+      socket.on('file' + myID, async (e) => {
+         const exist = allUserList.map((e) => e._id).indexOf(e.data._id)
+         if (exist < 0) {
+            setAllUserList([...allUserList, e.data])
+            let unread = unreadCount
+            unread[e.data._id] = 0
+            setUnreadCount(unread)
+         }
+      })
       return () => {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
       }
-   }, [allUserList, unreadCount])
+   }, [allMsg, allUserList, unreadCount])
 
    useEffect(() => {
       if (selectedIndex !== 0)
@@ -255,7 +279,22 @@ export default function AdminSupport() {
                                     }}
                                  >
                                     <ListItemIcon>
-                                       <Avatar alt="Remy Sharp" src="" />
+                                       {item.profile === '' ? (
+                                          <Avatar alt="avatar" src="" />
+                                       ) : item.profile === 'file' ? (
+                                          <Avatar>
+                                             <DescriptionIcon />
+                                          </Avatar>
+                                       ) : (
+                                          <Avatar
+                                             alt="avatar"
+                                             src={
+                                                process.env.REACT_APP_BASE_URL +
+                                                'logo/' +
+                                                item.profile
+                                             }
+                                          />
+                                       )}
                                     </ListItemIcon>
                                  </Badge>
                                  <ListItemText primary={`${item.name}`} />
@@ -290,28 +329,39 @@ export default function AdminSupport() {
                               <Grid item lg={12} md={12} sm={12} xs={12}>
                                  {allMsg.map((item, ind) => (
                                     <Box
+                                       key={ind}
                                        textAlign={
                                           myID === item.from ? 'right' : 'left'
                                        }
-                                       lineHeight={'2px'}
-                                       paddingTop={'0.5px'}
                                        color={
                                           myID === item.from
                                              ? '#1976d2'
                                              : '#e10000'
                                        }
-                                       key={ind}
+                                       className="chatting-group"
+                                       position={'relative'}
                                     >
-                                       <p className="break-string">
-                                          {item.msg}
-                                       </p>
-                                       <p style={{ fontSize: '10px' }}>
-                                          {item.date}
-                                       </p>
+                                       <Box>
+                                          <p
+                                             className="chatting-msg"
+                                             style={{ width: chatBoxWidth }}
+                                          >
+                                             {item.msg}
+                                          </p>
+                                          {myID === item.from ? (
+                                             <p className="chatting-right-date">
+                                                {item.date}
+                                             </p>
+                                          ) : (
+                                             <p className="chatting-left-date">
+                                                {item.date}
+                                             </p>
+                                          )}
+                                       </Box>
                                     </Box>
                                  ))}
+                                 <div ref={messagesEndRef} />
                               </Grid>
-                              <div ref={messagesEndRef} />
                            </>
                         ) : (
                            <></>
