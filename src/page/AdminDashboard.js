@@ -27,17 +27,19 @@ export default function AdminDashboard() {
    const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const navigate = useNavigate()
+   const [myID, setMyID] = useState('')
    const [userCount, setUserCount] = useState(0)
    const [serviceCount, setServiceCount] = useState(0)
    const [requestCount, setRequestCount] = useState(0)
    const [unreadCount, setUnreadCount] = useState(0)
    const [requestAlert, setRequestAlert] = useState(true)
 
-   const getDashBoardData = async () => {
+   const getDashBoardData = async (id) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}getDashBoardData`)
+            .post(`${process.env.REACT_APP_API_URL}getDashBoardData`, { id })
             .then((result) => {
+               console.log(result.data)
                setUserCount(result.data.userCount)
                setServiceCount(result.data.serviceCount)
                setRequestCount(result.data.requestCount)
@@ -63,24 +65,25 @@ export default function AdminDashboard() {
    }
 
    useEffect(() => {
+      let deleteId = ''
       if (account._id) {
+         getDashBoardData(account._id)
+         setMyID(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
+            deleteId = account._id
          })
          socket.on('request' + account._id, async () => {
             setRequestCount(requestCount + 1)
+            deleteId = 'request' + account._id
          })
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(account._id)
+            socket.off(deleteId)
          }
       }
    }, [account, unreadCount, requestCount])
-
-   useEffect(() => {
-      getDashBoardData()
-   }, [])
 
    return (
       <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'rgb(229, 229, 229)' }}>

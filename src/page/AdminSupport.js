@@ -169,6 +169,13 @@ export default function AdminSupport() {
       }
    }
 
+   const move = (from, to, arr) => {
+      const newArr = [...arr]
+      const item = newArr.splice(from, 1)[0]
+      newArr.splice(to, 0, item)
+      return newArr
+   }
+
    useEffect(() => {
       const setResponsiveness = () => {
          return setChatBoxWidth(window.innerWidth - window.innerWidth / 2)
@@ -185,7 +192,11 @@ export default function AdminSupport() {
    }, [account])
 
    useEffect(() => {
+      let deleteId = ''
       socket.on(myID, async (e) => {
+         const index = allUserList.map((e) => e._id).indexOf(e.data.from)
+         const swap = await move(index, 0, allUserList)
+         setAllUserList(swap)
          if (selectedIndex === e.data.from) {
             await setAllMsg([...allMsg, e.data])
             updateReadStatus(account._id, selectedIndex)
@@ -193,7 +204,9 @@ export default function AdminSupport() {
          const copy = { ...unreadCount }
          copy[e.data.from] += 1
          setUnreadCount(copy)
+         deleteId = myID
       })
+
       socket.on('file' + myID, async (e) => {
          const exist = allUserList.map((e) => e._id).indexOf(e.data._id)
          if (exist < 0) {
@@ -202,11 +215,12 @@ export default function AdminSupport() {
             unread[e.data._id] = 0
             setUnreadCount(unread)
          }
+         deleteId = 'file' + myID
       })
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(myID)
+         socket.off(deleteId)
       }
    }, [allMsg, allUserList, unreadCount])
 

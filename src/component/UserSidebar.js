@@ -97,6 +97,7 @@ export default function UserSidebar() {
    const [listopen, setListOpen] = useState(false)
    const [creditopen, setCreditOpen] = useState(false)
    const [unreadCount, setUnreadCount] = useState(0)
+   const [unreadFileCount, setUnreadFileCount] = useState(0)
    const [creditAmount, setCreditAmount] = useState(0)
    const [mobileView, setMobileView] = useState(false)
 
@@ -121,6 +122,22 @@ export default function UserSidebar() {
             .then((result) => {
                if (result.data.status) {
                   setUnreadCount(result.data.unreadCount)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   const getUserUnreadPerFileCount = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getUserUnreadPerFileCount`, {
+               id: id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setUnreadFileCount(result.data.unreadCount)
                }
             })
       } catch (error) {
@@ -195,14 +212,30 @@ export default function UserSidebar() {
    useEffect(() => {
       getLogo()
       if (account._id) {
+         let deleteId = ''
          setMyID(account._id)
          getUserUnreadCount(account._id)
+         getUserUnreadPerFileCount(account._id)
          getSumCredit(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
+            deleteId = account._id
          })
+         socket.on('fileReply' + account._id, async (e) => {
+            setUnreadFileCount(unreadFileCount + 1)
+            deleteId = 'fileReply' + account._id
+         })
+         socket.on('totalUnreadCount' + account._id, async (e) => {
+            setUnreadFileCount(unreadFileCount - e.count)
+            deleteId = 'totalUnreadCount' + account._id
+         })
+         return () => {
+            socket.off('connect')
+            socket.off('disconnect')
+            socket.off(deleteId)
+         }
       }
-   }, [account, unreadCount])
+   }, [account, unreadCount, unreadFileCount])
 
    return (
       <Box sx={{ display: 'flex' }}>
@@ -407,7 +440,12 @@ export default function UserSidebar() {
                         <ListItemIcon>
                            <DescriptionIcon />
                         </ListItemIcon>
-                        <ListItemText>Over View</ListItemText>
+                        <ListItemText>
+                           Over View{' '}
+                           <span style={{ color: 'blue', fontWeight: 'bold' }}>
+                              {unreadFileCount}
+                           </span>
+                        </ListItemText>
                      </ListItemButton>
                   </List>
                </Collapse>
@@ -537,6 +575,14 @@ export default function UserSidebar() {
                               >
                                  <ListItemIcon>
                                     <DescriptionIcon />
+                                    <span
+                                       style={{
+                                          color: 'blue',
+                                          fontWeight: 'bold',
+                                       }}
+                                    >
+                                       {unreadFileCount}
+                                    </span>
                                  </ListItemIcon>
                               </ListItemButton>
                            </List>

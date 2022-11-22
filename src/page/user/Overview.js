@@ -126,6 +126,7 @@ export default function Overview() {
    const [orderId, setOrderId] = useState('')
    const [supportID, setSupportID] = useState('')
    const [chattingMsg, setChattingMsg] = useState('')
+   const [unreadFileCount, setUnreadFileCount] = useState({})
    const [allMsg, setAllMsg] = useState([])
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
    const messagesEndRef = useRef(null)
@@ -178,6 +179,7 @@ export default function Overview() {
             })
             .then((result) => {
                if (result.data.status) {
+                  setUnreadFileCount(result.data.unreadCount)
                   setAllData(result.data.data)
                } else {
                   toast.error(result.data.data)
@@ -197,6 +199,7 @@ export default function Overview() {
             })
             .then((result) => {
                if (result.data.status) {
+                  setUnreadFileCount(result.data.unreadCount)
                   setAllData(result.data.data)
                } else {
                   toast.error(result.data.data)
@@ -250,6 +253,9 @@ export default function Overview() {
          name: `${account.name}/R-ID: ${orderId}`,
          profile: 'file',
       }
+      const copy = { ...unreadFileCount }
+      copy[dataId] = 0
+      setUnreadFileCount(copy)
       socket.emit('addChattingListPerFile', data)
    }
 
@@ -325,8 +331,16 @@ export default function Overview() {
    }, [OrderID, filterSetting, account])
 
    useEffect(() => {
+      let deleteId = ''
       socket.on(myID + dataId + orderId, async (e) => {
          await setAllMsg([...allMsg, e.data])
+         deleteId = myID + dataId + orderId
+      })
+      socket.on('fileReply' + myID, async (e) => {
+         const copy = { ...unreadFileCount }
+         copy[e.from] += 1
+         setUnreadFileCount(copy)
+         deleteId = 'fileReply' + myID
       })
       if (dataId && orderId && myID)
          setTimeout(() => {
@@ -335,9 +349,9 @@ export default function Overview() {
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(myID + dataId + orderId)
+         socket.off(deleteId)
       }
-   }, [allMsg])
+   }, [allMsg, unreadFileCount])
 
    return (
       <Box
@@ -467,7 +481,22 @@ export default function Overview() {
                                                 <IconButton
                                                    color="primary"
                                                    aria-label="add to shopping cart"
+                                                   style={{
+                                                      position: 'relative',
+                                                   }}
                                                 >
+                                                   <span
+                                                      style={{
+                                                         position: 'absolute',
+                                                         right: -4,
+                                                         top: 6,
+                                                         color: 'blue',
+                                                         fontWeight: 'bold',
+                                                         fontSize: '20px',
+                                                      }}
+                                                   >
+                                                      {unreadFileCount[row._id]}
+                                                   </span>{' '}
                                                    <ChatIcon />
                                                 </IconButton>
                                              </ButtonGroup>
@@ -556,7 +585,7 @@ export default function Overview() {
                         <li>
                            <a
                               href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList?.rename[0]}`}
-                              download
+                              download={downloadList?.origin[0]}
                            >
                               {downloadList?.origin[0]}
                            </a>
@@ -573,7 +602,7 @@ export default function Overview() {
                                  <li key={ind}>
                                     <a
                                        href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList.rename[ind]}`}
-                                       download
+                                       download={downloadList?.origin[ind]}
                                     >
                                        {item}
                                     </a>

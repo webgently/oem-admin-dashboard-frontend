@@ -29,9 +29,10 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import CloudUpload from '@mui/icons-material/CloudUpload'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
 import EuroIcon from '@mui/icons-material/Euro'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { clearAccountData } from '../features/account/account'
 import axios from 'axios'
+import io from 'socket.io-client'
 
 const drawerWidth = 240
 
@@ -79,11 +80,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
    ...theme.mixins.toolbar,
    justifyContent: 'flex-end',
 }))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function PersistentDrawerLeft() {
+   const account = useSelector((state) => state.account)
    const theme = useTheme()
    const [open, setOpen] = useState(false)
    const [logo, setLogo] = useState('')
+   const [myID, setMyID] = useState('')
+   const [unreadCount, setUnreadCount] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)
    const navigate = useNavigate()
    const dispatch = useDispatch()
@@ -123,6 +128,22 @@ export default function PersistentDrawerLeft() {
       navigate('admin_user')
    }
 
+   const getUserUnreadCount = async (id) => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getUserUnreadCount`, {
+               id: id,
+            })
+            .then((result) => {
+               if (result.data.status) {
+                  setUnreadCount(result.data.unreadCount)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
    const getLogo = async () => {
       try {
          await axios
@@ -139,7 +160,28 @@ export default function PersistentDrawerLeft() {
 
    useEffect(() => {
       getLogo()
-   }, [])
+      if (account._id) {
+         let deleteId = ''
+         getUserUnreadCount(account._id)
+         socket.on(account._id, async (e) => {
+            setUnreadCount(unreadCount + 1)
+            deleteId = account._id
+         })
+         socket.on('file' + account._id, async (e) => {
+            setUnreadCount(unreadCount + 1)
+            deleteId = 'file' + account._id
+         })
+         socket.on('checkUnreadCount' + account._id, async (e) => {
+            getUserUnreadCount(account._id)
+            deleteId = 'checkUnreadCount' + account._id
+         })
+         return () => {
+            socket.off('connect')
+            socket.off('disconnect')
+            socket.off(deleteId)
+         }
+      }
+   }, [account, unreadCount])
 
    return (
       <Box sx={{ display: 'flex' }}>
@@ -357,7 +399,10 @@ export default function PersistentDrawerLeft() {
                            navigate('admin_support')
                         }}
                      >
-                        Support
+                        Support{' '}
+                        <span style={{ color: 'blue', fontWeight: 'bold' }}>
+                           {unreadCount}
+                        </span>
                      </ListItemText>
                   </ListItemButton>
                </ListItem>
@@ -492,7 +537,15 @@ export default function PersistentDrawerLeft() {
                               }}
                            >
                               <ListItemIcon>
-                                 <ErrorOutlineIcon />
+                                 <ErrorOutlineIcon />{' '}
+                                 <span
+                                    style={{
+                                       color: 'blue',
+                                       fontWeight: 'bold',
+                                    }}
+                                 >
+                                    {unreadCount}
+                                 </span>
                               </ListItemIcon>
                            </ListItemButton>
                         </ListItem>
