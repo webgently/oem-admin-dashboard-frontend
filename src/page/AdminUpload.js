@@ -923,7 +923,7 @@ export default function AdminUpload() {
                                        <li>
                                           <a
                                              href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[0]}`}
-                                             download
+                                             download={oneData?.fileName[0]}
                                           >
                                              {oneData?.fileName[0]}
                                           </a>
@@ -953,7 +953,7 @@ export default function AdminUpload() {
                                              <li key={ind}>
                                                 <a
                                                    href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[ind]}`}
-                                                   download
+                                                   download={item}
                                                 >
                                                    {item}
                                                 </a>

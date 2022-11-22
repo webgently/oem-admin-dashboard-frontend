@@ -602,7 +602,7 @@ export default function Overview() {
                                  <li key={ind}>
                                     <a
                                        href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList.rename[ind]}`}
-                                       download={downloadList?.origin[ind]}
+                                       download={item}
                                     >
                                        {item}
                                     </a>
