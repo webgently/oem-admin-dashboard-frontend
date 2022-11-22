@@ -39,7 +39,6 @@ export default function AdminDashboard() {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getDashBoardData`, { id })
             .then((result) => {
-               console.log(result.data)
                setUserCount(result.data.userCount)
                setServiceCount(result.data.serviceCount)
                setRequestCount(result.data.requestCount)
