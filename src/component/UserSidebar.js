@@ -224,6 +224,7 @@ export default function UserSidebar() {
          socket.on('fileReply' + account._id, async (e) => {
             setUnreadFileCount(unreadFileCount + 1)
             deleteId = 'fileReply' + account._id
+            setListOpen(true)
          })
          socket.on('totalUnreadCount' + account._id, async (e) => {
             setUnreadFileCount(unreadFileCount - e.count)
