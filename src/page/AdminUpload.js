@@ -140,7 +140,7 @@ export default function AdminUpload() {
             return
          }
       try {
-        if(status === 'completed'){
+         if (status === 'completed') {
             let params = new FormData()
             const data = {
                id: oneData._id,
@@ -183,24 +183,24 @@ export default function AdminUpload() {
                orderId: oneData.orderId,
             }
             await axios
-                .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
-                   data,
-                })
-                .then((result) => {
-                   if (result.data.status) {
-                      toast.success(result.data.data)
-                      getRequests()
-                      setOpen(false)
-                      setStatus('')
-                      setNote('')
-                      socket.emit('reply', {
-                         from: myID,
-                         to: oneData.userId,
-                      })
-                   } else {
-                      toast.error(result.data.data)
-                   }
-                })
+               .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
+                  data,
+               })
+               .then((result) => {
+                  if (result.data.status) {
+                     toast.success(result.data.data)
+                     getRequests()
+                     setOpen(false)
+                     setStatus('')
+                     setNote('')
+                     socket.emit('reply', {
+                        from: myID,
+                        to: oneData.userId,
+                     })
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
          }
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -308,7 +308,7 @@ export default function AdminUpload() {
       if (status === 'completed') {
          setUploadBtnFlag(false)
          setCreditBtnFlag(false)
-      } else if(status === 'in-progress'){
+      } else if (status === 'in-progress') {
          setUploadBtnFlag(true)
          setCreditBtnFlag(true)
       } else {
@@ -891,7 +891,13 @@ export default function AdminUpload() {
                                        <Box sx={{ my: '20px' }}>Message:</Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
+                                       <Box
+                                          sx={{
+                                             my: '20px',
+                                             overflowWrap: 'break-word',
+                                             lineHeight: '20px',
+                                          }}
+                                       >
                                           {oneData?.message}
                                        </Box>
                                     </Grid>

@@ -181,7 +181,7 @@ export default function AdminRegister() {
                if (result.data === 'success') {
                   getUserData()
                   setOpen(false)
-                  toast.success('User Active Successfully')
+                  toast.success(`User ${status} Successfully`)
                }
             })
       } catch (error) {
