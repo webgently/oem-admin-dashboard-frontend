@@ -27,7 +27,6 @@ export default function AdminDashboard() {
    const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const navigate = useNavigate()
-   const [myID, setMyID] = useState('')
    const [userCount, setUserCount] = useState(0)
    const [serviceCount, setServiceCount] = useState(0)
    const [requestCount, setRequestCount] = useState(0)
@@ -67,7 +66,6 @@ export default function AdminDashboard() {
       let deleteId = ''
       if (account._id) {
          getDashBoardData(account._id)
-         setMyID(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
             deleteId = account._id

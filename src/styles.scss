@@ -173,6 +173,13 @@ p {
   }
 }
 
+.filename-string {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
 .chatting-group {
   position: relative;
   padding-top: 0.5px;

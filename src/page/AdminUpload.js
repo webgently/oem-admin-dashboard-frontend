@@ -518,7 +518,9 @@ export default function AdminUpload() {
                                        </Box>
                                        <Box className="file-info">
                                           <Box>
-                                             <Box>{fileData?.name}</Box>
+                                             <Box className="filename-string">
+                                                {fileData?.name}
+                                             </Box>
                                              <Box>
                                                 {(
                                                    fileData?.size / 1000000

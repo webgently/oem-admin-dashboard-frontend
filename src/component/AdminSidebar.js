@@ -87,7 +87,6 @@ export default function PersistentDrawerLeft() {
    const theme = useTheme()
    const [open, setOpen] = useState(false)
    const [logo, setLogo] = useState('')
-   const [myID, setMyID] = useState('')
    const [unreadCount, setUnreadCount] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)
    const navigate = useNavigate()
@@ -167,12 +166,14 @@ export default function PersistentDrawerLeft() {
             setUnreadCount(unreadCount + 1)
             deleteId = account._id
          })
+
          socket.on('file' + account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
             deleteId = 'file' + account._id
          })
+
          socket.on('checkUnreadCount' + account._id, async (e) => {
-            getUserUnreadCount(account._id)
+            await getUserUnreadCount(account._id)
             deleteId = 'checkUnreadCount' + account._id
          })
          return () => {

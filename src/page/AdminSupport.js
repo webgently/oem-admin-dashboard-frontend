@@ -35,7 +35,7 @@ const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminSupport() {
    const account = useSelector((state) => state.account)
-   const [selectedIndex, setSelectedIndex] = React.useState(0)
+   const [selectedIndex, setSelectedIndex] = useState('')
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
    const [unreadCount, setUnreadCount] = useState({})
@@ -57,6 +57,7 @@ export default function AdminSupport() {
          behavior: 'smooth',
          block: 'start',
       })
+      updateReadStatus(myID, selectedIndex)
    }
 
    const updateReadStatus = async (id, index) => {
@@ -102,20 +103,20 @@ export default function AdminSupport() {
          date: date,
          status: false,
       }
-      const userIndex = allUserList.map((e) => e._id).indexOf(selectedIndex)
-      const orderId = allUserList[userIndex].name.split(': ')[1]
+      if (selectedIndex !== '') {
+         const userIndex = allUserList.map((e) => e._id).indexOf(selectedIndex)
+         const orderId = allUserList[userIndex].name.split(': ')[1]
 
-      if (chattingMsg.trim() === '') {
-         toast.error('Write the message')
-      } else {
-         if (selectedIndex !== 0) {
+         if (chattingMsg.trim() === '') {
+            toast.error('Write the message')
+         } else {
             if (selectedIndex.length > 30)
                socket.emit('sendToUserPerFile', { data, orderId })
             else socket.emit('sendToUser', data)
             await setAllMsg([...allMsg, data])
-         } else {
-            toast.error('Select the user')
          }
+      } else {
+         toast.error('Select the user')
       }
       setChattingMsg('')
       inputRef.current.focus()
@@ -197,9 +198,11 @@ export default function AdminSupport() {
          const index = allUserList.map((e) => e._id).indexOf(e.data.from)
          const swap = await move(index, 0, allUserList)
          setAllUserList(swap)
-         if (selectedIndex === e.data.from) {
+         if (
+            selectedIndex === e.data.from &&
+            window.location.href.search('admin_support') > 0
+         ) {
             await setAllMsg([...allMsg, e.data])
-            updateReadStatus(account._id, selectedIndex)
          }
          const copy = { ...unreadCount }
          copy[e.data.from] += 1
@@ -225,7 +228,7 @@ export default function AdminSupport() {
    }, [allMsg, allUserList, unreadCount])
 
    useEffect(() => {
-      if (selectedIndex !== 0)
+      if (selectedIndex !== '')
          setTimeout(() => {
             scrollToBottom()
          }, 100)

@@ -29,6 +29,7 @@ const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function App() {
    const dispatch = useDispatch()
+
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       let deleteId = ''
@@ -59,6 +60,7 @@ export default function App() {
          socket.off(deleteId)
       }
    }, [])
+
    return (
       <Router>
          <Routes>

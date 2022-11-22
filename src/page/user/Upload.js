@@ -392,7 +392,9 @@ export default function Upload() {
                                  </Box>
                                  <Box className="file-info">
                                     <Box>
-                                       <Box>{fileData?.name}</Box>
+                                       <Box className="filename-string">
+                                          {fileData?.name}
+                                       </Box>
                                        <Box>
                                           {(fileData?.size / 1000000).toFixed(
                                              4
