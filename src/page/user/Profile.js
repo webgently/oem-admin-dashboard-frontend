@@ -351,7 +351,7 @@ export default function Profile() {
                               display: 'flex',
                               justifyContent: 'flex-start',
                               background: `url(${bgCar})`,
-                              height: '200px',
+                              height: '300px',
                               width: '100%',
                               position: 'relative',
                               backgroundSize: '100% 100%',

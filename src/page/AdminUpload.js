@@ -27,6 +27,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
+import { BeatLoader } from 'react-spinners'
 import axios from 'axios'
 import io from 'socket.io-client'
 import { useSelector } from 'react-redux'
@@ -99,6 +100,7 @@ export default function AdminUpload() {
    const [credit, setCredit] = useState(0)
    const [open, setOpen] = useState(false)
    const [fileData, setFileData] = useState({})
+   const [isLoading, setIsLoading] = useState(false)
    const inputElement = useRef('fileInput')
    /* file modal */
    const [fileOpen, setFileOpen] = useState(false)
@@ -134,76 +136,83 @@ export default function AdminUpload() {
          toast.error('Field the note')
          return
       }
-      if (!creditBtnFlag)
+      if (!creditBtnFlag) {
          if (credit < 0) {
             toast.error('Field the credit')
             return
          }
-      try {
-         if (status === 'completed') {
-            let params = new FormData()
-            const data = {
-               id: oneData._id,
-               userId: oneData.userId,
-               orderId: oneData.orderId,
-               status,
-               note,
-               credit,
-               date: getCustomDate(),
+      }
+      if (!isLoading) {
+         setIsLoading(true)
+         try {
+            if (status === 'completed') {
+               let params = new FormData()
+               const data = {
+                  id: oneData._id,
+                  userId: oneData.userId,
+                  orderId: oneData.orderId,
+                  status,
+                  note,
+                  credit,
+                  date: getCustomDate(),
+               }
+               params.append('file', fileData)
+               params.append('data', JSON.stringify(data))
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}updateUpload`, params)
+                  .then((result) => {
+                     if (result.data.status) {
+                        toast.success(result.data.data)
+                        getRequests()
+                        setOpen(false)
+                        setFileData('')
+                        setStatus('')
+                        setNote('')
+                        setCredit(0)
+                        socket.emit('reply', {
+                           from: myID,
+                           to: oneData.userId,
+                           orderId: oneData.orderId,
+                        })
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
+            } else {
+               const data = {
+                  id: oneData._id,
+                  userId: oneData.userId,
+                  status,
+                  note,
+                  credit,
+                  orderId: oneData.orderId,
+               }
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
+                     data,
+                  })
+                  .then((result) => {
+                     if (result.data.status) {
+                        toast.success(result.data.data)
+                        getRequests()
+                        setOpen(false)
+                        setStatus('')
+                        setNote('')
+                        socket.emit('reply', {
+                           from: myID,
+                           to: oneData.userId,
+                        })
+                        setIsLoading(false)
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
             }
-            params.append('file', fileData)
-            params.append('data', JSON.stringify(data))
-            await axios
-               .post(`${process.env.REACT_APP_API_URL}updateUpload`, params)
-               .then((result) => {
-                  if (result.data.status) {
-                     toast.success(result.data.data)
-                     getRequests()
-                     setOpen(false)
-                     setFileData('')
-                     setStatus('')
-                     setNote('')
-                     setCredit(0)
-                     socket.emit('reply', {
-                        from: myID,
-                        to: oneData.userId,
-                        orderId: oneData.orderId,
-                     })
-                  } else {
-                     toast.error(result.data.data)
-                  }
-               })
-         } else {
-            const data = {
-               id: oneData._id,
-               userId: oneData.userId,
-               status,
-               note,
-               credit,
-               orderId: oneData.orderId,
-            }
-            await axios
-               .post(`${process.env.REACT_APP_API_URL}uploadStatusSave`, {
-                  data,
-               })
-               .then((result) => {
-                  if (result.data.status) {
-                     toast.success(result.data.data)
-                     getRequests()
-                     setOpen(false)
-                     setStatus('')
-                     setNote('')
-                     socket.emit('reply', {
-                        from: myID,
-                        to: oneData.userId,
-                     })
-                  } else {
-                     toast.error(result.data.data)
-                  }
-               })
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
          }
-      } catch (error) {
-         if (process.env.REACT_APP_MODE) console.log(error)
+      } else {
+         toast.error('Loading...')
       }
    }
 
@@ -635,7 +644,11 @@ export default function AdminUpload() {
                                  endIcon={<ArrowForwardIcon />}
                                  onClick={upload}
                               >
-                                 Upload
+                                 {isLoading ? (
+                                    <BeatLoader color="#fff" size={10} />
+                                 ) : (
+                                    'Upload'
+                                 )}
                               </Button>
                            </Box>
                         </Grid>

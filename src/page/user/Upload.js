@@ -20,6 +20,7 @@ import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
 import toast from 'react-hot-toast'
+import { BeatLoader } from 'react-spinners'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import io from 'socket.io-client'
@@ -57,9 +58,9 @@ export default function Upload() {
    const inputElement = useRef('fileInput')
 
    const [policy, setPolicy] = useState('')
-   /* file modal */
    const [fileOpen, setFileOpen] = useState(false)
    const [termViewFlag, setTermViewFlag] = useState(false)
+   const [isLoading, setIsLoading] = useState(false)
 
    const getPrivacy = async () => {
       try {
@@ -150,7 +151,6 @@ export default function Upload() {
          toast.error('Accept the term')
          return
       }
-
       let params = new FormData()
       const data = {
          orderId: '',
@@ -182,39 +182,44 @@ export default function Upload() {
       }
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
-
-      try {
-         await axios
-            .post(`${process.env.REACT_APP_API_URL}uploadFile`, params)
-            .then((result) => {
-               if (result.data.status) {
-                  socket.emit('request', { to: supportID, name: userName })
-                  toast.success(result.data.data)
-                  setUserName('')
-                  setVehicleType('')
-                  setVehicleBrand('')
-                  setVehicleSeries('')
-                  setVehicleEngine('')
-                  setHP('')
-                  setKW('')
-                  setBuildYear(new Date())
-                  setTransmission('')
-                  setChasis('')
-                  setTuningType('')
-                  setReadMethod('')
-                  setECUProducer('')
-                  setECUBuild('')
-                  setUsedTool('')
-                  setMessage('')
-                  setTerm('')
-                  setFileData({})
-                  navigate('/dashboard')
-               } else {
-                  toast.error(result.data.data)
-               }
-            })
-      } catch (error) {
-         if (process.env.REACT_APP_MODE) console.log(error)
+      if (!isLoading) {
+         setIsLoading(true)
+         try {
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}uploadFile`, params)
+               .then((result) => {
+                  if (result.data.status) {
+                     socket.emit('request', { to: supportID, name: userName })
+                     toast.success(result.data.data)
+                     setUserName('')
+                     setVehicleType('')
+                     setVehicleBrand('')
+                     setVehicleSeries('')
+                     setVehicleEngine('')
+                     setHP('')
+                     setKW('')
+                     setBuildYear(new Date())
+                     setTransmission('')
+                     setChasis('')
+                     setTuningType('')
+                     setReadMethod('')
+                     setECUProducer('')
+                     setECUBuild('')
+                     setUsedTool('')
+                     setMessage('')
+                     setTerm('')
+                     setFileData({})
+                     setIsLoading(false)
+                     navigate('/dashboard')
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
+         }
+      } else {
+         toast.error('Loading...')
       }
    }
 
@@ -680,10 +685,15 @@ export default function Upload() {
                         <Button
                            variant="contained"
                            className="btn_red"
+                           style={{ padding: '2vh 0' }}
                            fullWidth
                            onClick={upload}
                         >
-                           Upload
+                           {isLoading ? (
+                              <BeatLoader color="#fff" size={10} />
+                           ) : (
+                              'Upload'
+                           )}
                         </Button>
                      </Grid>
                   </Grid>

@@ -129,6 +129,7 @@ export default function Overview() {
    const [unreadFileCount, setUnreadFileCount] = useState({})
    const [allMsg, setAllMsg] = useState([])
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
+   const [isLoading, setIsLoading] = useState(true)
    const messagesEndRef = useRef(null)
    const inputRef = useRef(null)
 
