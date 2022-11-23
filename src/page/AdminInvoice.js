@@ -284,7 +284,7 @@ export default function AdminInvoice() {
                      px: 5,
                      pt: 8,
                      overflowY: 'auto',
-                     height: '98vh',
+                     height: '800px',
                   }}
                   ref={invoiceRef}
                >

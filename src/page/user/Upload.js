@@ -685,7 +685,7 @@ export default function Upload() {
                         <Button
                            variant="contained"
                            className="btn_red"
-                           style={{ padding: '2vh 0' }}
+                           style={{ padding: '10px 0' }}
                            fullWidth
                            onClick={upload}
                         >

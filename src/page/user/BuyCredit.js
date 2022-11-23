@@ -501,6 +501,7 @@ export default function BuyCredit() {
                               style={{
                                  color: '#ffb100',
                                  textDecoration: 'underline',
+                                 cursor: 'pointer',
                               }}
                               onClick={() => navigate('/policy')}
                            >

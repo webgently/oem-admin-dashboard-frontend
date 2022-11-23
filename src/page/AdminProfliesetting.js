@@ -67,7 +67,7 @@ const ServiceStyle = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
-   height: '54vh',
+   height: '390px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -81,7 +81,7 @@ const ServiceStyle1 = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
-   height: '93vh',
+   height: '740px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -1307,97 +1307,6 @@ export default function AdminProfliesetting() {
          </Modal>
 
          <Modal
-            open={open4}
-            onClose={handleClose4}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-         >
-            <Box sx={ServiceStyle4}>
-               <Box
-                  sx={{
-                     px: 3,
-                     py: 1,
-                     bgcolor: '#1976d2',
-                     borderRadius: 1,
-                     color: 'white',
-                     display: 'flex',
-                     alignItems: 'center',
-                  }}
-               >
-                  <Box>Update Avatar</Box>
-                  <Box sx={{ flex: '1' }}></Box>
-                  <Box>
-                     <IconButton
-                        onClick={() => {
-                           handleClose4()
-                        }}
-                     >
-                        <CloseIcon sx={{ color: 'white' }} />
-                     </IconButton>
-                  </Box>
-               </Box>
-               <Box sx={{ p: 3 }}>
-                  <Box
-                     sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                     }}
-                  >
-                     <Avatar
-                        sx={{
-                           width: '140px',
-                           height: '140px',
-                        }}
-                     >
-                        {avatarPreview === '' ? (
-                           <PersonIcon style={{ fontSize: '100px' }} />
-                        ) : (
-                           <img
-                              src={avatarPreview}
-                              alt="Avatar"
-                              width="140px"
-                           />
-                        )}
-                     </Avatar>
-                  </Box>
-                  <Box
-                     sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                     }}
-                  >
-                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
-                        <Box>
-                           <input
-                              ref={avatarInputElement}
-                              type="file"
-                              style={{ display: 'none' }}
-                              onChange={(e) => avatarGetFile(e)}
-                           />
-                           <Button
-                              variant="contained"
-                              onClick={avatarHandleFileload}
-                           >
-                              Browse File
-                           </Button>
-                        </Box>
-                        <Box>
-                           <Button
-                              variant="contained"
-                              onClick={avatarHandleFileUpload}
-                           >
-                              Upload Avatar
-                           </Button>
-                        </Box>
-                     </Box>
-                  </Box>
-               </Box>
-            </Box>
-         </Modal>
-
-         <Modal
             open={open2}
             onClose={handleClose2}
             aria-labelledby="modal-modal-title"
@@ -1545,6 +1454,97 @@ export default function AdminProfliesetting() {
                         >
                            Update
                         </Button>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Modal>
+
+         <Modal
+            open={open4}
+            onClose={handleClose4}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle4}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Avatar</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose4()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Avatar
+                        sx={{
+                           width: '140px',
+                           height: '140px',
+                        }}
+                     >
+                        {avatarPreview === '' ? (
+                           <PersonIcon style={{ fontSize: '100px' }} />
+                        ) : (
+                           <img
+                              src={avatarPreview}
+                              alt="Avatar"
+                              width="140px"
+                           />
+                        )}
+                     </Avatar>
+                  </Box>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
+                        <Box>
+                           <input
+                              ref={avatarInputElement}
+                              type="file"
+                              style={{ display: 'none' }}
+                              onChange={(e) => avatarGetFile(e)}
+                           />
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileload}
+                           >
+                              Browse File
+                           </Button>
+                        </Box>
+                        <Box>
+                           <Button
+                              variant="contained"
+                              onClick={avatarHandleFileUpload}
+                           >
+                              Upload Avatar
+                           </Button>
+                        </Box>
                      </Box>
                   </Box>
                </Box>
