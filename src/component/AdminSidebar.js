@@ -24,7 +24,7 @@ import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
-import { Collapse, Menu, MenuItem } from '@mui/material'
+import { Collapse, Menu, MenuItem, Avatar } from '@mui/material'
 import { useNavigate, Outlet } from 'react-router-dom'
 import CloudUpload from '@mui/icons-material/CloudUpload'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
@@ -82,13 +82,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }))
 const socket = io(process.env.REACT_APP_BASE_URL)
 
-export default function PersistentDrawerLeft() {
+export default function AdminSidebar() {
    const account = useSelector((state) => state.account)
    const theme = useTheme()
    const [open, setOpen] = useState(false)
    const [logo, setLogo] = useState('')
    const [unreadCount, setUnreadCount] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)
+   const [avatar, setAvatar] = useState('')
    const navigate = useNavigate()
    const dispatch = useDispatch()
    const [listopen, setListOpen] = useState(false)
@@ -159,6 +160,7 @@ export default function PersistentDrawerLeft() {
 
    useEffect(() => {
       getLogo()
+      setAvatar(account.profile)
       if (account._id) {
          let deleteId = ''
          getUserUnreadCount(account._id)
@@ -215,13 +217,28 @@ export default function PersistentDrawerLeft() {
                   Dashboard
                </Typography>
                <div style={{ flex: '1' }}></div>
-               Admin
-               <IconButton
-                  sx={{ ml: '20px', bgcolor: 'white' }}
+               Admin&nbsp;&nbsp;&nbsp;
+               <Avatar
+                  sx={{
+                     width: '50px',
+                     height: '50px',
+                  }}
                   onClick={handleOpenUserMenu}
                >
-                  <PersonIcon />
-               </IconButton>
+                  {avatar === '' ? (
+                     <PersonIcon />
+                  ) : (
+                     <img
+                        src={process.env.REACT_APP_BASE_URL + 'logo/' + avatar}
+                        style={{
+                           width: '120px',
+                           height: '50px',
+                           borderRadius: '5px',
+                        }}
+                        alt="logo image"
+                     />
+                  )}
+               </Avatar>
                <Menu
                   sx={{ mt: '45px' }}
                   id="menu-appbar"
