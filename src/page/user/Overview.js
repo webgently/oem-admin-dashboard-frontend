@@ -180,7 +180,6 @@ export default function Overview() {
             })
             .then((result) => {
                if (result.data.status) {
-                  setUnreadFileCount(result.data.unreadCount)
                   setAllData(result.data.data)
                } else {
                   toast.error(result.data.data)
