@@ -77,6 +77,7 @@ export default function BuyCredit() {
    const handleToken = async (token, addresses) => {
       const data = {
          token: token,
+         account: account,
          other: {
             userId: account._id,
             name: account.name,
@@ -516,7 +517,8 @@ export default function BuyCredit() {
                               }
                               token={handleToken}
                               amount={total * 100}
-                              name="Product"
+                              currency="EUR"
+                              name={`You are paying €${total}`}
                            >
                               <button
                                  className={

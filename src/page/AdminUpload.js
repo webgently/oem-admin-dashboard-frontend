@@ -174,6 +174,7 @@ export default function AdminUpload() {
                            to: oneData.userId,
                            orderId: oneData.orderId,
                         })
+                        setIsLoading(false)
                      } else {
                         toast.error(result.data.data)
                      }
@@ -198,6 +199,7 @@ export default function AdminUpload() {
                         setOpen(false)
                         setStatus('')
                         setNote('')
+                        setCredit(0)
                         socket.emit('reply', {
                            from: myID,
                            to: oneData.userId,

@@ -155,6 +155,7 @@ export default function Upload() {
       const data = {
          orderId: '',
          userId,
+         email: account.email,
          client: userName,
          fileName: [fileData.name],
          fileSize: [fileData.size],

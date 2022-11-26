@@ -36,6 +36,8 @@ const Login = () => {
    const [subcontinent, setSubcontinent] = useState('')
    const [vatNumber, setVatNumber] = useState('')
 
+   const [registerEmail, setRegisterEmail] = useState('')
+
    const handleChangeSubcontinent = () => {
       if (subcontinent === 'europe') {
          setSubcontinent('other')
@@ -164,6 +166,29 @@ const Login = () => {
       }
    }
 
+   const getResetLink = async () => {
+      const regex =
+         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+      if (registerEmail !== '' && regex.test(registerEmail) === true) {
+         try {
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}forgotPassword`, {
+                  email: registerEmail,
+               })
+               .then((result) => {
+                  if (result.data.status) {
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
+         }
+      } else {
+         toast.error('Email is not valid')
+      }
+   }
+
    useEffect(() => {
       try {
          if (account) {
@@ -260,10 +285,24 @@ const Login = () => {
                            Sign In
                         </Button>
                      </Box>
-                     <Box></Box>
+                     <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+                        <a
+                           onClick={() => {
+                              setPageFlag('forgotPassword')
+                           }}
+                           style={{
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                              color: 'blue',
+                           }}
+                        >
+                           Forgot password?
+                        </a>
+                     </Box>
                      <Box
                         sx={{
                            display: 'flex',
+                           paddingTop: '6vh',
                         }}
                      >
                         Don't have an account yet?
@@ -282,7 +321,7 @@ const Login = () => {
                         </a>
                      </Box>
                   </Box>
-               ) : (
+               ) : pageFlag === 'signUp' ? (
                   <Box
                      sx={{
                         flexGrow: 1,
@@ -494,6 +533,73 @@ const Login = () => {
                            }}
                            style={{
                               textAlign: 'right',
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                              color: 'blue',
+                           }}
+                        >
+                           Sign In
+                        </a>
+                     </Box>
+                  </Box>
+               ) : (
+                  <Box
+                     sx={{
+                        flexGrow: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '20px',
+                     }}
+                     className="login-form"
+                  >
+                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <img
+                           alt="logo"
+                           src={logo}
+                           style={{ width: '200px', height: '90px' }}
+                        />
+                     </Box>
+                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        Enter your registered email...
+                     </Box>
+                     <Box>
+                        <TextField
+                           hiddenLabel
+                           id="outlined-basic"
+                           variant="filled"
+                           type="email"
+                           fullWidth
+                           placeholder="Registered Email"
+                           value={registerEmail}
+                           onChange={(e) => {
+                              setRegisterEmail(e.target.value)
+                           }}
+                        />
+                     </Box>
+                     <Box>
+                        <Button
+                           variant="contained"
+                           size="small"
+                           fullWidth
+                           onClick={getResetLink}
+                        >
+                           GET RESET LINK
+                        </Button>
+                     </Box>
+                     <Box
+                        sx={{
+                           display: 'flex',
+                           justifyContent: 'center',
+                        }}
+                     >
+                        Can't Change Password?
+                        <a
+                           onClick={() => {
+                              setPageFlag('signin')
+                           }}
+                           style={{
                               cursor: 'pointer',
                               textDecoration: 'underline',
                               color: 'blue',
