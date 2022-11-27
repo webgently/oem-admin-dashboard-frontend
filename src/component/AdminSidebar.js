@@ -426,6 +426,7 @@ export default function AdminSidebar() {
                </ListItem>
             </List>
          </Drawer>
+
          <Main open={open}>
             <DrawerHeader />
             <div style={{ display: 'flex', height: 'calc(100vh - 64px)' }}>

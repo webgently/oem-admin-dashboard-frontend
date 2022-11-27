@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
+/.idea
 .pnp.js
 
 # testing
@@ -14,6 +15,7 @@
 # misc
 .DS_Store
 .env
+
 
 npm-debug.log*
 yarn-debug.log*

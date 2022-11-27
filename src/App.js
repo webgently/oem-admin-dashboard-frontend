@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import Home from './component/Home'
 import Login from './component/Login'
+import Register from './component/Register'
+import ForgotPassword from './component/ForgotPassword'
+import ResetPassword from './component/ResetPassword'
 // --------user------------
 import UserSidebar from './component/UserSidebar'
 import Dashboard from './page/user/Dashboard'
@@ -30,7 +34,6 @@ const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function App() {
    const dispatch = useDispatch()
-
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       let deleteId = ''
@@ -65,7 +68,12 @@ export default function App() {
    return (
       <Router>
          <Routes>
-            <Route path="/" element={<Login />} />
+            <Route element={<Home />}>
+               <Route path="/" element={<Login />} />
+               <Route path="/register" element={<Register />} />
+               <Route path="/forgot-password" element={<ForgotPassword />} />
+               <Route path="/reset-password/*" element={<ResetPassword />} />
+            </Route>
             <Route element={<UserSidebar />}>
                <Route path="/dashboard" element={<Dashboard />} />
                <Route path="/upload" element={<Upload />} />

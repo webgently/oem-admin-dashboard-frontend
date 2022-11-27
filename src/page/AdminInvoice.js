@@ -42,21 +42,8 @@ const ServiceStyle = {
 export default function AdminInvoice() {
    const invoiceRef = React.createRef()
    const [page, setPage] = useState(0)
-   const [rowsPerPage, setRowsPerPage] = useState(10)
-
-   const handleChangePage = (event, newPage) => {
-      setPage(newPage)
-   }
-
-   const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(+event.target.value)
-      setPage(0)
-   }
-
    const [open, setOpen] = useState(false)
-
-   const handleClose = () => setOpen(false)
-
+   const [rowsPerPage, setRowsPerPage] = useState(10)
    const [allData, setAllData] = useState([])
    const [invoice, setInvoice] = useState({
       receipt: '',
@@ -79,6 +66,17 @@ export default function AdminInvoice() {
       amountCharge: '',
       vatCharge: 0,
    })
+
+   const handleChangePage = (event, newPage) => {
+      setPage(newPage)
+   }
+
+   const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(+event.target.value)
+      setPage(0)
+   }
+
+   const handleClose = () => setOpen(false)
 
    const getAllInvoice = async () => {
       try {
