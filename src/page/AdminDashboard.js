@@ -89,8 +89,9 @@ export default function AdminDashboard() {
                container
                spacing={{ xs: 2, md: 3 }}
                columns={{ xs: 4, sm: 8, md: 12 }}
+               sx={{ diplay: 'flex', justifyContent: 'center' }}
             >
-               <Grid item xs={12} sm={6} md={3}>
+               <Grid item xs={12} sm={12} md={3}>
                   <Item
                      onClick={() => {
                         navigate('/admin_user')
@@ -124,7 +125,7 @@ export default function AdminDashboard() {
                      </Box>
                   </Item>
                </Grid>
-               <Grid item xs={12} sm={6} md={3}>
+               <Grid item xs={12} sm={12} md={3}>
                   <Item
                      onClick={() => {
                         navigate('/admin_service')
@@ -158,7 +159,7 @@ export default function AdminDashboard() {
                      </Box>
                   </Item>
                </Grid>
-               <Grid item xs={12} sm={6} md={3}>
+               <Grid item xs={12} sm={12} md={3}>
                   <Item
                      onClick={() => setRequestStatus()}
                      className={requestAlert ? '' : 'shaking-animation'}
@@ -191,7 +192,7 @@ export default function AdminDashboard() {
                      </Box>
                   </Item>
                </Grid>
-               <Grid item xs={12} sm={6} md={3}>
+               <Grid item xs={12} sm={12} md={3}>
                   <Item
                      onClick={() => {
                         navigate('/admin_support')

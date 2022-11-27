@@ -21,15 +21,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setAccountData } from '../../features/account/account'
 import Key from '../../assets/img/changepassword.png'
 
-const columns = [
-   { id: 'id', label: 'Sr #', minWidth: 50 },
-   { id: 'day', label: 'Day', minWidth: 50 },
-   { id: 'open', label: 'Opening time', minWidth: 100 },
-   { id: 'close', label: 'Closing time', minWidth: 150 },
-   { id: 'holyday', label: 'Holiday', minWidth: 100 },
-   { id: 'action', label: 'Action' },
-]
-
 const Item1 = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
    ...theme.typography.body2,
@@ -48,7 +39,7 @@ const ServiceStyle1 = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: '50vw',
+   width: '500px',
    height: '740px',
    bgcolor: 'background.paper',
    border: '0px',

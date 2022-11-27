@@ -35,7 +35,7 @@ const ServiceStyle = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: '30vw',
+   width: '320px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
