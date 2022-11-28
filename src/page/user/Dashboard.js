@@ -154,6 +154,7 @@ export default function Dashboard() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
+
    useEffect(() => {
       if (account._id) {
          getDataByFilter(account._id)

@@ -230,6 +230,11 @@ export default function UserSidebar() {
             setUnreadFileCount(unreadFileCount - e.count)
             deleteId = 'totalUnreadCount' + account._id
          })
+         socket.on('creditCheck' + account._id, async () => {
+            getSumCredit(account._id)
+            deleteId = 'creditCheck' + account._id
+         })
+
          return () => {
             socket.off('connect')
             socket.off('disconnect')
