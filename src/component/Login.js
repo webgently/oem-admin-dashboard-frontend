@@ -23,6 +23,7 @@ const Login = () => {
                mail,
                pass,
             }
+            console.log(process.env.REACT_APP_API_URL)
             try {
                await axios
                   .post(`${process.env.REACT_APP_API_URL}signin`, { data })
