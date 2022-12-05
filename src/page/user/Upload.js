@@ -87,6 +87,10 @@ export default function Upload() {
          toast.error('Select the file')
          return
       }
+      if (fileData.type === 'application/octet-stream') {
+         toast.error(`Can't select the file like this type`)
+         return
+      }
       if (!vehicleType) {
          toast.error('Field the Vehicle type')
          return
@@ -197,8 +201,8 @@ export default function Upload() {
                      setVehicleBrand('')
                      setVehicleSeries('')
                      setVehicleEngine('')
-                     setHP('')
-                     setKW('')
+                     setHP(0)
+                     setKW(0)
                      setBuildYear(new Date())
                      setTransmission('')
                      setChasis('')
