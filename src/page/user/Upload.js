@@ -181,7 +181,6 @@ export default function Upload() {
          createdAt: getCustomDate(),
          readStatus: false,
       }
-      console.log('data', data)
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
       if (!isLoading) {
