@@ -89,15 +89,15 @@ export default function Upload() {
          return
       }
       if (
-         type !== 'bin' ||
-         type !== 'unq' ||
-         type !== 'ori' ||
-         type !== 'slave' ||
-         type !== 'bdc' ||
-         type !== 'mmf' ||
-         type !== 'zip' ||
-         type !== 'slv' ||
-         type !== 'rar' ||
+         type !== 'bin' &&
+         type !== 'unq' &&
+         type !== 'ori' &&
+         type !== 'slave' &&
+         type !== 'bdc' &&
+         type !== 'mmf' &&
+         type !== 'zip' &&
+         type !== 'slv' &&
+         type !== 'rar' &&
          type !== 'tun'
       ) {
          toast.error(`Can't select the file like this type`)

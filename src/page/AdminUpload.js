@@ -123,11 +123,27 @@ export default function AdminUpload() {
    }
 
    const upload = async () => {
+      const type = fileData.name.split('.')[1]
       if (!uploadBtnFlag)
          if (!fileData.name) {
             toast.error('Select the file')
             return
          }
+      if (
+         type !== 'bin' &&
+         type !== 'unq' &&
+         type !== 'ori' &&
+         type !== 'slave' &&
+         type !== 'bdc' &&
+         type !== 'mmf' &&
+         type !== 'zip' &&
+         type !== 'slv' &&
+         type !== 'rar' &&
+         type !== 'tun'
+      ) {
+         toast.error(`Can't select the file like this type`)
+         return
+      }
       if (!status) {
          toast.error('Select the status')
          return
