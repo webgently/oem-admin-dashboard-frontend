@@ -65,6 +65,7 @@ export default function AdminInvoice() {
       handleFee: '',
       amountCharge: '',
       vatCharge: 0,
+      adminMail: '',
    })
 
    const handleChangePage = (event, newPage) => {
@@ -125,6 +126,7 @@ export default function AdminInvoice() {
                      handleFee: result1.fee,
                      vatCharge: result1.vatCharge,
                      amountCharge: result1.netAmount,
+                     adminMail: result.data.adminMail,
                   })
                   setOpen(true)
                } else {
@@ -195,7 +197,7 @@ export default function AdminInvoice() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                          ind + 1
+                                          ind + 1 + page * rowsPerPage
                                        ) : column.id === 'profile' ? (
                                           <Avatar
                                              alt="Remy Sharp"
@@ -261,7 +263,10 @@ export default function AdminInvoice() {
                   <Box>Invoice Details</Box>
                   <Box sx={{ flex: '1' }}></Box>
                   <Box>
-                     <Pdf targetRef={invoiceRef} filename="invoice.pdf">
+                     <Pdf
+                        targetRef={invoiceRef}
+                        filename={'invoice' + invoice.receipt + '.pdf'}
+                     >
                         {({ toPdf }) => (
                            <IconButton onClick={toPdf}>
                               <DownloadIcon sx={{ color: 'white' }} />
@@ -293,7 +298,7 @@ export default function AdminInvoice() {
                         fontWeight: 'bold',
                      }}
                   >
-                     Receipt from ZipTuning Team
+                     Receipt from OEMSERVICE
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
                      Receipt #: {invoice.receipt}
@@ -444,7 +449,7 @@ export default function AdminInvoice() {
                   >
                      If you have any questions, contact us at{' '}
                      <span style={{ fontWeight: 'bold' }}>
-                        jonas@ecmtweaks.se
+                        {invoice.adminMail}
                      </span>
                   </Box>
                   <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.5)' }} />
@@ -456,7 +461,7 @@ export default function AdminInvoice() {
                      }}
                   >
                      You're receiving this email because you made a purchase at
-                     ZipTuning
+                     OEMSERVICE
                   </Box>
                </Box>
             </Box>

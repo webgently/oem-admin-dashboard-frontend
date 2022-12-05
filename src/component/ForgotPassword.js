@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Grid, TextField } from '@mui/material'
 import { Box } from '@mui/system'
 import toast from 'react-hot-toast'
-import logo from '../assets/img/logo.png'
+import logo from '../assets/img/OEMservice.png'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -49,11 +49,7 @@ const ForgotPassword = () => {
             className="login-form"
          >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-               <img
-                  alt="logo"
-                  src={logo}
-                  style={{ width: '200px', height: '90px' }}
-               />
+               <img alt="logo" src={logo} style={{ width: '100%' }} />
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                Enter your registered email...

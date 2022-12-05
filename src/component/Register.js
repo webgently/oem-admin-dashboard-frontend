@@ -5,7 +5,7 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import toast from 'react-hot-toast'
-import logo from '../assets/img/logo.png'
+import logo from '../assets/img/OEMservice.png'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -133,11 +133,7 @@ const Regiter = () => {
                   justifyContent: 'center',
                }}
             >
-               <img
-                  alt="logo"
-                  src={logo}
-                  style={{ width: '200px', height: '90px' }}
-               />
+               <img alt="logo" src={logo} style={{ width: '100%' }} />
             </Box>
             <Box>
                <TextField

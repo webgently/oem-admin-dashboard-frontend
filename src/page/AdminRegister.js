@@ -280,7 +280,7 @@ export default function AdminRegister() {
                                  return (
                                     <TableCell key={k}>
                                        {column.id === 'id' ? (
-                                          ind + 1
+                                          ind + 1 + page * rowsPerPage
                                        ) : column.id === 'profile' ? (
                                           <Avatar
                                              alt="avatar"

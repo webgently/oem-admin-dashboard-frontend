@@ -545,6 +545,11 @@ export default function BuyCredit() {
                            <TableCell
                               style={{ fontWeight: 'bold', fontSize: '16px' }}
                            >
+                              ID
+                           </TableCell>
+                           <TableCell
+                              style={{ fontWeight: 'bold', fontSize: '16px' }}
+                           >
                               File services type
                            </TableCell>
                            <TableCell
@@ -562,7 +567,7 @@ export default function BuyCredit() {
                         </TableRow>
                      </TableHead>
                      <TableBody>
-                        {allData.map((row) => (
+                        {allData.map((row, ind) => (
                            <TableRow
                               key={row._id}
                               sx={{
@@ -571,6 +576,9 @@ export default function BuyCredit() {
                                  },
                               }}
                            >
+                              <TableCell component="th" scope="row">
+                                 {ind + 1}
+                              </TableCell>
                               <TableCell component="th" scope="row">
                                  {row.serviceType}
                               </TableCell>

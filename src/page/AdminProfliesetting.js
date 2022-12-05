@@ -642,7 +642,7 @@ export default function AdminProfliesetting() {
                               display: 'flex',
                               justifyContent: 'flex-start',
                               background: `url(${bgCar})`,
-                              height: '300px',
+                              height: '400px',
                               width: '100%',
                               position: 'relative',
                               backgroundSize: '100% 100%',
@@ -876,7 +876,7 @@ export default function AdminProfliesetting() {
                                              align={column.align}
                                           >
                                              {column.id === 'id' ? (
-                                                ind + 1
+                                                ind + 1 + page * rowsPerPage
                                              ) : column.id === 'holyday' &&
                                                value ? (
                                                 'holiday'

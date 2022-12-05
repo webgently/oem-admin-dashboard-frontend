@@ -272,7 +272,7 @@ export default function AdminPricelist() {
                                        align={column.align}
                                     >
                                        {column.id === 'id' ? (
-                                          ind + 1
+                                          ind + 1 + page * rowsPerPage
                                        ) : column.id === 'action' ? (
                                           <ButtonGroup
                                              variant="outlined"
