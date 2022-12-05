@@ -181,6 +181,7 @@ export default function Upload() {
          createdAt: getCustomDate(),
          readStatus: false,
       }
+      console.log('data', data)
       params.append('file', fileData)
       params.append('data', JSON.stringify(data))
       if (!isLoading) {
@@ -490,7 +491,7 @@ export default function Upload() {
                               size="small"
                               value={HP}
                               type="number"
-                              onChange={(e) => setHP(e.target.value)}
+                              onChange={(e) => setHP(Number(e.target.value))}
                            />
                         </FormControl>
                      </Grid>

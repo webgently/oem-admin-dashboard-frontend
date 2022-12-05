@@ -34,12 +34,16 @@ const Regiter = () => {
       }
    }
 
+   const validateEmail = (email) => {
+      return email.match(
+         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+   }
+
    const SignUp = async () => {
-      const regex =
-         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
       if (name === '') {
          toast.error('Please input name!')
-      } else if (email === '' || regex.test(email) === false) {
+      } else if (email === '' || validateEmail(email) === null) {
          toast.error('Email is not valid')
       } else if (phone === '') {
          toast.error('Please input phone number!')

@@ -14,16 +14,20 @@ const Login = () => {
    const dispatch = useDispatch()
    const [mail, setMail] = useState('')
    const [pass, setPass] = useState('')
+
+   const validateEmail = (email) => {
+      return email.match(
+         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+   }
+
    const SignIn = async () => {
-      const regex =
-         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-      if (mail !== '' && regex.test(mail) === true) {
+      if (mail !== '' && validateEmail(mail) !== null) {
          if (pass !== '') {
             let data = {
                mail,
                pass,
             }
-            console.log(process.env.REACT_APP_API_URL)
             try {
                await axios
                   .post(`${process.env.REACT_APP_API_URL}signin`, { data })
