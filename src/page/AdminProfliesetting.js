@@ -34,7 +34,7 @@ import Stack from '@mui/material/Stack'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
-import LogoIcon from '../assets/img/OEMservice2.jpg'
+import LogoIcon from '../assets/img/blue-logo.png'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { setAccountData } from '../features/account/account'
@@ -1082,7 +1082,7 @@ export default function AdminProfliesetting() {
                            src={logo === '' ? LogoIcon : logo}
                            alt="Logo Upload Image"
                            style={{
-                              height: '100%',
+                              height: '80%',
                            }}
                         />
                      </Box>
@@ -1197,7 +1197,6 @@ export default function AdminProfliesetting() {
                <Box sx={{ p: 3 }}>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Name"
                         variant="outlined"
                         size="small"
@@ -1208,7 +1207,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Email"
                         variant="outlined"
                         size="small"
@@ -1219,7 +1217,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Contact"
                         variant="outlined"
                         size="small"
@@ -1230,7 +1227,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="VAT Number"
                         variant="outlined"
                         size="small"
@@ -1241,7 +1237,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Region"
                         variant="outlined"
                         size="small"
@@ -1252,7 +1247,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Country"
                         variant="outlined"
                         size="small"
@@ -1263,7 +1257,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="City"
                         variant="outlined"
                         size="small"
@@ -1274,7 +1267,6 @@ export default function AdminProfliesetting() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Address"
                         variant="outlined"
                         size="small"

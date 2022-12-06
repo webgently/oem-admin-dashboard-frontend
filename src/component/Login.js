@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Button, Grid, TextField } from '@mui/material'
 import { Box } from '@mui/system'
-import logo from '../assets/img/OEMservice.png'
+import logo1 from '../assets/img/blue-logo.png'
+import logo2 from '../assets/img/white-logo.png'
 import axios from 'axios'
 import { setAccountData } from '../features/account/account'
 
@@ -12,6 +13,7 @@ const Login = () => {
    const account = useSelector((state) => state.account)
    const navigate = useNavigate()
    const dispatch = useDispatch()
+   const [mobileView, setMobileView] = useState(false)
    const [mail, setMail] = useState('')
    const [pass, setPass] = useState('')
 
@@ -58,6 +60,16 @@ const Login = () => {
    }
 
    useEffect(() => {
+      const setResponsiveness = () => {
+         return window.innerWidth < 900
+            ? setMobileView(true)
+            : setMobileView(false)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
+   useEffect(() => {
       try {
          if (account) {
             switch (account.permission) {
@@ -94,12 +106,15 @@ const Login = () => {
             className="login-form"
          >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-               <img alt="logo" src={logo} style={{ width: '100%' }} />
+               <img
+                  alt="logo"
+                  src={mobileView ? logo2 : logo1}
+                  style={{ width: '100%' }}
+               />
             </Box>
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   type="email"
                   fullWidth
@@ -113,7 +128,6 @@ const Login = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   type="password"
                   placeholder="Input the password"

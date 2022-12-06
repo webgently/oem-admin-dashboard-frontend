@@ -396,7 +396,6 @@ export default function AdminRegister() {
                <Box sx={{ p: 3 }}>
                   <Box>
                      <TextField
-                        id="outlined-basic"
                         label="Note"
                         variant="outlined"
                         size="small"
@@ -512,7 +511,6 @@ export default function AdminRegister() {
                      <>
                         <Box>
                            <TextField
-                              id="outlined-basic"
                               type="number"
                               label="Enter More Credits"
                               variant="outlined"
@@ -555,7 +553,6 @@ export default function AdminRegister() {
                         </Box>
                         <Box>
                            <TextField
-                              id="outlined-basic"
                               type="number"
                               label="Update Credits"
                               variant="outlined"

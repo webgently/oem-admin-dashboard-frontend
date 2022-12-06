@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Grid, TextField } from '@mui/material'
 import { Box } from '@mui/system'
 import toast from 'react-hot-toast'
-import logo from '../assets/img/OEMservice.png'
+import logo1 from '../assets/img/blue-logo.png'
+import logo2 from '../assets/img/white-logo.png'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const ForgotPassword = () => {
    const navigate = useNavigate()
    const [registerEmail, setRegisterEmail] = useState('')
+   const [mobileView, setMobileView] = useState(false)
 
    const getResetLink = async () => {
       const regex =
@@ -35,6 +37,16 @@ const ForgotPassword = () => {
       }
    }
 
+   useEffect(() => {
+      const setResponsiveness = () => {
+         return window.innerWidth < 900
+            ? setMobileView(true)
+            : setMobileView(false)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
          <Box
@@ -49,7 +61,11 @@ const ForgotPassword = () => {
             className="login-form"
          >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-               <img alt="logo" src={logo} style={{ width: '100%' }} />
+               <img
+                  alt="logo"
+                  src={mobileView ? logo2 : logo1}
+                  style={{ width: '100%' }}
+               />
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                Enter your registered email...
@@ -57,7 +73,6 @@ const ForgotPassword = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   type="email"
                   fullWidth

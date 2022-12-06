@@ -322,7 +322,6 @@ export default function AdminService() {
                <Box sx={{ p: 3 }}>
                   <Box>
                      <TextField
-                        id="outlined-basic"
                         label="Service Type"
                         variant="outlined"
                         size="small"

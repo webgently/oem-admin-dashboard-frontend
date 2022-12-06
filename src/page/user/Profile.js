@@ -618,7 +618,6 @@ export default function Profile() {
                <Box sx={{ p: 3 }}>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Name"
                         variant="outlined"
                         size="small"
@@ -629,7 +628,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Email"
                         variant="outlined"
                         size="small"
@@ -640,7 +638,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Contact"
                         variant="outlined"
                         size="small"
@@ -651,7 +648,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="VAT Number"
                         variant="outlined"
                         size="small"
@@ -662,7 +658,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Region"
                         variant="outlined"
                         size="small"
@@ -673,7 +668,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Country"
                         variant="outlined"
                         size="small"
@@ -684,7 +678,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="City"
                         variant="outlined"
                         size="small"
@@ -695,7 +688,6 @@ export default function Profile() {
                   </Box>
                   <Box sx={{ mt: '30px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Address"
                         variant="outlined"
                         size="small"

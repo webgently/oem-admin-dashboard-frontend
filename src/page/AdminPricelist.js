@@ -375,7 +375,6 @@ export default function AdminPricelist() {
                   </Box>
                   <Box sx={{ mt: '20px' }}>
                      <TextField
-                        id="outlined-basic"
                         label="Service"
                         variant="outlined"
                         size="small"

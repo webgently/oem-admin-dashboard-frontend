@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Checkbox, FormControl, Grid, TextField } from '@mui/material'
 import { Box } from '@mui/system'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import toast from 'react-hot-toast'
-import logo from '../assets/img/OEMservice.png'
+import logo1 from '../assets/img/blue-logo.png'
+import logo2 from '../assets/img/white-logo.png'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -25,6 +26,7 @@ const Regiter = () => {
    const [checkflag, setCheck] = useState(false)
    const [subcontinent, setSubcontinent] = useState('')
    const [vatNumber, setVatNumber] = useState('')
+   const [mobileView, setMobileView] = useState(false)
 
    const handleChangeSubcontinent = () => {
       if (subcontinent === 'europe') {
@@ -116,6 +118,16 @@ const Regiter = () => {
       }
    }
 
+   useEffect(() => {
+      const setResponsiveness = () => {
+         return window.innerWidth < 900
+            ? setMobileView(true)
+            : setMobileView(false)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', () => setResponsiveness())
+   }, [window.innerWidth])
+
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
          <Box
@@ -137,12 +149,15 @@ const Regiter = () => {
                   justifyContent: 'center',
                }}
             >
-               <img alt="logo" src={logo} style={{ width: '100%' }} />
+               <img
+                  alt="logo"
+                  src={mobileView ? logo2 : logo1}
+                  style={{ width: '100%' }}
+               />
             </Box>
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   type="string"
                   fullWidth
@@ -156,7 +171,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   type="email"
                   fullWidth
@@ -170,7 +184,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   placeholder="Mobile Number*"
                   fullWidth
@@ -183,7 +196,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   placeholder="Address*"
@@ -196,7 +208,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   placeholder="City*"
@@ -209,7 +220,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   placeholder="Country*"
@@ -222,7 +232,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   placeholder="Zip Code*"
@@ -249,7 +258,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   type="string"
@@ -275,7 +283,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   type="password"
@@ -289,7 +296,6 @@ const Regiter = () => {
             <Box>
                <TextField
                   hiddenLabel
-                  id="outlined-basic"
                   variant="filled"
                   fullWidth
                   placeholder="Confirm Password*"

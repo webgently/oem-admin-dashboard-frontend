@@ -16,7 +16,8 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import LogoIcon from '../assets/img/OEMservice2.jpg'
+import LogoIcon1 from '../assets/img/white-logo.png'
+import LogoIcon2 from '../assets/img/blue-logo.png'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PersonIcon from '@mui/icons-material/Person'
 import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
@@ -195,7 +196,7 @@ export default function AdminSidebar() {
                   <></>
                ) : (
                   <img
-                     src={logo === '' ? LogoIcon : logo}
+                     src={logo === '' ? LogoIcon1 : logo}
                      style={{
                         width: '120px',
                         height: '50px',
@@ -282,7 +283,7 @@ export default function AdminSidebar() {
          >
             <DrawerHeader>
                <img
-                  src={logo === '' ? LogoIcon : logo}
+                  src={logo === '' ? LogoIcon2 : logo}
                   style={{ width: '120px', height: '60px' }}
                   alt="logo image"
                />
