@@ -84,7 +84,8 @@ export default function Upload() {
 
    const upload = async () => {
       const arr = fileData.name.split('.')
-      const type = fileData.name.split('.')[arr.length - 1]
+      const element = fileData.name.split('.')[arr.length - 1]
+      const type = element.toLowerCase()
       if (!fileData.name) {
          toast.error('Select the file')
          return
