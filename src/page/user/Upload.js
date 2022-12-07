@@ -83,21 +83,30 @@ export default function Upload() {
    }
 
    const upload = async () => {
-      const type = fileData.name.split('.')[1]
+      const arr = fileData.name.split('.')
+      const type = fileData.name.split('.')[arr.length - 1]
       if (!fileData.name) {
          toast.error('Select the file')
          return
       }
       if (
          type !== 'bin' &&
+         type !== 'bdc' &&
          type !== 'unq' &&
-         type !== 'ori' &&
          type !== 'slave' &&
+         type !== 'fls' &&
+         type !== 'dim' &&
+         type !== 'dtf' &&
+         type !== 'e2p' &&
+         type !== 'ori' &&
          type !== 'bdc' &&
          type !== 'mmf' &&
          type !== 'zip' &&
          type !== 'slv' &&
          type !== 'rar' &&
+         type !== 'mtx' &&
+         type !== 'fpf' &&
+         type !== 'cod' &&
          type !== 'tun'
       ) {
          toast.error(`Can't select the file like this type`)

@@ -129,17 +129,26 @@ export default function AdminUpload() {
             return
          }
       if (status == 'completed') {
-         const type = fileData.name.split('.')[1]
+         const arr = fileData.name.split('.')
+         const type = fileData.name.split('.')[arr.length - 1]
          if (
             type !== 'bin' &&
+            type !== 'bdc' &&
             type !== 'unq' &&
-            type !== 'ori' &&
             type !== 'slave' &&
+            type !== 'fls' &&
+            type !== 'dim' &&
+            type !== 'dtf' &&
+            type !== 'e2p' &&
+            type !== 'ori' &&
             type !== 'bdc' &&
             type !== 'mmf' &&
             type !== 'zip' &&
             type !== 'slv' &&
             type !== 'rar' &&
+            type !== 'mtx' &&
+            type !== 'fpf' &&
+            type !== 'cod' &&
             type !== 'tun'
          ) {
             toast.error(`Can't select the file like this type`)
