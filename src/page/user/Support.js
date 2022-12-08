@@ -85,39 +85,35 @@ export default function Support() {
          }
          flag = false
       }
-      if (chattingMsg.trim() === '' && fileData?.name === '') {
+      if (chattingMsg.trim() || fileData?.name) {
+         if (fileData?.size / 1000000 > 2) {
+            toast.error(`Can't upload 2MB files`)
+            return
+         }
+         if (flag) {
+            let params = new FormData()
+            params.append('file', fileData)
+            params.append('data', JSON.stringify(data))
+            await axios
+               .post(`${process.env.REACT_APP_API_URL}sendToSupport`, params)
+               .then(async (result) => {
+                  if (result.data.status) {
+                     data.msg = result.data.data
+                     await setAllMsg([...allMsg, data])
+                     setFileData({})
+                     setFileOpen(false)
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } else {
+            socket.emit('sendToSupport', { data, name })
+            await setAllMsg([...allMsg, data])
+            setChattingMsg('')
+            inputRef.current.focus()
+         }
+      } else {
          toast.error('Write the message')
-         return
-      }
-
-      if (fileData?.size / 1000000 > 2) {
-         toast.error(`Can't upload 2MB files`)
-         return
-      }
-      if (flag) {
-         let params = new FormData()
-         params.append('file', fileData)
-         params.append('data', JSON.stringify(data))
-         await axios
-            .post(`${process.env.REACT_APP_API_URL}sendToSupport`, params)
-            .then(async (result) => {
-               if (result.data.status) {
-                  data.msg = result.data.data
-                  await setAllMsg([...allMsg, data])
-               } else {
-                  toast.error(result.data.data)
-               }
-            })
-      } else {
-         socket.emit('sendToSupport', { data, name })
-         await setAllMsg([...allMsg, data])
-      }
-      if (fileOpen) {
-         setFileData({})
-         setFileOpen(false)
-      } else {
-         setChattingMsg('')
-         inputRef.current.focus()
       }
    }
 

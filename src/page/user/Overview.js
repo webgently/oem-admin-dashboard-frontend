@@ -143,8 +143,6 @@ export default function Overview() {
       let data = {}
       let flag
       if (fileData?.name) {
-         const arr = fileData.name.split('.')
-         const type = fileData.name.split('.')[arr.length - 1]
          data = {
             from: myID + dataId + orderId,
             to: supportID,
@@ -164,49 +162,45 @@ export default function Overview() {
          flag = false
       }
 
-      if (chattingMsg.trim() === '' && fileData?.name === '') {
-         toast.error('Write the message')
-         return
-      }
+      if (chattingMsg.trim() || fileData?.name) {
+         if (fileData?.size / 1000000 > 2) {
+            toast.error(`Can't upload 2MB files`)
+            return
+         }
 
-      if (fileData?.size / 1000000 > 2) {
-         toast.error(`Can't upload 2MB files`)
-         return
-      }
-
-      if (flag) {
-         let params = new FormData()
-         params.append('file', fileData)
-         params.append('data', JSON.stringify(data))
-         params.append('orderId', orderId)
-         params.append('name', name)
-         await axios
-            .post(
-               `${process.env.REACT_APP_API_URL}sendToSupportPerFile`,
-               params
-            )
-            .then(async (result) => {
-               if (result.data.status) {
-                  data.msg = result.data.data
-                  await setAllMsg([...allMsg, data])
-               } else {
-                  toast.error(result.data.data)
-               }
+         if (flag) {
+            let params = new FormData()
+            params.append('file', fileData)
+            params.append('data', JSON.stringify(data))
+            params.append('orderId', orderId)
+            params.append('name', name)
+            await axios
+               .post(
+                  `${process.env.REACT_APP_API_URL}sendToSupportPerFile`,
+                  params
+               )
+               .then(async (result) => {
+                  if (result.data.status) {
+                     data.msg = result.data.data
+                     await setAllMsg([...allMsg, data])
+                     setFileData({})
+                     setFileOpen(false)
+                  } else {
+                     toast.error(result.data.data)
+                  }
+               })
+         } else {
+            socket.emit('sendToSupportPerFile', {
+               data,
+               orderId,
+               name,
             })
+            await setAllMsg([...allMsg, data])
+            setChattingMsg('')
+            inputRef.current.focus()
+         }
       } else {
-         socket.emit('sendToSupportPerFile', {
-            data,
-            orderId,
-            name,
-         })
-         await setAllMsg([...allMsg, data])
-      }
-      if (fileOpen) {
-         setFileData({})
-         setFileOpen(false)
-      } else {
-         setChattingMsg('')
-         inputRef.current.focus()
+         toast.error('Write the message')
       }
    }
 

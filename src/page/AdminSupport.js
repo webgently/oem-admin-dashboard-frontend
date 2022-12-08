@@ -107,8 +107,6 @@ export default function AdminSupport() {
          let data = {}
          let flag
          if (fileData?.name) {
-            const arr = fileData.name.split('.')
-            const type = fileData.name.split('.')[arr.length - 1]
             data = {
                from: myID,
                to: selectedIndex,
@@ -133,64 +131,65 @@ export default function AdminSupport() {
                .map((e) => e._id)
                .indexOf(selectedIndex)
             const orderId = allUserList[userIndex].name.split(': ')[1]
-            if (chattingMsg.trim() === '' && fileData?.name === '') {
-               toast.error('Write the message')
-               return
-            }
-            if (fileData?.size / 1000000 > 2) {
-               toast.error(`Can't upload 2MB files`)
-               return
-            }
-            if (flag) {
-               if (selectedIndex.length > 30) {
-                  let params = new FormData()
-                  params.append('file', fileData)
-                  params.append('data', JSON.stringify(data))
-                  params.append('orderId', orderId)
-                  await axios
-                     .post(
-                        `${process.env.REACT_APP_API_URL}sendToUserPerFile`,
-                        params
-                     )
-                     .then(async (result) => {
-                        if (result.data.status) {
-                           data.msg = result.data.data
-                           await setAllMsg([...allMsg, data])
-                        } else {
-                           toast.error(result.data.data)
-                        }
-                     })
+            if (chattingMsg.trim() || fileData?.name) {
+               if (fileData?.size / 1000000 > 2) {
+                  toast.error(`Can't upload 2MB files`)
+                  return
+               }
+               if (flag) {
+                  if (selectedIndex.length > 30) {
+                     let params = new FormData()
+                     params.append('file', fileData)
+                     params.append('data', JSON.stringify(data))
+                     params.append('orderId', orderId)
+                     await axios
+                        .post(
+                           `${process.env.REACT_APP_API_URL}sendToUserPerFile`,
+                           params
+                        )
+                        .then(async (result) => {
+                           if (result.data.status) {
+                              data.msg = result.data.data
+                              await setAllMsg([...allMsg, data])
+                              setFileData({})
+                              setFileOpen(false)
+                           } else {
+                              toast.error(result.data.data)
+                           }
+                        })
+                  } else {
+                     let params = new FormData()
+                     params.append('file', fileData)
+                     params.append('data', JSON.stringify(data))
+                     await axios
+                        .post(
+                           `${process.env.REACT_APP_API_URL}sendToUser`,
+                           params
+                        )
+                        .then(async (result) => {
+                           if (result.data.status) {
+                              data.msg = result.data.data
+                              await setAllMsg([...allMsg, data])
+                              setFileData({})
+                              setFileOpen(false)
+                           } else {
+                              toast.error(result.data.data)
+                           }
+                        })
+                  }
                } else {
-                  let params = new FormData()
-                  params.append('file', fileData)
-                  params.append('data', JSON.stringify(data))
-                  await axios
-                     .post(`${process.env.REACT_APP_API_URL}sendToUser`, params)
-                     .then(async (result) => {
-                        if (result.data.status) {
-                           data.msg = result.data.data
-                           await setAllMsg([...allMsg, data])
-                        } else {
-                           toast.error(result.data.data)
-                        }
-                     })
+                  if (selectedIndex.length > 30)
+                     socket.emit('sendToUserPerFile', { data, orderId })
+                  else socket.emit('sendToUser', data)
+                  await setAllMsg([...allMsg, data])
+                  setChattingMsg('')
+                  inputRef.current.focus()
                }
             } else {
-               if (selectedIndex.length > 30)
-                  socket.emit('sendToUserPerFile', { data, orderId })
-               else socket.emit('sendToUser', data)
-               await setAllMsg([...allMsg, data])
+               toast.error('Write the message')
             }
          } else {
             toast.error('Select the user')
-         }
-
-         if (fileOpen) {
-            setFileData({})
-            setFileOpen(false)
-         } else {
-            setChattingMsg('')
-            inputRef.current.focus()
          }
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
