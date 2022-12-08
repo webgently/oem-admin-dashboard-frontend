@@ -45,7 +45,7 @@ export default function AdminSupport() {
    const [unreadCount, setUnreadCount] = useState({})
    const [chattingMsg, setChattingMsg] = useState('')
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
-   const [fileData, setFileData] = useState({})
+   const [fileData, setFileData] = useState(null)
    const [fileOpen, setFileOpen] = useState(false)
    const [allMsg, setAllMsg] = useState([])
    const messagesEndRef = useRef(null)
@@ -151,8 +151,9 @@ export default function AdminSupport() {
                            if (result.data.status) {
                               data.msg = result.data.data
                               await setAllMsg([...allMsg, data])
-                              setFileData({})
+                              setFileData(null)
                               setFileOpen(false)
+                              inputElement.current.value = null
                            } else {
                               toast.error(result.data.data)
                            }
@@ -170,8 +171,9 @@ export default function AdminSupport() {
                            if (result.data.status) {
                               data.msg = result.data.data
                               await setAllMsg([...allMsg, data])
-                              setFileData({})
+                              setFileData(null)
                               setFileOpen(false)
+                              inputElement.current.value = null
                            } else {
                               toast.error(result.data.data)
                            }
@@ -258,10 +260,11 @@ export default function AdminSupport() {
    const getFile = async (e) => {
       setFileData(e.target.files[0])
       setChattingMsg('')
+      setFileOpen(true)
    }
 
    const deleteFile = () => {
-      setFileData({})
+      setFileData(null)
       setFileOpen(false)
    }
 

@@ -100,8 +100,9 @@ export default function Support() {
                   if (result.data.status) {
                      data.msg = result.data.data
                      await setAllMsg([...allMsg, data])
-                     setFileData({})
+                     setFileData(null)
                      setFileOpen(false)
+                     inputElement.current.value = null
                   } else {
                      toast.error(result.data.data)
                   }
@@ -174,10 +175,11 @@ export default function Support() {
    const getFile = async (e) => {
       setFileData(e.target.files[0])
       setChattingMsg('')
+      setFileOpen(true)
    }
 
    const deleteFile = () => {
-      setFileData({})
+      setFileData(null)
       setFileOpen(false)
    }
 

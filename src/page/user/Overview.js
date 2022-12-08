@@ -185,6 +185,7 @@ export default function Overview() {
                      await setAllMsg([...allMsg, data])
                      setFileData({})
                      setFileOpen(false)
+                     inputElement.current.value = null
                   } else {
                      toast.error(result.data.data)
                   }
@@ -364,6 +365,7 @@ export default function Overview() {
    const getFile = async (e) => {
       setFileData(e.target.files[0])
       setChattingMsg('')
+      setFileOpen(true)
    }
 
    const deleteFile = () => {
