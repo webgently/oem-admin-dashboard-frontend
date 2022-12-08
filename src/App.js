@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import useSound from 'use-sound'
 import Home from './component/Home'
 import Login from './component/Login'
 import Register from './component/Register'
@@ -28,33 +29,49 @@ import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 import AdminSupport from './page/AdminSupport'
 import { setAccountData } from './features/account/account'
+import soundSrc from './assets/mp3/ring.mp3'
 import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
 const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function App() {
    const dispatch = useDispatch()
+   const [playbackRate, setPlaybackRate] = useState(0.75)
+
+   const [play] = useSound(soundSrc, {
+      playbackRate,
+      interrupt: true,
+   })
+
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       let deleteId = ''
       if (account) dispatch(setAccountData(account))
       socket.on(account._id, async (e) => {
          toast.success(e.alertMsg)
+         setPlaybackRate(playbackRate + 0.1)
+         play()
          deleteId = account._id
       })
 
       socket.on('fileReply' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         setPlaybackRate(playbackRate + 0.1)
+         play()
          deleteId = 'fileReply' + account._id
       })
 
       socket.on('request' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         setPlaybackRate(playbackRate + 0.1)
+         play()
          deleteId = 'request' + account._id
       })
 
       socket.on('answer' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         setPlaybackRate(playbackRate + 0.1)
+         play()
          deleteId = 'answer' + account._id
       })
 
