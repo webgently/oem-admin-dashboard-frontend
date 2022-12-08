@@ -130,7 +130,7 @@ export default function AdminUpload() {
          }
       if (status == 'completed') {
          const arr = fileData.name.split('.')
-         const element = fileData.name.split('.')[arr.length - 1]
+         const element = arr[arr.length - 1]
          const type = element.toLowerCase()
          if (
             type !== 'bin' &&

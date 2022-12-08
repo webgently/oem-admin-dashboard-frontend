@@ -12,6 +12,9 @@ import TableRow from '@mui/material/TableRow'
 import ChatIcon from '@mui/icons-material/Chat'
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
 import MenuItem from '@mui/material/MenuItem'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import Paper from '@mui/material/Paper'
@@ -129,21 +132,67 @@ export default function Overview() {
    const [unreadFileCount, setUnreadFileCount] = useState({})
    const [allMsg, setAllMsg] = useState([])
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
-   const [isLoading, setIsLoading] = useState(true)
+   const [fileData, setFileData] = useState({})
+   const [fileOpen, setFileOpen] = useState(false)
+   const inputElement = useRef('fileInput')
    const messagesEndRef = useRef(null)
    const inputRef = useRef(null)
 
    const sendChatting = async () => {
       const date = await getCustomDate()
-      const data = {
-         from: myID + dataId + orderId,
-         to: supportID,
-         msg: chattingMsg,
-         date: date,
-         status: false,
+      let data = {}
+      let flag
+      if (fileData?.name) {
+         const arr = fileData.name.split('.')
+         const type = fileData.name.split('.')[arr.length - 1]
+         data = {
+            from: myID + dataId + orderId,
+            to: supportID,
+            msg: '',
+            date: date,
+            status: false,
+         }
+         flag = true
+      } else {
+         data = {
+            from: myID + dataId + orderId,
+            to: supportID,
+            msg: chattingMsg,
+            date: date,
+            status: false,
+         }
+         flag = false
       }
-      if (chattingMsg.trim() === '') {
+
+      if (chattingMsg.trim() === '' && fileData?.name === '') {
          toast.error('Write the message')
+         return
+      }
+
+      if (fileData?.size / 1000000 > 2) {
+         toast.error(`Can't upload 2MB files`)
+         return
+      }
+
+      if (flag) {
+         let params = new FormData()
+         params.append('file', fileData)
+         params.append('data', JSON.stringify(data))
+         params.append('orderId', orderId)
+         params.append('name', name)
+         await axios
+            .post(
+               `${process.env.REACT_APP_API_URL}sendToSupportPerFile`,
+               params
+            )
+            .then(async (result) => {
+               if (result.data.status) {
+                  data.msg = result.data.data
+                  await setAllMsg([...allMsg, data])
+               } else {
+                  toast.error(result.data.data)
+               }
+            })
       } else {
          socket.emit('sendToSupportPerFile', {
             data,
@@ -152,8 +201,13 @@ export default function Overview() {
          })
          await setAllMsg([...allMsg, data])
       }
-      setChattingMsg('')
-      inputRef.current.focus()
+      if (fileOpen) {
+         setFileData({})
+         setFileOpen(false)
+      } else {
+         setChattingMsg('')
+         inputRef.current.focus()
+      }
    }
 
    const getKeyCode = async (e) => {
@@ -309,6 +363,25 @@ export default function Overview() {
       })
    }
 
+   const handleFileload = () => {
+      inputElement.current.click()
+   }
+
+   const getFile = async (e) => {
+      setFileData(e.target.files[0])
+      setChattingMsg('')
+   }
+
+   const deleteFile = () => {
+      setFileData({})
+      setFileOpen(false)
+   }
+
+   useEffect(() => {
+      if (fileData?.name) setFileOpen(true)
+      else setFileOpen(false)
+   }, [fileData])
+
    useEffect(() => {
       const setResponsiveness = () => {
          return setChatBoxWidth(window.innerWidth - window.innerWidth / 2 - 50)
@@ -337,7 +410,9 @@ export default function Overview() {
          deleteId = myID + dataId + orderId
       })
       socket.on('fileReply' + myID, async (e) => {
+         console.log(e.from)
          const copy = { ...unreadFileCount }
+         console.log(copy)
          copy[e.from] += 1
          setUnreadFileCount(copy)
          deleteId = 'fileReply' + myID
@@ -666,69 +741,152 @@ export default function Overview() {
                         }}
                      >
                         <Grid item lg={12} md={12} sm={12} xs={12}>
-                           {allMsg.map((item, ind) => (
-                              <Box
-                                 key={ind}
-                                 textAlign={
-                                    item.from.search(myID) >= 0
-                                       ? 'right'
-                                       : 'left'
-                                 }
-                                 color={
-                                    item.from.search(myID) >= 0
-                                       ? '#1976d2'
-                                       : '#e10000'
-                                 }
-                                 className="chatting-group"
-                                 position={'relative'}
-                              >
-                                 <Box>
-                                    <p
-                                       className="chatting-msg"
-                                       style={{ width: chatBoxWidth }}
-                                    >
-                                       {item.msg}
-                                    </p>
-                                    {item.from.search(myID) >= 0 ? (
-                                       <p className="chatting-right-date">
-                                          {item.date}
-                                       </p>
-                                    ) : (
-                                       <p className="chatting-left-date">
-                                          {item.date}
-                                       </p>
-                                    )}
+                           {allMsg.map((item, ind) => {
+                              const arr = item.msg.split('->')
+                              const type = arr[arr.length - 1]
+                              return (
+                                 <Box
+                                    key={ind}
+                                    textAlign={
+                                       item.from.search(myID) >= 0
+                                          ? 'right'
+                                          : 'left'
+                                    }
+                                    color={
+                                       item.from.search(myID) >= 0
+                                          ? '#1976d2'
+                                          : '#e10000'
+                                    }
+                                    className="chatting-group"
+                                    position={'relative'}
+                                 >
+                                    <Box>
+                                       {type === 'file' ? (
+                                          <p
+                                             className="chatting-msg"
+                                             style={{
+                                                width: chatBoxWidth,
+                                             }}
+                                          >
+                                             <a
+                                                style={{
+                                                   color: `${
+                                                      item.from.search(myID) >=
+                                                      0
+                                                         ? 'blue'
+                                                         : 'green'
+                                                   }`,
+                                                }}
+                                                href={`${
+                                                   process.env
+                                                      .REACT_APP_BASE_URL
+                                                }chatFile/${
+                                                   arr[arr.length - 2]
+                                                }`}
+                                                download={arr[0]}
+                                             >
+                                                {arr[0]}
+                                             </a>
+                                          </p>
+                                       ) : (
+                                          <p
+                                             className="chatting-msg"
+                                             style={{
+                                                width: chatBoxWidth,
+                                             }}
+                                          >
+                                             {item.msg}
+                                          </p>
+                                       )}
+                                       {item.from.search(myID) >= 0 ? (
+                                          <p className="chatting-right-date">
+                                             {item.date}
+                                          </p>
+                                       ) : (
+                                          <p className="chatting-left-date">
+                                             {item.date}
+                                          </p>
+                                       )}
+                                    </Box>
                                  </Box>
-                              </Box>
-                           ))}
+                              )
+                           })}
                            <div ref={messagesEndRef} />
                         </Grid>
                      </Grid>
                      <Grid
                         container
                         justifyContent={'space-between'}
-                        paddingX={'2vw'}
+                        alignItems={'flex-end'}
                      >
-                        <Grid item xs={10.8}>
-                           <TextField
-                              id="filled-multiline-flexible"
-                              ref={inputRef}
-                              label="Type Something"
-                              multiline
-                              variant="filled"
-                              minRows={1}
-                              maxRows={3}
-                              fullWidth
-                              value={chattingMsg}
-                              onKeyUp={(e) => getKeyCode(e.keyCode)}
-                              onChange={(e) => setChattingMsg(e.target.value)}
+                        <Grid item xs={0.5}>
+                           <input
+                              ref={inputElement}
+                              type="file"
+                              style={{ display: 'none' }}
+                              onChange={(e) => getFile(e)}
                            />
+                           <IconButton
+                              color="primary"
+                              component="label"
+                              onClick={handleFileload}
+                           >
+                              <AttachFileIcon />
+                           </IconButton>
                         </Grid>
+                        {fileOpen ? (
+                           <Grid className="select-file" item xs={10}>
+                              <Box className="file-group-box">
+                                 <Box className="upload-img-box">
+                                    <UploadFileIcon className="upload-img-icon" />
+                                 </Box>
+                                 <Box className="file-info">
+                                    <Box>
+                                       <Box className="filename-string">
+                                          {fileData?.name}
+                                       </Box>
+                                       <Box>
+                                          {(fileData?.size / 1000000).toFixed(
+                                             4
+                                          )}{' '}
+                                          MB
+                                       </Box>
+                                    </Box>
+                                 </Box>
+                              </Box>
+                              <Box className="close-img-box">
+                                 <HighlightOffIcon
+                                    className="close-img-icon"
+                                    onClick={() => deleteFile()}
+                                 />
+                              </Box>
+                           </Grid>
+                        ) : (
+                           <Grid item xs={10}>
+                              <TextField
+                                 id="filled-multiline-flexible"
+                                 ref={inputRef}
+                                 label="Type Something"
+                                 multiline
+                                 variant="filled"
+                                 minRows={1}
+                                 maxRows={3}
+                                 fullWidth
+                                 value={chattingMsg}
+                                 onKeyUp={(e) => getKeyCode(e.keyCode)}
+                                 onChange={(e) =>
+                                    setChattingMsg(e.target.value)
+                                 }
+                              />
+                           </Grid>
+                        )}
                         <Grid item xs={1}>
                            <Fab
                               color="secondary"
                               aria-label="edit"
-                              onClick={() => sendChatting()}
+                              onClick={() => {
+                                 sendChatting()
+                              }}
                            >
                               <SendIcon />
                            </Fab>
