@@ -37,7 +37,6 @@ const socket = io(process.env.REACT_APP_BASE_URL)
 export default function App() {
    const dispatch = useDispatch()
    const [playbackRate, setPlaybackRate] = useState(0.75)
-
    const [play] = useSound(soundSrc, {
       playbackRate,
       interrupt: true,
@@ -47,32 +46,33 @@ export default function App() {
       const account = JSON.parse(localStorage.getItem('user'))
       let deleteId = ''
       if (account) dispatch(setAccountData(account))
+
       socket.on(account._id, async (e) => {
          toast.success(e.alertMsg)
+         deleteId = account._id
          setPlaybackRate(playbackRate + 0.1)
          play()
-         deleteId = account._id
       })
 
       socket.on('fileReply' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         deleteId = 'fileReply' + account._id
          setPlaybackRate(playbackRate + 0.1)
          play()
-         deleteId = 'fileReply' + account._id
       })
 
       socket.on('request' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         deleteId = 'request' + account._id
          setPlaybackRate(playbackRate + 0.1)
          play()
-         deleteId = 'request' + account._id
       })
 
       socket.on('answer' + account._id, async (e) => {
          toast.success(e.alertMsg)
+         deleteId = 'answer' + account._id
          setPlaybackRate(playbackRate + 0.1)
          play()
-         deleteId = 'answer' + account._id
       })
 
       return () => {
