@@ -100,9 +100,6 @@ export default function Support() {
                   if (result.data.status) {
                      data.msg = result.data.data
                      await setAllMsg([...allMsg, data])
-                     setFileData(null)
-                     setFileOpen(false)
-                     inputElement.current.value = null
                   } else {
                      toast.error(result.data.data)
                   }
@@ -110,11 +107,17 @@ export default function Support() {
          } else {
             socket.emit('sendToSupport', { data, name })
             await setAllMsg([...allMsg, data])
-            setChattingMsg('')
-            inputRef.current.focus()
          }
       } else {
          toast.error('Write the message')
+      }
+      if (flag) {
+         setFileData(null)
+         setFileOpen(false)
+         inputElement.current.value = null
+      } else {
+         setChattingMsg('')
+         inputRef.current.focus()
       }
    }
 

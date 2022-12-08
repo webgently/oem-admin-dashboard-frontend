@@ -183,9 +183,6 @@ export default function Overview() {
                   if (result.data.status) {
                      data.msg = result.data.data
                      await setAllMsg([...allMsg, data])
-                     setFileData({})
-                     setFileOpen(false)
-                     inputElement.current.value = null
                   } else {
                      toast.error(result.data.data)
                   }
@@ -197,11 +194,17 @@ export default function Overview() {
                name,
             })
             await setAllMsg([...allMsg, data])
-            setChattingMsg('')
-            inputRef.current.focus()
          }
       } else {
          toast.error('Write the message')
+      }
+      if (flag) {
+         setFileData(null)
+         setFileOpen(false)
+         inputElement.current.value = null
+      } else {
+         setChattingMsg('')
+         inputRef.current.focus()
       }
    }
 

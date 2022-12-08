@@ -151,9 +151,6 @@ export default function AdminSupport() {
                            if (result.data.status) {
                               data.msg = result.data.data
                               await setAllMsg([...allMsg, data])
-                              setFileData(null)
-                              setFileOpen(false)
-                              inputElement.current.value = null
                            } else {
                               toast.error(result.data.data)
                            }
@@ -171,9 +168,6 @@ export default function AdminSupport() {
                            if (result.data.status) {
                               data.msg = result.data.data
                               await setAllMsg([...allMsg, data])
-                              setFileData(null)
-                              setFileOpen(false)
-                              inputElement.current.value = null
                            } else {
                               toast.error(result.data.data)
                            }
@@ -184,14 +178,20 @@ export default function AdminSupport() {
                      socket.emit('sendToUserPerFile', { data, orderId })
                   else socket.emit('sendToUser', data)
                   await setAllMsg([...allMsg, data])
-                  setChattingMsg('')
-                  inputRef.current.focus()
                }
             } else {
                toast.error('Write the message')
             }
          } else {
             toast.error('Select the user')
+         }
+         if (flag) {
+            setFileData(null)
+            setFileOpen(false)
+            inputElement.current.value = null
+         } else {
+            setChattingMsg('')
+            inputRef.current.focus()
          }
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
