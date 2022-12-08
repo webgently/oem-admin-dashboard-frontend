@@ -18,6 +18,7 @@ import toast from 'react-hot-toast'
 import CloseIcon from '@mui/icons-material/Close'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
+import { BeatLoader } from 'react-spinners'
 import { setAccountData } from '../../features/account/account'
 import Key from '../../assets/img/changepassword.png'
 
@@ -99,6 +100,7 @@ export default function Profile() {
    const [avatar, setAvatar] = useState('')
    const [open2, setOpen2] = useState(false)
    const [avatarFile, setAvatarFile] = useState({})
+   const [isLoading1, setIsLoading1] = useState(false)
    const [avatarPreview, setAvatarPreview] = useState('')
    const avatarInputElement = useRef('fileInput')
    const changeAvatar = async () => {
@@ -131,37 +133,51 @@ export default function Profile() {
       let params = new FormData()
       params.append('file', avatarFile)
       params.append('userId', JSON.stringify(account._id))
-      if (!avatarFile.name) {
-         toast.error('Please select an image')
-      } else {
-         if (
-            avatarFile.type === 'image/jpeg' ||
-            avatarFile.type === 'image/png' ||
-            avatarFile.type === 'image/svg' ||
-            avatarFile.type === 'image/gif' ||
-            avatarFile.type === 'image/tiff'
-         ) {
-            try {
-               await axios
-                  .post(`${process.env.REACT_APP_API_URL}uploadAvatar`, params)
-                  .then((result) => {
-                     if (result.data.status) {
-                        setAvatarFile({})
-                        setAvatar(
-                           process.env.REACT_APP_BASE_URL + result.data.data
+      if (avatar !== avatarPreview) {
+         if (!isLoading1) {
+            setIsLoading1(true)
+            if (!avatarFile.name) {
+               toast.error('Please select an image')
+            } else {
+               if (
+                  avatarFile.type === 'image/jpeg' ||
+                  avatarFile.type === 'image/png' ||
+                  avatarFile.type === 'image/svg' ||
+                  avatarFile.type === 'image/gif' ||
+                  avatarFile.type === 'image/tiff'
+               ) {
+                  try {
+                     await axios
+                        .post(
+                           `${process.env.REACT_APP_API_URL}uploadAvatar`,
+                           params
                         )
-                        toast.success('Image Uploaded Successfully')
-                        setOpen2(false)
-                     } else {
-                        toast.error(result.data.data)
-                     }
-                  })
-            } catch (error) {
-               if (process.env.REACT_APP_MODE) console.log(error)
+                        .then((result) => {
+                           if (result.data.status) {
+                              setAvatarFile({})
+                              setAvatar(
+                                 process.env.REACT_APP_BASE_URL +
+                                    result.data.data
+                              )
+                              toast.success('Image Uploaded Successfully')
+                              setOpen2(false)
+                              setIsLoading1(false)
+                           } else {
+                              toast.error(result.data.data)
+                           }
+                        })
+                  } catch (error) {
+                     if (process.env.REACT_APP_MODE) console.log(error)
+                  }
+               } else {
+                  toast.error('This isn`t an image')
+               }
             }
          } else {
-            toast.error('This isn`t an image')
+            toast.error('Loading...')
          }
+      } else {
+         toast.error('Already selected the image')
       }
    }
    const getAvatar = async (userId) => {
@@ -821,9 +837,18 @@ export default function Profile() {
                         <Box>
                            <Button
                               variant="contained"
+                              style={{
+                                 padding: '6px 4px',
+                                 width: '150px',
+                                 height: '36px',
+                              }}
                               onClick={avatarHandleFileUpload}
                            >
-                              Upload Avatar
+                              {isLoading1 ? (
+                                 <BeatLoader color="#fff" size={10} />
+                              ) : (
+                                 'Upload Avatar'
+                              )}
                            </Button>
                         </Box>
                      </Box>

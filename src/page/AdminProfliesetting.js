@@ -38,6 +38,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import LogoIcon from '../assets/img/blue-logo.png'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import { BeatLoader } from 'react-spinners'
 import { setAccountData } from '../features/account/account'
 
 const columns = [
@@ -137,6 +138,8 @@ export default function AdminProfliesetting() {
    const [open5, setOpen5] = useState(false)
    const [bgFile, setBgFile] = useState({})
    const [bgPreview, setBgPreview] = useState('')
+   const [isLoading1, setIsLoading1] = useState(false)
+   const [isLoading2, setIsLoading2] = useState(false)
    const bgInputElement = useRef('fileInput')
    const changeBackground = async () => {
       setOpen5(true)
@@ -168,37 +171,51 @@ export default function AdminProfliesetting() {
       let params = new FormData()
       params.append('file', bgFile)
       params.append('userId', JSON.stringify(account._id))
-      if (!bgFile.name) {
-         toast.error('Please select an image')
-      } else {
-         if (
-            bgFile.type === 'image/jpeg' ||
-            bgFile.type === 'image/png' ||
-            bgFile.type === 'image/svg' ||
-            bgFile.type === 'image/gif' ||
-            bgFile.type === 'image/tiff'
-         ) {
-            try {
-               await axios
-                  .post(`${process.env.REACT_APP_API_URL}uploadBg`, params)
-                  .then((result) => {
-                     if (result.data.status) {
-                        setBgFile({})
-                        setBgProfile(
-                           process.env.REACT_APP_BASE_URL + result.data.data
+      if (bgProfile !== bgPreview) {
+         if (!isLoading1) {
+            setIsLoading1(true)
+            if (!bgFile.name) {
+               toast.error('Please select an image')
+            } else {
+               if (
+                  bgFile.type === 'image/jpeg' ||
+                  bgFile.type === 'image/png' ||
+                  bgFile.type === 'image/svg' ||
+                  bgFile.type === 'image/gif' ||
+                  bgFile.type === 'image/tiff'
+               ) {
+                  try {
+                     await axios
+                        .post(
+                           `${process.env.REACT_APP_API_URL}uploadBg`,
+                           params
                         )
-                        toast.success('Image Uploaded Successfully')
-                        setOpen5(false)
-                     } else {
-                        toast.error(result.data.data)
-                     }
-                  })
-            } catch (error) {
-               if (process.env.REACT_APP_MODE) console.log(error)
+                        .then((result) => {
+                           if (result.data.status) {
+                              setIsLoading1(false)
+                              setBgFile({})
+                              setBgProfile(
+                                 process.env.REACT_APP_BASE_URL +
+                                    result.data.data
+                              )
+                              toast.success('Image Uploaded Successfully')
+                              setOpen5(false)
+                           } else {
+                              toast.error(result.data.data)
+                           }
+                        })
+                  } catch (error) {
+                     if (process.env.REACT_APP_MODE) console.log(error)
+                  }
+               } else {
+                  toast.error('This isn`t an image')
+               }
             }
          } else {
-            toast.error('This isn`t an image')
+            toast.error('Loading...')
          }
+      } else {
+         toast.error('Already selected the image')
       }
    }
    const getBg = async () => {
@@ -254,37 +271,51 @@ export default function AdminProfliesetting() {
       let params = new FormData()
       params.append('file', avatarFile)
       params.append('userId', JSON.stringify(account._id))
-      if (!avatarFile.name) {
-         toast.error('Please select an image')
-      } else {
-         if (
-            avatarFile.type === 'image/jpeg' ||
-            avatarFile.type === 'image/png' ||
-            avatarFile.type === 'image/svg' ||
-            avatarFile.type === 'image/gif' ||
-            avatarFile.type === 'image/tiff'
-         ) {
-            try {
-               await axios
-                  .post(`${process.env.REACT_APP_API_URL}uploadAvatar`, params)
-                  .then((result) => {
-                     if (result.data.status) {
-                        setAvatarFile({})
-                        setAvatar(
-                           process.env.REACT_APP_BASE_URL + result.data.data
+      if (avatar !== avatarPreview) {
+         if (!isLoading2) {
+            setIsLoading2(true)
+            if (!avatarFile.name) {
+               toast.error('Please select an image')
+            } else {
+               if (
+                  avatarFile.type === 'image/jpeg' ||
+                  avatarFile.type === 'image/png' ||
+                  avatarFile.type === 'image/svg' ||
+                  avatarFile.type === 'image/gif' ||
+                  avatarFile.type === 'image/tiff'
+               ) {
+                  try {
+                     await axios
+                        .post(
+                           `${process.env.REACT_APP_API_URL}uploadAvatar`,
+                           params
                         )
-                        toast.success('Image Uploaded Successfully')
-                        setOpen4(false)
-                     } else {
-                        toast.error(result.data.data)
-                     }
-                  })
-            } catch (error) {
-               if (process.env.REACT_APP_MODE) console.log(error)
+                        .then((result) => {
+                           if (result.data.status) {
+                              setAvatarFile({})
+                              setAvatar(
+                                 process.env.REACT_APP_BASE_URL +
+                                    result.data.data
+                              )
+                              toast.success('Image Uploaded Successfully')
+                              setOpen4(false)
+                              setIsLoading2(false)
+                           } else {
+                              toast.error(result.data.data)
+                           }
+                        })
+                  } catch (error) {
+                     if (process.env.REACT_APP_MODE) console.log(error)
+                  }
+               } else {
+                  toast.error('This isn`t an image')
+               }
             }
          } else {
-            toast.error('This isn`t an image')
+            toast.error('Loading...')
          }
+      } else {
+         toast.error('Already selected the image')
       }
    }
    const getAvatar = async (userId) => {
@@ -1644,9 +1675,18 @@ export default function AdminProfliesetting() {
                         <Box>
                            <Button
                               variant="contained"
+                              style={{
+                                 padding: '6px 4px',
+                                 width: '150px',
+                                 height: '36px',
+                              }}
                               onClick={avatarHandleFileUpload}
                            >
-                              Upload Avatar
+                              {isLoading2 ? (
+                                 <BeatLoader color="#fff" size={10} />
+                              ) : (
+                                 'Upload Avatar'
+                              )}
                            </Button>
                         </Box>
                      </Box>
@@ -1732,9 +1772,18 @@ export default function AdminProfliesetting() {
                         <Box>
                            <Button
                               variant="contained"
+                              style={{
+                                 padding: '6px 4px',
+                                 width: '200px',
+                                 height: '36px',
+                              }}
                               onClick={bgHandleFileUpload}
                            >
-                              Upload Background
+                              {isLoading1 ? (
+                                 <BeatLoader color="#fff" size={10} />
+                              ) : (
+                                 'Upload Background'
+                              )}
                            </Button>
                         </Box>
                      </Box>
