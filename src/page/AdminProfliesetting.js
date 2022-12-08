@@ -12,6 +12,7 @@ import {
    Modal,
    TextField,
 } from '@mui/material'
+import ImageIcon from '@mui/icons-material/Image'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -105,6 +106,20 @@ const ServiceStyle4 = {
    p: 0,
 }
 
+const ServiceStyle5 = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '500px',
+   height: '380px',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+
 export default function AdminProfliesetting() {
    const account = useSelector((state) => state.account)
    const dispatch = useDispatch()
@@ -116,6 +131,92 @@ export default function AdminProfliesetting() {
    const handleChangeRowsPerPage = (event) => {
       setRowsPerPage(+event.target.value)
       setPage(0)
+   }
+   // changeBackground
+   const [bgProfile, setBgProfile] = useState('')
+   const [open5, setOpen5] = useState(false)
+   const [bgFile, setBgFile] = useState({})
+   const [bgPreview, setBgPreview] = useState('')
+   const bgInputElement = useRef('fileInput')
+   const changeBackground = async () => {
+      setOpen5(true)
+      setBgPreview(bgProfile)
+   }
+   const handleClose5 = async () => {
+      setOpen5(false)
+   }
+   const bgHandleFileload = () => {
+      bgInputElement.current.click()
+   }
+   const bgGetFile = async (e) => {
+      const file = e.target.files[0]
+      if (
+         file?.type === 'image/jpeg' ||
+         file?.type === 'image/png' ||
+         file?.type === 'image/svg' ||
+         file?.type === 'image/gif' ||
+         file?.type === 'image/tiff'
+      ) {
+         setBgFile(e.target.files[0])
+         setBgPreview(URL.createObjectURL(e.target.files[0]))
+      } else {
+         setBgFile({})
+         setBgPreview('')
+      }
+   }
+   const bgHandleFileUpload = async () => {
+      let params = new FormData()
+      params.append('file', bgFile)
+      params.append('userId', JSON.stringify(account._id))
+      if (!bgFile.name) {
+         toast.error('Please select an image')
+      } else {
+         if (
+            bgFile.type === 'image/jpeg' ||
+            bgFile.type === 'image/png' ||
+            bgFile.type === 'image/svg' ||
+            bgFile.type === 'image/gif' ||
+            bgFile.type === 'image/tiff'
+         ) {
+            try {
+               await axios
+                  .post(`${process.env.REACT_APP_API_URL}uploadBg`, params)
+                  .then((result) => {
+                     if (result.data.status) {
+                        setBgFile({})
+                        setBgProfile(
+                           process.env.REACT_APP_BASE_URL + result.data.data
+                        )
+                        toast.success('Image Uploaded Successfully')
+                        setOpen5(false)
+                     } else {
+                        toast.error(result.data.data)
+                     }
+                  })
+            } catch (error) {
+               if (process.env.REACT_APP_MODE) console.log(error)
+            }
+         } else {
+            toast.error('This isn`t an image')
+         }
+      }
+   }
+   const getBg = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getBg`)
+            .then((result) => {
+               if (result.data.status) {
+                  if (result.data.data === 'logo/') setBgProfile('')
+                  else
+                     setBgProfile(
+                        process.env.REACT_APP_BASE_URL + result.data.data
+                     )
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
    }
    // Avatar setting
    const [avatar, setAvatar] = useState('')
@@ -599,6 +700,7 @@ export default function AdminProfliesetting() {
       getPrivacy()
       getAllDaily()
       getLogo()
+      getBg()
    }, [])
 
    useEffect(() => {
@@ -641,13 +743,21 @@ export default function AdminProfliesetting() {
                            sx={{
                               display: 'flex',
                               justifyContent: 'flex-start',
-                              background: `url(${bgCar})`,
+                              background: `url(${
+                                 bgProfile === '' ? bgCar : bgProfile
+                              })`,
                               height: '400px',
                               width: '100%',
-                              position: 'relative',
                               backgroundSize: '100% 100%',
                            }}
+                           className="user-profile-bg"
                         >
+                           <IconButton
+                              className="bg-edit-btn"
+                              onClick={changeBackground}
+                           >
+                              <EditIcon />
+                           </IconButton>
                            <Box
                               sx={{
                                  position: 'absolute',
@@ -1537,6 +1647,94 @@ export default function AdminProfliesetting() {
                               onClick={avatarHandleFileUpload}
                            >
                               Upload Avatar
+                           </Button>
+                        </Box>
+                     </Box>
+                  </Box>
+               </Box>
+            </Box>
+         </Modal>
+
+         <Modal
+            open={open5}
+            onClose={handleClose5}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={ServiceStyle5}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Profile Background</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton
+                        onClick={() => {
+                           handleClose5()
+                        }}
+                     >
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Avatar
+                        sx={{
+                           width: '400px',
+                           height: '200px',
+                        }}
+                        variant="rounded"
+                     >
+                        {bgPreview === '' ? (
+                           <ImageIcon style={{ fontSize: '100px' }} />
+                        ) : (
+                           <img src={bgPreview} alt="Avatar" width="400px" />
+                        )}
+                     </Avatar>
+                  </Box>
+                  <Box
+                     sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                     }}
+                  >
+                     <Box sx={{ mt: 5, display: 'flex', gap: 1 }}>
+                        <Box>
+                           <input
+                              ref={bgInputElement}
+                              type="file"
+                              style={{ display: 'none' }}
+                              onChange={(e) => bgGetFile(e)}
+                           />
+                           <Button
+                              variant="contained"
+                              onClick={bgHandleFileload}
+                           >
+                              Browse File
+                           </Button>
+                        </Box>
+                        <Box>
+                           <Button
+                              variant="contained"
+                              onClick={bgHandleFileUpload}
+                           >
+                              Upload Background
                            </Button>
                         </Box>
                      </Box>

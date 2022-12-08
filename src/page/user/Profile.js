@@ -77,6 +77,24 @@ export default function Profile() {
    const [city, setCity] = useState('')
    const [address, setAddress] = useState('')
    const [open1, setOpen1] = useState(false)
+   const [bgProfile, setBgProfile] = useState('')
+   const getBg = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getBg`)
+            .then((result) => {
+               if (result.data.status) {
+                  if (result.data.data === 'logo/') setBgProfile('')
+                  else
+                     setBgProfile(
+                        process.env.REACT_APP_BASE_URL + result.data.data
+                     )
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
    // Avatar setting
    const [avatar, setAvatar] = useState('')
    const [open2, setOpen2] = useState(false)
@@ -250,7 +268,6 @@ export default function Profile() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
-
    // change password
    const [oldPassword, setOldPassword] = useState('')
    const [newPassword, setNewPassword] = useState('')
@@ -303,6 +320,7 @@ export default function Profile() {
          setUserName(account.name)
          setUserID(account._id)
          getAvatar(account._id)
+         getBg()
       }
       setUserData([
          { label: 'Email:', value: account.email },
@@ -341,7 +359,9 @@ export default function Profile() {
                            sx={{
                               display: 'flex',
                               justifyContent: 'flex-start',
-                              background: `url(${bgCar})`,
+                              background: `url(${
+                                 bgProfile === '' ? bgCar : bgProfile
+                              })`,
                               height: '400px',
                               width: '100%',
                               position: 'relative',

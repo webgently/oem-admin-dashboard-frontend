@@ -70,7 +70,7 @@ const ServiceStyle1 = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: '50vw',
+   width: '500px',
    height: '50vh',
    bgcolor: 'background.paper',
    border: '0px',
@@ -586,7 +586,7 @@ export default function Overview() {
                   <Box pt={2}>
                      <Box>User Files</Box>
                      <ul>
-                        <li>
+                        <li className="file-download-name">
                            <a
                               href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList?.rename[0]}`}
                               download={downloadList?.origin[0]}
@@ -603,7 +603,7 @@ export default function Overview() {
                            {downloadList.origin.map((item, ind) => {
                               if (ind === 0) return
                               return (
-                                 <li key={ind}>
+                                 <li key={ind} className="file-download-name">
                                     <a
                                        href={`${process.env.REACT_APP_BASE_URL}/fileService/${downloadList.rename[ind]}`}
                                        download={item}

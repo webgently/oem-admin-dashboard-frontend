@@ -173,11 +173,41 @@ p {
   }
 }
 
+.user-profile-bg {
+  position: relative;
+    .bg-edit-btn {
+      position: absolute;
+      right: 2vw;
+      top: 2vh;
+      color: white;
+      cursor: pointer;
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+}
+
+
 .filename-string {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 150px;
+}
+
+.file-download-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+.file-admin-download-name {
+  overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 500px;
 }
 
 .chatting-group {

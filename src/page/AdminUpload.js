@@ -964,7 +964,7 @@ export default function AdminUpload() {
                                        Upload
                                     </Box>
                                     <ul>
-                                       <li>
+                                       <li className="file-admin-download-name">
                                           <a
                                              href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[0]}`}
                                              download={oneData?.fileName[0]}
@@ -994,7 +994,10 @@ export default function AdminUpload() {
                                        {oneData?.fileName.map((item, ind) => {
                                           if (ind === 0) return
                                           return (
-                                             <li key={ind}>
+                                             <li
+                                                key={ind}
+                                                className="file-admin-download-name"
+                                             >
                                                 <a
                                                    href={`${process.env.REACT_APP_BASE_URL}/fileService/${oneData?.fileRename[ind]}`}
                                                    download={item}
