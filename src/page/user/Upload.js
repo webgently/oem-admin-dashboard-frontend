@@ -30,25 +30,20 @@ export default function Upload() {
    const navigate = useNavigate()
    const account = useSelector((state) => state.account)
    const [supportID, setSupportID] = useState('')
-
    const [userName, setUserName] = useState('')
+
    const [vehicleType, setVehicleType] = useState('')
    const [vehicleBrand, setVehicleBrand] = useState('')
    const [vehicleSeries, setVehicleSeries] = useState('')
-   const [vehicleEngine, setVehicleEngine] = useState('')
+   const [buildYear, setBuildYear] = useState(new Date())
 
    const [HP, setHP] = useState(0)
    const [KW, setKW] = useState(0)
-   const [buildYear, setBuildYear] = useState(new Date())
    const [transmission, setTransmission] = useState('')
+   const [VINnumber, setVINnumber] = useState('')
 
-   const [chasis, setChasis] = useState('')
    const [tuningType, setTuningType] = useState('')
-   const [readMethod, setReadMethod] = useState('')
-   const [ECUProducer, setECUProducer] = useState('')
-
-   const [ECUBuild, setECUBuild] = useState('')
-   const [usedTool, setUsedTool] = useState('')
+   const [extras, setExtras] = useState('')
    const [message, setMessage] = useState('')
    const [term, setTerm] = useState('')
 
@@ -82,13 +77,13 @@ export default function Upload() {
    }
 
    const upload = async () => {
-      const arr = fileData.name.split('.')
-      const element = arr[arr.length - 1]
-      const type = element.toLowerCase()
       if (!fileData.name) {
          toast.error('Select the file')
          return
       }
+      const arr = fileData.name.split('.')
+      const element = arr[arr.length - 1]
+      const type = element.toLowerCase()
       if (
          type !== 'bin' &&
          type !== 'bdc' &&
@@ -124,8 +119,8 @@ export default function Upload() {
          toast.error('Field the Vehicle Series')
          return
       }
-      if (!vehicleEngine) {
-         toast.error('Field the Vehicle Engine')
+      if (!buildYear) {
+         toast.error('Field the Build Year')
          return
       }
       if (!HP) {
@@ -136,36 +131,20 @@ export default function Upload() {
          toast.error('Field the KW')
          return
       }
-      if (!buildYear) {
-         toast.error('Field the Build Year')
-         return
-      }
       if (!transmission) {
          toast.error('Field the Transmission')
          return
       }
-      if (!chasis) {
-         toast.error('Field the Chasis#')
+      if (!VINnumber) {
+         toast.error('Field the VINnumber')
          return
       }
       if (!tuningType) {
          toast.error('Field the Tuning Type')
          return
       }
-      if (!readMethod) {
-         toast.error('Field the Read Method')
-         return
-      }
-      if (!ECUProducer) {
-         toast.error('Field the ECU Producer')
-         return
-      }
-      if (!ECUBuild) {
-         toast.error('Field the ECU Build')
-         return
-      }
-      if (!usedTool) {
-         toast.error('Field the Used Tool')
+      if (!extras) {
+         toast.error('Field the extras')
          return
       }
       if (!message) {
@@ -189,17 +168,13 @@ export default function Upload() {
          vehicleType,
          vehicleBrand,
          vehicleSeries,
-         vehicleEngine,
+         buildYear,
          HP,
          KW,
-         buildYear,
          transmission,
-         chasis,
+         VINnumber,
          tuningType,
-         readMethod,
-         ECUProducer,
-         ECUBuild,
-         usedTool,
+         extras,
          message,
          note: '',
          status: 'requested',
@@ -221,17 +196,13 @@ export default function Upload() {
                      setVehicleType('')
                      setVehicleBrand('')
                      setVehicleSeries('')
-                     setVehicleEngine('')
+                     setBuildYear(new Date())
                      setHP(0)
                      setKW(0)
-                     setBuildYear(new Date())
                      setTransmission('')
-                     setChasis('')
+                     setVINnumber('')
                      setTuningType('')
-                     setReadMethod('')
-                     setECUProducer('')
-                     setECUBuild('')
-                     setUsedTool('')
+                     setExtras('')
                      setMessage('')
                      setTerm('')
                      setFileData({})
@@ -460,12 +431,17 @@ export default function Upload() {
                               onChange={(e) => setVehicleType(e.target.value)}
                            >
                               <MenuItem value="Cars">Cars</MenuItem>
-                              <MenuItem value="Trucks">Trucks</MenuItem>
                               <MenuItem value="Motorcycles">
                                  Motorcycles
                               </MenuItem>
+                              <MenuItem value="Trucks">Trucks</MenuItem>
+                              <MenuItem value="Tractor">Tractor</MenuItem>
+                              <MenuItem value="Powersports">
+                                 Powersports
+                              </MenuItem>
                               <MenuItem value="Boats">Boats</MenuItem>
                               <MenuItem value="Bus">Bus</MenuItem>
+                              <MenuItem value="Gearbox">Gearbox</MenuItem>
                            </Select>
                         </FormControl>
                      </Grid>
@@ -479,34 +455,111 @@ export default function Upload() {
                               value={vehicleBrand}
                               onChange={(e) => setVehicleBrand(e.target.value)}
                            >
+                              <MenuItem value="Abarth">Abarth</MenuItem>
+                              <MenuItem value="Alfa-Romeo">Alfa-Romeo</MenuItem>
+                              <MenuItem value="Alpine">Alpine</MenuItem>
+                              <MenuItem value="Aprilia">Aprilia</MenuItem>
+                              <MenuItem value="Aston-Martin">
+                                 Aston-Martin
+                              </MenuItem>
+                              <MenuItem value="Audi">Audi</MenuItem>
                               <MenuItem value="BMW">BMW</MenuItem>
+                              <MenuItem value="Bentley">Bentley</MenuItem>
+                              <MenuItem value="Bugatti">Bugatti</MenuItem>
+                              <MenuItem value="BRP">Brp</MenuItem>
+                              <MenuItem value="Buick">Buick</MenuItem>
+                              <MenuItem value="Cadillac">Cadillac</MenuItem>
+                              <MenuItem value="Chevrolet">Chevrolet</MenuItem>
+                              <MenuItem value="Chrysler">Chrysler</MenuItem>
+                              <MenuItem value="Dodge">Dodge</MenuItem>
+                              <MenuItem value="Ducati">Ducati</MenuItem>
+                              <MenuItem value="Ferrari">Ferrari</MenuItem>
+                              <MenuItem value="Fiat">Fiat</MenuItem>
+                              <MenuItem value="Ford">Ford</MenuItem>
+                              <MenuItem value="Geely">Geely</MenuItem>
+                              <MenuItem value="Harley-Davidson">
+                                 Harley-Davidson
+                              </MenuItem>
+                              <MenuItem value="Honda">Honda</MenuItem>
+                              <MenuItem value="Hummer">Hummer</MenuItem>
+                              <MenuItem value="Hyosung">Hyosung</MenuItem>
+                              <MenuItem value="Hyundai">Hyundai</MenuItem>
+                              <MenuItem value="Infiniti">Infiniti</MenuItem>
+                              <MenuItem value="Jaguar">Jaguar</MenuItem>
+                              <MenuItem value="KTM">KTM</MenuItem>
+                              <MenuItem value="Kawasaki">Kawasaki</MenuItem>
+                              <MenuItem value="Kia">Kia</MenuItem>
+                              <MenuItem value="Lamborghini">
+                                 Lamborghini
+                              </MenuItem>
+                              <MenuItem value="Land Rover">Land Rover</MenuItem>
+                              <MenuItem value="Lexus">Lexus</MenuItem>
+                              <MenuItem value="Lincoln">Lincoln</MenuItem>
+                              <MenuItem value="Lotus">Lotus</MenuItem>
+                              <MenuItem value="Maserati">Maserati</MenuItem>
+                              <MenuItem value="Mazda">Mazda</MenuItem>
+                              <MenuItem value="McLaren">McLaren</MenuItem>
                               <MenuItem value="Mercedes">Mercedes</MenuItem>
+                              <MenuItem value="Mini">Mini</MenuItem>
+                              <MenuItem value="Mitsubishi">Mitsubishi</MenuItem>
+                              <MenuItem value="Mitsuoka">Mitsuoka</MenuItem>
+                              <MenuItem value="Nio">Nio</MenuItem>
+                              <MenuItem value="Nissan">Nissan</MenuItem>
+                              <MenuItem value="Norton">Norton</MenuItem>
+                              <MenuItem value="Pagani">Pagani</MenuItem>
+                              <MenuItem value="Porsche">Porsche</MenuItem>
+                              <MenuItem value="Ram">Ram</MenuItem>
+                              <MenuItem value="Renault">Renault</MenuItem>
+                              <MenuItem value="Rezvani">Rezvani</MenuItem>
+                              <MenuItem value="Rolls-Royce">
+                                 Rolls-Royce
+                              </MenuItem>
+                              <MenuItem value="Saab">Saab</MenuItem>
+                              <MenuItem value="Scion">Scion</MenuItem>
+                              <MenuItem value="Seat">Seat</MenuItem>
+                              <MenuItem value="Skoda">Skoda</MenuItem>
+                              <MenuItem value="Smart">Smart</MenuItem>
+                              <MenuItem value="Subaru">Subaru</MenuItem>
+                              <MenuItem value="Tata">Tata</MenuItem>
+                              <MenuItem value="Toyota">Toyota</MenuItem>
+                              <MenuItem value="Tesla">Tesla</MenuItem>
+                              <MenuItem value="Triumph">Triumph</MenuItem>
+                              <MenuItem value="Vauxhall">Vauxhall</MenuItem>
+                              <MenuItem value="Volkswagen">Volkswagen</MenuItem>
+                              <MenuItem value="Volvo">Volvo</MenuItem>
+                              <MenuItem value="Yamaha">Yamaha</MenuItem>
                            </Select>
                         </FormControl>
                      </Grid>
                      <Grid item xs={12} sm={6} md={6}>
                         Vehicle Series
                         <FormControl fullWidth>
-                           <Select
+                           <TextField
                               size="small"
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
                               value={vehicleSeries}
                               onChange={(e) => setVehicleSeries(e.target.value)}
-                           >
-                              <MenuItem value="Serie 1">Serie 1</MenuItem>
-                              <MenuItem value="Serie 2">Serie 2</MenuItem>
-                           </Select>
+                           />
                         </FormControl>
                      </Grid>
                      <Grid item xs={12} sm={6} md={6}>
-                        Vehicle Engine
+                        Build Year
                         <FormControl fullWidth>
-                           <TextField
-                              size="small"
-                              value={vehicleEngine}
-                              onChange={(e) => setVehicleEngine(e.target.value)}
-                           />
+                           <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                 views={['year']}
+                                 value={buildYear}
+                                 onChange={(e) => {
+                                    setBuildYear(e)
+                                 }}
+                                 renderInput={(params) => (
+                                    <TextField
+                                       size="small"
+                                       {...params}
+                                       helperText={null}
+                                    />
+                                 )}
+                              />
+                           </LocalizationProvider>
                         </FormControl>
                      </Grid>
 
@@ -533,27 +586,6 @@ export default function Upload() {
                         </FormControl>
                      </Grid>
                      <Grid item xs={12} sm={6} md={6}>
-                        Build Year
-                        <FormControl fullWidth>
-                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DatePicker
-                                 views={['year']}
-                                 value={buildYear}
-                                 onChange={(e) => {
-                                    setBuildYear(e)
-                                 }}
-                                 renderInput={(params) => (
-                                    <TextField
-                                       size="small"
-                                       {...params}
-                                       helperText={null}
-                                    />
-                                 )}
-                              />
-                           </LocalizationProvider>
-                        </FormControl>
-                     </Grid>
-                     <Grid item xs={12} sm={6} md={6}>
                         Transmission
                         <FormControl fullWidth>
                            <Select
@@ -568,17 +600,17 @@ export default function Upload() {
                            </Select>
                         </FormControl>
                      </Grid>
-
                      <Grid item xs={12} sm={6} md={6}>
-                        Chasis#
+                        VIN number#
                         <FormControl fullWidth>
                            <TextField
                               size="small"
-                              value={chasis}
-                              onChange={(e) => setChasis(e.target.value)}
+                              value={VINnumber}
+                              onChange={(e) => setVINnumber(e.target.value)}
                            />
                         </FormControl>
                      </Grid>
+
                      <Grid item xs={12} sm={6} md={6}>
                         Tuning Type
                         <FormControl fullWidth>
@@ -591,76 +623,37 @@ export default function Upload() {
                            >
                               <MenuItem value="Stage 1">Stage 1</MenuItem>
                               <MenuItem value="Stage 2">Stage 2</MenuItem>
-                              <MenuItem value="Stage 3">Stage 3</MenuItem>
-                              <MenuItem value="Stage 4">Stage 4</MenuItem>
-                              <MenuItem value="Make Original">
-                                 Make Original
-                              </MenuItem>
+                              <MenuItem value="A-traktor">A-traktor</MenuItem>
                               <MenuItem value="Original">Original</MenuItem>
                            </Select>
                         </FormControl>
                      </Grid>
                      <Grid item xs={12} sm={6} md={6}>
-                        Read Method
+                        Extras
                         <FormControl fullWidth>
                            <Select
                               size="small"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={readMethod}
-                              onChange={(e) => setReadMethod(e.target.value)}
+                              value={extras}
+                              onChange={(e) => setExtras(e.target.value)}
                            >
-                              <MenuItem value="OBD">OBD</MenuItem>
-                              <MenuItem value="BENCH">BENCH</MenuItem>
-                              <MenuItem value={30}>BOOTMODE</MenuItem>
-                           </Select>
-                        </FormControl>
-                     </Grid>
-                     <Grid item xs={12} sm={6} md={6}>
-                        ECU Producer
-                        <FormControl fullWidth>
-                           <Select
-                              size="small"
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={ECUProducer}
-                              onChange={(e) => setECUProducer(e.target.value)}
-                           >
-                              <MenuItem value="Gems">Gems</MenuItem>
-                              <MenuItem value="Hella">Hella</MenuItem>
-                              <MenuItem value="Adem">Adem</MenuItem>
-                           </Select>
-                        </FormControl>
-                     </Grid>
-
-                     <Grid item xs={12} sm={6} md={6}>
-                        ECU Build
-                        <FormControl fullWidth>
-                           <Select
-                              size="small"
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={ECUBuild}
-                              onChange={(e) => setECUBuild(e.target.value)}
-                           >
-                              <MenuItem value="BOSCH">BOSCH</MenuItem>
-                              <MenuItem value="MSB100960">MSB100960</MenuItem>
-                           </Select>
-                        </FormControl>
-                     </Grid>
-                     <Grid item xs={12} sm={6} md={6}>
-                        Used Tool
-                        <FormControl fullWidth>
-                           <Select
-                              size="small"
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={usedTool}
-                              onChange={(e) => setUsedTool(e.target.value)}
-                           >
-                              <MenuItem value="Autotuner">Autotuner</MenuItem>
-                              <MenuItem value="Bitbox">Bitbox</MenuItem>
-                              <MenuItem value="Galetto">Galetto</MenuItem>
+                              <MenuItem value="EGR OFF">EGR OFF</MenuItem>
+                              <MenuItem value="DPF OFF">DPF OFF</MenuItem>
+                              <MenuItem value="DTC OFF">DTC OFF</MenuItem>
+                              <MenuItem value="AdBlue OFF">AdBlue OFF</MenuItem>
+                              <MenuItem value="GPF/OPF OFF">
+                                 GPF/OPF OFF
+                              </MenuItem>
+                              <MenuItem value="POP & BANG">POP & BANG</MenuItem>
+                              <MenuItem value="DECAT">DECAT</MenuItem>
+                              <MenuItem value="VMAX OFF">VMAX OFF</MenuItem>
+                              <MenuItem value="POPCORN / HARDCUT">
+                                 POPCORN / HARDCUT
+                              </MenuItem>
+                              <MenuItem value="MULTIPLE OPTIONS">
+                                 MULTIPLE OPTIONS
+                              </MenuItem>
                            </Select>
                         </FormControl>
                      </Grid>
@@ -670,7 +663,7 @@ export default function Upload() {
                         <Textarea
                            minRows={4}
                            size="sm"
-                           placeholder="Type Message..."
+                           placeholder="Have multiple options write here, or just an comment..."
                            value={message}
                            onChange={(e) => setMessage(e.target.value)}
                         />

@@ -67,31 +67,28 @@ export default function AdminUpload() {
    const [creditBtnFlag, setCreditBtnFlag] = useState(true)
    const [allData, setAllData] = useState([])
    const [oneData, setOneData] = useState({
-      ECUBuild: '',
-      ECUProducer: '',
-      HP: '',
-      KW: '',
-      buildYear: '',
-      chasis: '',
+      orderId: '',
+      userId: '',
       client: '',
-      createdAt: '',
-      fileName: [],
-      fileRename: [],
       fileSize: [],
       fileType: [],
-      message: '',
-      note: '',
-      orderId: '',
-      readMethod: '',
-      status: '',
-      transmission: '',
-      tuningType: '',
-      usedTool: '',
-      userId: '',
+      fileName: [],
+      fileRename: [],
+      vehicleType: '',
       vehicleBrand: '',
       vehicleEngine: '',
       vehicleSeries: '',
-      vehicleType: '',
+      buildYear: '',
+      HP: '',
+      KW: '',
+      transmission: '',
+      VINnumber: '',
+      tuningType: '',
+      extras: '',
+      message: '',
+      note: '',
+      status: '',
+      createdAt: '',
       availableCredit: 0,
       chargedCredit: 0,
    })
@@ -737,12 +734,14 @@ export default function AdminUpload() {
                                  >
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          Vehicle Engine:
+                                          Build Year:
                                        </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          {oneData?.vehicleEngine}
+                                          {new Date(
+                                             oneData?.buildYear
+                                          ).getFullYear()}
                                        </Box>
                                     </Grid>
                                  </Grid>
@@ -781,24 +780,6 @@ export default function AdminUpload() {
                                  >
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          Build Year:
-                                       </Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          {new Date(
-                                             oneData?.buildYear
-                                          ).getFullYear()}
-                                       </Box>
-                                    </Grid>
-                                 </Grid>
-                                 <Grid
-                                    container
-                                    spacing={{ xs: 2, md: 3 }}
-                                    columns={{ xs: 4, sm: 8, md: 12 }}
-                                 >
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
                                           Transmission:
                                        </Box>
                                     </Grid>
@@ -808,17 +789,20 @@ export default function AdminUpload() {
                                        </Box>
                                     </Grid>
                                  </Grid>
+
                                  <Grid
                                     container
                                     spacing={{ xs: 2, md: 3 }}
                                     columns={{ xs: 4, sm: 8, md: 12 }}
                                  >
                                     <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>Chassis#:</Box>
+                                       <Box sx={{ my: '20px' }}>
+                                          VINnumber#:
+                                       </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          {oneData?.chasis}
+                                          {oneData?.VINnumber}
                                        </Box>
                                     </Grid>
                                  </Grid>
@@ -844,62 +828,14 @@ export default function AdminUpload() {
                                     columns={{ xs: 4, sm: 8, md: 12 }}
                                  >
                                     <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          Read Method:
-                                       </Box>
+                                       <Box sx={{ my: '20px' }}>Extras:</Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          {oneData?.readMethod}
-                                       </Box>
-                                    </Grid>
-                                 </Grid>
-                                 <Grid
-                                    container
-                                    spacing={{ xs: 2, md: 3 }}
-                                    columns={{ xs: 4, sm: 8, md: 12 }}
-                                 >
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          ECU Producer:
-                                       </Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          {oneData?.ECUProducer}
+                                          {oneData?.extras}
                                        </Box>
                                     </Grid>
                                  </Grid>
-
-                                 <Grid
-                                    container
-                                    spacing={{ xs: 2, md: 3 }}
-                                    columns={{ xs: 4, sm: 8, md: 12 }}
-                                 >
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>ECU Build:</Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          {oneData?.ECUBuild}
-                                       </Box>
-                                    </Grid>
-                                 </Grid>
-                                 <Grid
-                                    container
-                                    spacing={{ xs: 2, md: 3 }}
-                                    columns={{ xs: 4, sm: 8, md: 12 }}
-                                 >
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>Used Tool:</Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={6}>
-                                       <Box sx={{ my: '20px' }}>
-                                          {oneData?.usedTool}
-                                       </Box>
-                                    </Grid>
-                                 </Grid>
-
                                  <Grid
                                     container
                                     spacing={{ xs: 2, md: 3 }}
@@ -984,7 +920,7 @@ export default function AdminUpload() {
                                     <ul>
                                        {oneData?.fileName.map((item, ind) =>
                                           ind === 0 ? (
-                                             <></>
+                                             <p key={ind}></p>
                                           ) : (
                                              <li
                                                 key={ind}
