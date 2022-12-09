@@ -15,7 +15,7 @@ const ResetPassword = () => {
 
    const checkLink = async () => {
       try {
-         await axios
+         axios
             .post(`${process.env.REACT_APP_API_URL}checkResetLink`, {
                link: window.location.href,
             })
@@ -71,15 +71,20 @@ const ResetPassword = () => {
       checkLink()
    }, [])
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
    useEffect(() => {
       const setResponsiveness = () => {
-         return window.innerWidth < 900
-            ? setMobileView(true)
-            : setMobileView(false)
+         getWidth() < 900 ? setMobileView(true) : setMobileView(false)
       }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
+      window.addEventListener('resize', setResponsiveness)
+      return () => {
+         window.removeEventListener('resize', setResponsiveness)
+      }
+   }, [])
 
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
@@ -145,10 +150,8 @@ const ResetPassword = () => {
                }}
             >
                Can't Reset Password?
-               <a
-                  onClick={() => {
-                     navigate('/')
-                  }}
+               <span
+                  onClick={() => navigate('/')}
                   style={{
                      textAlign: 'right',
                      cursor: 'pointer',
@@ -157,7 +160,7 @@ const ResetPassword = () => {
                   }}
                >
                   Sign In
-               </a>
+               </span>
             </Box>
          </Box>
       </Grid>

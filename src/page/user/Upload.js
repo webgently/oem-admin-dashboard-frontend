@@ -26,7 +26,6 @@ import { useSelector } from 'react-redux'
 import io from 'socket.io-client'
 
 const socket = io(process.env.REACT_APP_BASE_URL)
-
 export default function Upload() {
    const navigate = useNavigate()
    const account = useSelector((state) => state.account)

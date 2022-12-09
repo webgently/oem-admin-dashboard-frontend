@@ -32,8 +32,8 @@ import { setAccountData } from './features/account/account'
 import soundSrc from './assets/mp3/ring.mp3'
 import toast, { Toaster } from 'react-hot-toast'
 import io from 'socket.io-client'
-const socket = io(process.env.REACT_APP_BASE_URL)
 
+const socket = io(process.env.REACT_APP_BASE_URL)
 export default function App() {
    const dispatch = useDispatch()
    const [playbackRate, setPlaybackRate] = useState(0.75)
@@ -41,7 +41,6 @@ export default function App() {
       playbackRate,
       interrupt: true,
    })
-
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
       let deleteId = ''

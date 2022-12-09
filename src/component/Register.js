@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import logo1 from '../assets/img/blue-logo.png'
 import logo2 from '../assets/img/white-logo.png'
 import { useNavigate } from 'react-router-dom'
+import validator from 'validator'
 import axios from 'axios'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
@@ -36,16 +37,10 @@ const Regiter = () => {
       }
    }
 
-   const validateEmail = (email) => {
-      return email.match(
-         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )
-   }
-
    const SignUp = async () => {
       if (name === '') {
          toast.error('Please input name!')
-      } else if (email === '' || validateEmail(email) === null) {
+      } else if (!email && !validator.isEmail(email)) {
          toast.error('Email is not valid')
       } else if (phone === '') {
          toast.error('Please input phone number!')
@@ -118,15 +113,20 @@ const Regiter = () => {
       }
    }
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
    useEffect(() => {
       const setResponsiveness = () => {
-         return window.innerWidth < 900
-            ? setMobileView(true)
-            : setMobileView(false)
+         getWidth() < 900 ? setMobileView(true) : setMobileView(false)
       }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
+      window.addEventListener('resize', setResponsiveness)
+      return () => {
+         window.removeEventListener('resize', setResponsiveness)
+      }
+   }, [])
 
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
@@ -325,7 +325,7 @@ const Regiter = () => {
                }}
             >
                Already have an account?
-               <a
+               <span
                   onClick={() => {
                      navigate('/')
                   }}
@@ -337,7 +337,7 @@ const Regiter = () => {
                   }}
                >
                   Sign In
-               </a>
+               </span>
             </Box>
          </Box>
       </Grid>

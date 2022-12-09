@@ -1221,7 +1221,7 @@ export default function AdminProfliesetting() {
                      >
                         <img
                            src={logo === '' ? LogoIcon : logo}
-                           alt="Logo Upload Image"
+                           alt="logo"
                            style={{
                               height: '80%',
                            }}
@@ -1260,7 +1260,7 @@ export default function AdminProfliesetting() {
                         justifyContent: 'center',
                      }}
                   >
-                     <img src={Key} />
+                     <img src={Key} alt="key" />
                   </Grid>
 
                   <Grid

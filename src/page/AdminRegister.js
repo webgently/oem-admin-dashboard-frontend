@@ -126,13 +126,9 @@ export default function AdminRegister() {
    const handleOpen2 = async (row) => {
       setCurrentRow(row)
       setOpen2(true)
-      userData.map((item) => {
-         if (item._id === row._id) {
-            setCurTotalCredit(item.credit)
-            setSubTotalCredit(item.credit)
-            return
-         }
-      })
+      const i = userData.map((e) => e._id).indexOf(row._id)
+      setCurTotalCredit(userData[i].credit)
+      setSubTotalCredit(userData[i].credit)
    }
 
    const handleClose2 = () => setOpen2(false)

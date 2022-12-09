@@ -21,6 +21,7 @@ import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
 import Badge from '@mui/material/Badge'
 import toast from 'react-hot-toast'
+import { ClockLoader } from 'react-spinners'
 import io from 'socket.io-client'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -48,6 +49,7 @@ export default function AdminSupport() {
    const [fileData, setFileData] = useState(null)
    const [fileOpen, setFileOpen] = useState(false)
    const [allMsg, setAllMsg] = useState([])
+   const [isLoading, setIsLoading] = useState(false)
    const messagesEndRef = useRef(null)
    const inputElement = useRef('fileInput')
    const inputRef = useRef(null)
@@ -102,99 +104,105 @@ export default function AdminSupport() {
    }
 
    const sendChatting = async () => {
-      try {
-         const date = await getCustomDate()
-         let data = {}
-         let flag
-         if (fileData?.name) {
-            data = {
-               from: myID,
-               to: selectedIndex,
-               msg: '',
-               date: date,
-               status: false,
-            }
-            flag = true
-         } else {
-            data = {
-               from: myID,
-               to: selectedIndex,
-               msg: chattingMsg,
-               date: date,
-               status: false,
-            }
-            flag = false
-         }
-
-         if (selectedIndex !== '') {
-            const userIndex = allUserList
-               .map((e) => e._id)
-               .indexOf(selectedIndex)
-            const orderId = allUserList[userIndex].name.split(': ')[1]
-            if (chattingMsg.trim() || fileData?.name) {
-               if (fileData?.size / 1000000 > 2) {
-                  toast.error(`Can't upload 2MB files`)
-                  return
+      if (!isLoading) {
+         setIsLoading(true)
+         try {
+            const date = await getCustomDate()
+            let data = {}
+            let flag
+            if (fileData?.name) {
+               data = {
+                  from: myID,
+                  to: selectedIndex,
+                  msg: '',
+                  date: date,
+                  status: false,
                }
-               if (flag) {
-                  if (selectedIndex.length > 30) {
-                     let params = new FormData()
-                     params.append('file', fileData)
-                     params.append('data', JSON.stringify(data))
-                     params.append('orderId', orderId)
-                     await axios
-                        .post(
-                           `${process.env.REACT_APP_API_URL}sendToUserPerFile`,
-                           params
-                        )
-                        .then(async (result) => {
-                           if (result.data.status) {
-                              data.msg = result.data.data
-                              await setAllMsg([...allMsg, data])
-                           } else {
-                              toast.error(result.data.data)
-                           }
-                        })
+               flag = true
+            } else {
+               data = {
+                  from: myID,
+                  to: selectedIndex,
+                  msg: chattingMsg,
+                  date: date,
+                  status: false,
+               }
+               flag = false
+            }
+
+            if (selectedIndex !== '') {
+               const userIndex = allUserList
+                  .map((e) => e._id)
+                  .indexOf(selectedIndex)
+               const orderId = allUserList[userIndex].name.split(': ')[1]
+               if (chattingMsg.trim() || fileData?.name) {
+                  if (fileData?.size / 1000000 > 5) {
+                     toast.error(`Can't upload 2MB files`)
+                     return
+                  }
+                  if (flag) {
+                     if (selectedIndex.length > 30) {
+                        let params = new FormData()
+                        params.append('file', fileData)
+                        params.append('data', JSON.stringify(data))
+                        params.append('orderId', orderId)
+                        await axios
+                           .post(
+                              `${process.env.REACT_APP_API_URL}sendToUserPerFile`,
+                              params
+                           )
+                           .then(async (result) => {
+                              if (result.data.status) {
+                                 data.msg = result.data.data
+                                 await setAllMsg([...allMsg, data])
+                              } else {
+                                 toast.error(result.data.data)
+                              }
+                           })
+                     } else {
+                        let params = new FormData()
+                        params.append('file', fileData)
+                        params.append('data', JSON.stringify(data))
+                        await axios
+                           .post(
+                              `${process.env.REACT_APP_API_URL}sendToUser`,
+                              params
+                           )
+                           .then(async (result) => {
+                              if (result.data.status) {
+                                 data.msg = result.data.data
+                                 await setAllMsg([...allMsg, data])
+                              } else {
+                                 toast.error(result.data.data)
+                              }
+                           })
+                     }
                   } else {
-                     let params = new FormData()
-                     params.append('file', fileData)
-                     params.append('data', JSON.stringify(data))
-                     await axios
-                        .post(
-                           `${process.env.REACT_APP_API_URL}sendToUser`,
-                           params
-                        )
-                        .then(async (result) => {
-                           if (result.data.status) {
-                              data.msg = result.data.data
-                              await setAllMsg([...allMsg, data])
-                           } else {
-                              toast.error(result.data.data)
-                           }
-                        })
+                     if (selectedIndex.length > 30)
+                        socket.emit('sendToUserPerFile', { data, orderId })
+                     else socket.emit('sendToUser', data)
+                     await setAllMsg([...allMsg, data])
                   }
                } else {
-                  if (selectedIndex.length > 30)
-                     socket.emit('sendToUserPerFile', { data, orderId })
-                  else socket.emit('sendToUser', data)
-                  await setAllMsg([...allMsg, data])
+                  toast.error('Write the message')
                }
             } else {
-               toast.error('Write the message')
+               toast.error('Select the user')
             }
-         } else {
-            toast.error('Select the user')
+            if (flag) {
+               setFileData(null)
+               setFileOpen(false)
+               inputElement.current.value = null
+            } else {
+               setChattingMsg('')
+               inputRef.current.focus()
+            }
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
          }
-         if (flag) {
-            setFileData(null)
-            setFileOpen(false)
-            inputElement.current.value = null
-         } else {
-            setChattingMsg('')
-            inputRef.current.focus()
-         }
-      } catch (error) {
-         if (process.env.REACT_APP_MODE) console.log(error)
+         setIsLoading(false)
+      } else {
+         toast.error('Loading...')
       }
    }
 
@@ -268,18 +276,23 @@ export default function AdminSupport() {
       setFileOpen(false)
    }
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
+   useEffect(() => {
+      const setResponsiveness = () => {
+         setChatBoxWidth(getWidth() - getWidth() / 2)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', setResponsiveness)
+   }, [])
+
    useEffect(() => {
       if (fileData?.name) setFileOpen(true)
       else setFileOpen(false)
    }, [fileData])
-
-   useEffect(() => {
-      const setResponsiveness = () => {
-         return setChatBoxWidth(window.innerWidth - window.innerWidth / 2)
-      }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
 
    useEffect(() => {
       if (account._id) {
@@ -321,7 +334,7 @@ export default function AdminSupport() {
          socket.off('disconnect')
          socket.off(deleteId)
       }
-   }, [allMsg, allUserList, unreadCount])
+   }, [allMsg, allUserList, unreadCount, myID, selectedIndex])
 
    useEffect(() => {
       if (selectedIndex !== '')
@@ -591,7 +604,11 @@ export default function AdminSupport() {
                                  sendChatting()
                               }}
                            >
-                              <SendIcon />
+                              {isLoading ? (
+                                 <ClockLoader color="#fff" size={30} />
+                              ) : (
+                                 <SendIcon />
+                              )}
                            </Fab>
                         </Grid>
                      </Grid>

@@ -5,17 +5,15 @@ import toast from 'react-hot-toast'
 import logo1 from '../assets/img/blue-logo.png'
 import logo2 from '../assets/img/white-logo.png'
 import { useNavigate } from 'react-router-dom'
+import validator from 'validator'
 import axios from 'axios'
 
 const ForgotPassword = () => {
    const navigate = useNavigate()
    const [registerEmail, setRegisterEmail] = useState('')
    const [mobileView, setMobileView] = useState(false)
-
    const getResetLink = async () => {
-      const regex =
-         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-      if (registerEmail !== '' && regex.test(registerEmail) === true) {
+      if (registerEmail && validator.isEmail(registerEmail)) {
          try {
             await axios
                .post(`${process.env.REACT_APP_API_URL}forgotPassword`, {
@@ -37,15 +35,20 @@ const ForgotPassword = () => {
       }
    }
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
    useEffect(() => {
       const setResponsiveness = () => {
-         return window.innerWidth < 900
-            ? setMobileView(true)
-            : setMobileView(false)
+         getWidth() < 900 ? setMobileView(true) : setMobileView(false)
       }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
+      window.addEventListener('resize', setResponsiveness)
+      return () => {
+         window.removeEventListener('resize', setResponsiveness)
+      }
+   }, [])
 
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
@@ -100,7 +103,7 @@ const ForgotPassword = () => {
                }}
             >
                Can't Change Password?
-               <a
+               <span
                   onClick={() => {
                      navigate('/')
                   }}
@@ -111,7 +114,7 @@ const ForgotPassword = () => {
                   }}
                >
                   Sign In
-               </a>
+               </span>
             </Box>
          </Box>
       </Grid>

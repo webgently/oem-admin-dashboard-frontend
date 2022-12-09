@@ -81,8 +81,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
    ...theme.mixins.toolbar,
    justifyContent: 'flex-end',
 }))
-const socket = io(process.env.REACT_APP_BASE_URL)
 
+const socket = io(process.env.REACT_APP_BASE_URL)
 export default function AdminSidebar() {
    const account = useSelector((state) => state.account)
    const theme = useTheme()
@@ -202,7 +202,7 @@ export default function AdminSidebar() {
                         height: '50px',
                         borderRadius: '5px',
                      }}
-                     alt="logo image"
+                     alt="logo"
                   />
                )}
                <IconButton
@@ -236,7 +236,7 @@ export default function AdminSidebar() {
                            height: '50px',
                            borderRadius: '5px',
                         }}
-                        alt="logo image"
+                        alt="logo"
                      />
                   )}
                </Avatar>
@@ -285,7 +285,7 @@ export default function AdminSidebar() {
                <img
                   src={logo === '' ? LogoIcon2 : logo}
                   style={{ width: '120px', height: '60px' }}
-                  alt="logo image"
+                  alt="logo"
                />
                <div style={{ flex: '1' }}></div>
                <IconButton onClick={handleDrawerClose}>

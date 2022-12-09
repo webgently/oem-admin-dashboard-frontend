@@ -150,7 +150,7 @@ export default function BuyCredit() {
          setCredits(creditsData[selectIndex - 1].credit)
          setPrice(creditsData[selectIndex - 1].price)
       }
-   }, [selectIndex, credits, price])
+   }, [selectIndex, credits, price, creditsData, handleFee])
 
    useEffect(() => {
       if (selectIndex === 0) {
@@ -485,6 +485,7 @@ export default function BuyCredit() {
                                           style={{
                                              width: '100px',
                                           }}
+                                          alt="stripe"
                                        />
                                        Stripe
                                     </Box>
@@ -498,7 +499,7 @@ export default function BuyCredit() {
                               onChange={handleChange}
                               {...label}
                            />
-                           <a
+                           <span
                               style={{
                                  color: '#ffb100',
                                  textDecoration: 'underline',
@@ -508,7 +509,7 @@ export default function BuyCredit() {
                            >
                               I have read the Privacy Policy and agree to the
                               Terms of Service.
-                           </a>
+                           </span>
                         </Box>
                         <Box sx={{ mt: '20px' }}>
                            <StripeCheckout

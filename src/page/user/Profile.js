@@ -568,7 +568,7 @@ export default function Profile() {
                                  justifyContent: 'center',
                               }}
                            >
-                              <img src={Key} />
+                              <img src={Key} alt="key" />
                            </Grid>
 
                            <Grid

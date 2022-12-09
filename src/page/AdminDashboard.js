@@ -22,9 +22,9 @@ const Item = styled(Paper)(({ theme }) => ({
    borderLeft: '5px solid gray',
    color: theme.palette.text.secondary,
 }))
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminDashboard() {
-   const socket = io(process.env.REACT_APP_BASE_URL)
    const account = useSelector((state) => state.account)
    const navigate = useNavigate()
    const [userCount, setUserCount] = useState(0)

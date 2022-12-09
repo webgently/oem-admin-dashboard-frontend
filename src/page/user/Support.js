@@ -12,6 +12,7 @@ import SendIcon from '@mui/icons-material/Send'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import toast from 'react-hot-toast'
 import TextField from '@mui/material/TextField'
+import { ClockLoader } from 'react-spinners'
 import axios from 'axios'
 import io from 'socket.io-client'
 
@@ -27,8 +28,8 @@ const Item = styled(Paper)(({ theme }) => ({
    borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
-const socket = io(process.env.REACT_APP_BASE_URL)
 
+const socket = io(process.env.REACT_APP_BASE_URL)
 export default function Support() {
    const account = useSelector((state) => state.account)
    const messagesEndRef = useRef(null)
@@ -41,6 +42,7 @@ export default function Support() {
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
    const [fileData, setFileData] = useState({})
    const [fileOpen, setFileOpen] = useState(false)
+   const [isLoading, setIsLoading] = useState(false)
    const inputElement = useRef('fileInput')
 
    const scrollToBottom = () => {
@@ -63,61 +65,74 @@ export default function Support() {
    }
 
    const sendChatting = async () => {
-      const date = await getCustomDate()
-      let data = {}
-      let flag
-      if (fileData?.name) {
-         data = {
-            from: myID,
-            to: supportID,
-            msg: '',
-            date: date,
-            status: false,
+      if (!isLoading) {
+         setIsLoading(true)
+         try {
+            const date = await getCustomDate()
+            let data = {}
+            let flag
+            if (fileData?.name) {
+               data = {
+                  from: myID,
+                  to: supportID,
+                  msg: '',
+                  date: date,
+                  status: false,
+               }
+               flag = true
+            } else {
+               data = {
+                  from: myID,
+                  to: supportID,
+                  msg: chattingMsg,
+                  date: date,
+                  status: false,
+               }
+               flag = false
+            }
+            if (chattingMsg.trim() || fileData?.name) {
+               if (fileData?.size / 1000000 > 5) {
+                  toast.error(`Can't upload 2MB files`)
+                  return
+               }
+               if (flag) {
+                  let params = new FormData()
+                  params.append('file', fileData)
+                  params.append('data', JSON.stringify(data))
+                  await axios
+                     .post(
+                        `${process.env.REACT_APP_API_URL}sendToSupport`,
+                        params
+                     )
+                     .then(async (result) => {
+                        if (result.data.status) {
+                           data.msg = result.data.data
+                           await setAllMsg([...allMsg, data])
+                        } else {
+                           toast.error(result.data.data)
+                        }
+                     })
+               } else {
+                  socket.emit('sendToSupport', { data, name })
+                  await setAllMsg([...allMsg, data])
+               }
+            } else {
+               toast.error('Write the message')
+            }
+            if (flag) {
+               setFileData(null)
+               setFileOpen(false)
+               inputElement.current.value = null
+            } else {
+               setChattingMsg('')
+               inputRef.current.focus()
+            }
+            setIsLoading(false)
+         } catch (error) {
+            if (process.env.REACT_APP_MODE) console.log(error)
          }
-         flag = true
       } else {
-         data = {
-            from: myID,
-            to: supportID,
-            msg: chattingMsg,
-            date: date,
-            status: false,
-         }
-         flag = false
-      }
-      if (chattingMsg.trim() || fileData?.name) {
-         if (fileData?.size / 1000000 > 2) {
-            toast.error(`Can't upload 2MB files`)
-            return
-         }
-         if (flag) {
-            let params = new FormData()
-            params.append('file', fileData)
-            params.append('data', JSON.stringify(data))
-            await axios
-               .post(`${process.env.REACT_APP_API_URL}sendToSupport`, params)
-               .then(async (result) => {
-                  if (result.data.status) {
-                     data.msg = result.data.data
-                     await setAllMsg([...allMsg, data])
-                  } else {
-                     toast.error(result.data.data)
-                  }
-               })
-         } else {
-            socket.emit('sendToSupport', { data, name })
-            await setAllMsg([...allMsg, data])
-         }
-      } else {
-         toast.error('Write the message')
-      }
-      if (flag) {
-         setFileData(null)
-         setFileOpen(false)
-         inputElement.current.value = null
-      } else {
-         setChattingMsg('')
-         inputRef.current.focus()
+         toast.error('Loading...')
       }
    }
 
@@ -186,18 +201,23 @@ export default function Support() {
       setFileOpen(false)
    }
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
+   useEffect(() => {
+      const setResponsiveness = () => {
+         setChatBoxWidth(getWidth() - getWidth() / 2)
+      }
+      setResponsiveness()
+      window.addEventListener('resize', setResponsiveness)
+   }, [])
+
    useEffect(() => {
       if (fileData?.name) setFileOpen(true)
       else setFileOpen(false)
    }, [fileData])
-
-   useEffect(() => {
-      const setResponsiveness = () => {
-         return setChatBoxWidth(window.innerWidth - window.innerWidth / 2)
-      }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
 
    useEffect(() => {
       if (account._id) {
@@ -220,7 +240,7 @@ export default function Support() {
          socket.off('disconnect')
          socket.off(myID)
       }
-   }, [allMsg])
+   }, [allMsg, myID])
 
    return (
       <Box
@@ -400,7 +420,11 @@ export default function Support() {
                                  sendChatting()
                               }}
                            >
-                              <SendIcon />
+                              {isLoading ? (
+                                 <ClockLoader color="#fff" size={30} />
+                              ) : (
+                                 <SendIcon />
+                              )}
                            </Fab>
                         </Grid>
                      </Grid>

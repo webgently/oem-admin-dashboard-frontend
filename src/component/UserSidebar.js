@@ -192,15 +192,20 @@ export default function UserSidebar() {
       }
    }
 
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+
    useEffect(() => {
       const setResponsiveness = () => {
-         return window.innerWidth < 600
-            ? setMobileView(true)
-            : setMobileView(false)
+         getWidth() < 600 ? setMobileView(true) : setMobileView(false)
       }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
+      window.addEventListener('resize', setResponsiveness)
+      return () => {
+         window.removeEventListener('resize', setResponsiveness)
+      }
+   }, [])
 
    useEffect(() => {
       const check = window.location.href.search('support')
@@ -264,6 +269,7 @@ export default function UserSidebar() {
                            height: '50px',
                            borderRadius: '5px',
                         }}
+                        alt="logo"
                      />
                   )}
                   <IconButton
@@ -392,6 +398,7 @@ export default function UserSidebar() {
                <img
                   src={logo === '' ? LogoIcon : logo}
                   style={{ width: '120px', height: '60px' }}
+                  alt="logo"
                />
                <div style={{ flex: '1' }}></div>
                <IconButton onClick={handleDrawerClose}>
@@ -510,7 +517,7 @@ export default function UserSidebar() {
                      <ListItemIcon>
                         <ErrorOutlineIcon />
                      </ListItemIcon>
-                     <ListItemText onClick={() => checkMsg()}>
+                     <ListItemText onClick={checkMsg}>
                         Support{' '}
                         <span style={{ color: 'blue', fontWeight: 'bold' }}>
                            {unreadCount}
@@ -641,7 +648,7 @@ export default function UserSidebar() {
                            </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
-                           <ListItemButton onClick={() => checkMsg()}>
+                           <ListItemButton onClick={checkMsg}>
                               <ListItemIcon>
                                  <ErrorOutlineIcon />{' '}
                                  <span

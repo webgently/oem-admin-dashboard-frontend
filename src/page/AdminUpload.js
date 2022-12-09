@@ -128,7 +128,7 @@ export default function AdminUpload() {
             toast.error('Select the file')
             return
          }
-      if (status == 'completed') {
+      if (status === 'completed') {
          const arr = fileData.name.split('.')
          const element = arr[arr.length - 1]
          const type = element.toLowerCase()
@@ -311,15 +311,6 @@ export default function AdminUpload() {
 
    const getCustomDate = () => {
       const d = new Date()
-      const weekdaylist = [
-         'Sunday',
-         'Monday',
-         'Tuesday',
-         'Wednesday',
-         'Thursday',
-         'Friday',
-         'Saturday',
-      ]
       let year = d.getFullYear()
       let month = d.getMonth() + 1
       let day = d.getDate()
@@ -991,9 +982,10 @@ export default function AdminUpload() {
                                        Uploaded by Support team
                                     </Box>
                                     <ul>
-                                       {oneData?.fileName.map((item, ind) => {
-                                          if (ind === 0) return
-                                          return (
+                                       {oneData?.fileName.map((item, ind) =>
+                                          ind === 0 ? (
+                                             <></>
+                                          ) : (
                                              <li
                                                 key={ind}
                                                 className="file-admin-download-name"
@@ -1006,7 +998,7 @@ export default function AdminUpload() {
                                                 </a>
                                              </li>
                                           )
-                                       })}
+                                       )}
                                     </ul>
                                  </Grid>
                               </Grid>

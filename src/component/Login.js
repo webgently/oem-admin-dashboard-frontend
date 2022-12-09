@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Button, Grid, TextField } from '@mui/material'
+import validator from 'validator'
 import { Box } from '@mui/system'
 import logo1 from '../assets/img/blue-logo.png'
 import logo2 from '../assets/img/white-logo.png'
@@ -17,14 +18,8 @@ const Login = () => {
    const [mail, setMail] = useState('')
    const [pass, setPass] = useState('')
 
-   const validateEmail = (email) => {
-      return email.match(
-         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )
-   }
-
    const SignIn = async () => {
-      if (mail !== '' && validateEmail(mail) !== null) {
+      if (mail && validator.isEmail(mail)) {
          if (pass !== '') {
             let data = {
                mail,
@@ -59,38 +54,36 @@ const Login = () => {
       }
    }
 
-   useEffect(() => {
-      const setResponsiveness = () => {
-         return window.innerWidth < 900
-            ? setMobileView(true)
-            : setMobileView(false)
-      }
-      setResponsiveness()
-      window.addEventListener('resize', () => setResponsiveness())
-   }, [window.innerWidth])
+   const getWidth = () =>
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
 
    useEffect(() => {
-      try {
-         if (account) {
-            switch (account.permission) {
-               case 'admin':
-                  navigate('admin_dashboard')
-                  break
-               case 'user':
-                  navigate('dashboard')
-                  break
-               default:
-                  break
-            }
-            dispatch(setAccountData(account))
-         } else {
-            if (process.env.REACT_APP_MODE)
-               console.log('storage is emtry or broken')
-         }
-      } catch (error) {
-         if (process.env.REACT_APP_MODE) console.log(error)
+      const setResponsiveness = () => {
+         getWidth() < 900 ? setMobileView(true) : setMobileView(false)
       }
-   }, [account])
+      window.addEventListener('resize', setResponsiveness)
+      return () => {
+         window.removeEventListener('resize', setResponsiveness)
+      }
+   }, [])
+
+   useEffect(() => {
+      if (account) {
+         switch (account.permission) {
+            case 'admin':
+               navigate('admin_dashboard')
+               break
+            case 'user':
+               navigate('dashboard')
+               break
+            default:
+               break
+         }
+         dispatch(setAccountData(account))
+      }
+   }, [account, dispatch, navigate])
 
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>
@@ -149,7 +142,7 @@ const Login = () => {
                </Button>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-               <a
+               <p
                   onClick={() => {
                      navigate('forgot-password')
                   }}
@@ -160,16 +153,15 @@ const Login = () => {
                   }}
                >
                   Forgot password?
-               </a>
+               </p>
             </Box>
             <Box
                sx={{
                   display: 'flex',
-                  paddingTop: '6vh',
                }}
             >
                Don't have an account yet?
-               <a
+               <span
                   onClick={() => {
                      navigate('/register')
                   }}
@@ -181,7 +173,7 @@ const Login = () => {
                   }}
                >
                   Sign Up
-               </a>
+               </span>
             </Box>
          </Box>
       </Grid>
