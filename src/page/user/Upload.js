@@ -325,7 +325,7 @@ export default function Upload() {
                      justifyContent: 'space-between',
                   }}
                >
-                  <h2 style={{ color: 'red', margin: '0px' }}>
+                  <h2 style={{ color: '#1976d2', margin: '0px' }}>
                      Privacy Policy
                   </h2>
                   <Box>
@@ -341,7 +341,7 @@ export default function Upload() {
                <Box
                   sx={{
                      mt: '10px',
-                     borderTop: '5px solid red',
+                     borderTop: '5px solid #1976d2',
                      bgcolor: 'white',
                      borderBottomRightRadius: '5px',
                      borderBottomLeftRadius: '5px',
@@ -355,13 +355,15 @@ export default function Upload() {
          ) : (
             <>
                <Box sx={{ mt: '80px' }}>
-                  <h3 style={{ color: 'red', margin: '0px' }}>Upload File</h3>
+                  <h3 style={{ color: '#1976d2', margin: '0px' }}>
+                     Upload File
+                  </h3>
                   <span>Upload here the original file</span>
                </Box>
                <Box
                   sx={{
                      mt: '10px',
-                     borderTop: '5px solid red',
+                     borderTop: '5px solid #1976d2',
                      bgcolor: 'white',
                      borderBottomRightRadius: '5px',
                      borderBottomLeftRadius: '5px',
@@ -388,7 +390,7 @@ export default function Upload() {
                         >
                            <Box>
                               <CloudUploadIcon
-                                 sx={{ color: 'red', fontSize: '70px' }}
+                                 sx={{ color: '#1976d2', fontSize: '70px' }}
                               />
                            </Box>
                            <Box>Drag amd Drop your File here</Box>
@@ -403,9 +405,9 @@ export default function Upload() {
                               <Button
                                  variant="outlined"
                                  sx={{
-                                    border: '1px solid red',
+                                    border: '1px solid #1976d2',
                                     borderRadius: '12px',
-                                    color: 'red',
+                                    color: '#1976d2',
                                  }}
                                  onClick={handleFileload}
                               >
@@ -692,7 +694,10 @@ export default function Upload() {
                                  <RadioJoy value="true" />
                                  &nbsp;I accept the{' '}
                                  <span
-                                    style={{ color: 'red', cursor: 'pointer' }}
+                                    style={{
+                                       color: '#1976d2',
+                                       cursor: 'pointer',
+                                    }}
                                     onClick={() => setTermViewFlag(true)}
                                  >
                                     terms and condition
@@ -710,7 +715,7 @@ export default function Upload() {
                      >
                         <Button
                            variant="contained"
-                           className="btn_red"
+                           className="btn_blue"
                            style={{ padding: '10px 0' }}
                            fullWidth
                            onClick={upload}

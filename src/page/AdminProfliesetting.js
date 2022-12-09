@@ -59,7 +59,7 @@ const Item1 = styled(Paper)(({ theme }) => ({
    flexDirection: 'column',
    gap: '10px',
    textAlign: 'center',
-   borderLeft: '5px solid red',
+   borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
 
@@ -134,7 +134,7 @@ export default function AdminProfliesetting() {
       setPage(0)
    }
    // changeBackground
-   const [bgProfile, setBgProfile] = useState('')
+   const [bgProfile, setBgProfile] = useState()
    const [open5, setOpen5] = useState(false)
    const [bgFile, setBgFile] = useState({})
    const [bgPreview, setBgPreview] = useState('')
@@ -751,7 +751,7 @@ export default function AdminProfliesetting() {
          >
             <Box
                sx={{
-                  color: 'red',
+                  color: '#1976d2',
                   py: '20px',
                   fontSize: '25px',
                }}
@@ -774,9 +774,11 @@ export default function AdminProfliesetting() {
                            sx={{
                               display: 'flex',
                               justifyContent: 'flex-start',
-                              background: `url(${
-                                 bgProfile === '' ? bgCar : bgProfile
-                              })`,
+                              background: `${
+                                 bgProfile === ''
+                                    ? `url(${bgCar})`
+                                    : `url(${bgProfile})`
+                              }`,
                               height: '400px',
                               width: '100%',
                               backgroundSize: '100% 100%',
@@ -1149,7 +1151,7 @@ export default function AdminProfliesetting() {
                               <Box>
                                  <CloudUploadIcon
                                     sx={{
-                                       color: 'red',
+                                       color: '#1976d2',
                                        fontSize: '70px',
                                     }}
                                  />
@@ -1170,9 +1172,9 @@ export default function AdminProfliesetting() {
                               <Button
                                  variant="outlined"
                                  sx={{
-                                    border: '1px solid red',
+                                    border: '1px solid #1976d2',
                                     borderRadius: '12px',
-                                    color: 'red',
+                                    color: '#1976d2',
                                  }}
                                  onClick={handleFileload}
                               >
@@ -1183,9 +1185,9 @@ export default function AdminProfliesetting() {
                               <Button
                                  variant="outlined"
                                  sx={{
-                                    border: '1px solid red',
+                                    border: '1px solid #1976d2',
                                     borderRadius: '12px',
-                                    color: 'red',
+                                    color: '#1976d2',
                                  }}
                                  onClick={handleFileUpload}
                               >

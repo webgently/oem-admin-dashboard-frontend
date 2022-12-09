@@ -79,12 +79,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
    display: 'flex',
    alignItems: 'center',
    padding: theme.spacing(0, 1),
-   // necessary for content to be below app bar
    ...theme.mixins.toolbar,
    justifyContent: 'flex-end',
 }))
-const socket = io(process.env.REACT_APP_BASE_URL)
 
+const socket = io(process.env.REACT_APP_BASE_URL)
 export default function UserSidebar() {
    const account = useSelector((state) => state.account)
    const theme = useTheme()
@@ -291,7 +290,7 @@ export default function UserSidebar() {
                         alignItems: 'center',
                      }}
                   >
-                     <WalletIcon sx={{ color: 'red' }} />
+                     <WalletIcon sx={{ color: '#1976d2' }} />
                      {creditAmount} Credit
                   </Box>
                   <Divider orientation="vertical" flexItem />

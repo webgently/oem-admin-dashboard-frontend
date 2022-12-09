@@ -302,7 +302,7 @@ export default function Dashboard() {
                               <Box>
                                  <CloudUploadIcon
                                     sx={{
-                                       color: 'red',
+                                       color: '#1976d2',
                                        fontSize: '70px',
                                     }}
                                  />
@@ -312,9 +312,9 @@ export default function Dashboard() {
                                  <Button
                                     variant="outlined"
                                     sx={{
-                                       border: '1px solid red',
+                                       border: '1px solid #1976d2',
                                        borderRadius: '12px',
-                                       color: 'red',
+                                       color: '#1976d2',
                                     }}
                                     onClick={() => navigate('/upload')}
                                  >

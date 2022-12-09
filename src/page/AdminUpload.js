@@ -573,7 +573,7 @@ export default function AdminUpload() {
                                     <Box>
                                        <CloudUploadIcon
                                           sx={{
-                                             color: 'red',
+                                             color: '#1976d2',
                                              fontSize: '70px',
                                           }}
                                        />
@@ -593,9 +593,9 @@ export default function AdminUpload() {
                                  <Button
                                     variant="outlined"
                                     sx={{
-                                       border: '1px solid red',
+                                       border: '1px solid #1976d2',
                                        borderRadius: '12px',
-                                       color: 'red',
+                                       color: '#1976d2',
                                     }}
                                     disabled={uploadBtnFlag}
                                     onClick={handleFileload}

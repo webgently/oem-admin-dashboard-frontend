@@ -249,7 +249,7 @@ export default function OverviewCredit() {
                <Box
                   sx={{
                      mt: '10px',
-                     borderTop: '5px solid red',
+                     borderTop: '5px solid #1976d2',
                      bgcolor: 'white',
                      borderBottomRightRadius: '5px',
                      borderBottomLeftRadius: '5px',
@@ -340,7 +340,7 @@ export default function OverviewCredit() {
                   <Box>
                      <Button
                         fullWidth
-                        className="btn_red"
+                        className="btn_blue"
                         sx={{ color: 'white', mt: 2 }}
                         size="small"
                         onClick={() => navigate('/buyCredit')}

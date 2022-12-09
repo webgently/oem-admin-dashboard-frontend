@@ -184,7 +184,7 @@ export default function BuyCredit() {
          }}
       >
          <Box sx={{ mt: '80px' }}>
-            <h3 style={{ color: 'red', margin: '0px' }}>Buy Credits</h3>
+            <h3 style={{ color: '#1976d2', margin: '0px' }}>Buy Credits</h3>
             <span>Individual tuning file service credit</span>
          </Box>
          <Grid
@@ -536,7 +536,7 @@ export default function BuyCredit() {
                </Box>
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
-               <Box sx={{ color: 'red', fontSize: '20px' }}>Price List</Box>
+               <Box sx={{ color: '#1976d2', fontSize: '20px' }}>Price List</Box>
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
                <TableContainer component={Paper}>

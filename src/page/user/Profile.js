@@ -31,7 +31,7 @@ const Item1 = styled(Paper)(({ theme }) => ({
    flexDirection: 'column',
    gap: '10px',
    textAlign: 'center',
-   borderLeft: '5px solid red',
+   borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
 
@@ -375,9 +375,11 @@ export default function Profile() {
                            sx={{
                               display: 'flex',
                               justifyContent: 'flex-start',
-                              background: `url(${
-                                 bgProfile === '' ? bgCar : bgProfile
-                              })`,
+                              background: `${
+                                 bgProfile === ''
+                                    ? `url(${bgCar})`
+                                    : `url(${bgProfile})`
+                              }`,
                               height: '400px',
                               width: '100%',
                               position: 'relative',
