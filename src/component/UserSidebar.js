@@ -88,7 +88,7 @@ export default function UserSidebar() {
    const account = useSelector((state) => state.account)
    const theme = useTheme()
    const dispatch = useDispatch()
-   const [open, setOpen] = useState(false)
+   const [open, setOpen] = useState(true)
    const [logo, setLogo] = useState('')
    const [myID, setMyID] = useState('')
    const [anchorElUser, setAnchorElUser] = useState(null)

@@ -86,7 +86,7 @@ const socket = io(process.env.REACT_APP_BASE_URL)
 export default function AdminSidebar() {
    const account = useSelector((state) => state.account)
    const theme = useTheme()
-   const [open, setOpen] = useState(false)
+   const [open, setOpen] = useState(true)
    const [logo, setLogo] = useState('')
    const [unreadCount, setUnreadCount] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)

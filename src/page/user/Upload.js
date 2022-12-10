@@ -147,10 +147,6 @@ export default function Upload() {
          toast.error('Field the extras')
          return
       }
-      if (!message) {
-         toast.error('Field the Message')
-         return
-      }
       if (!term) {
          toast.error('Accept the term')
          return
