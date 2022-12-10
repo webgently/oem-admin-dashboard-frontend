@@ -575,7 +575,7 @@ export default function AdminUpload() {
                                           }}
                                        />
                                     </Box>
-                                    <Box>Drag amd Drop your File here</Box>
+                                    <Box>Drag and Drop your File here</Box>
                                     <Box>Or</Box>
                                  </>
                               )}

@@ -369,7 +369,7 @@ export default function Upload() {
                                  sx={{ color: '#1976d2', fontSize: '70px' }}
                               />
                            </Box>
-                           <Box>Drag amd Drop your File here</Box>
+                           <Box>Drag and Drop your File here</Box>
                            <Box>Or</Box>
                            <Box>
                               <input
@@ -668,7 +668,7 @@ export default function Upload() {
                         <Textarea
                            minRows={4}
                            size="sm"
-                           placeholder="Have multiple options write here, or just an comment..."
+                           placeholder="Leave an messag"
                            value={message}
                            onChange={(e) => setMessage(e.target.value)}
                         />
