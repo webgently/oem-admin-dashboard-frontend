@@ -37,8 +37,8 @@ export default function Upload() {
    const [vehicleSeries, setVehicleSeries] = useState('')
    const [buildYear, setBuildYear] = useState(new Date())
 
-   const [HP, setHP] = useState(null)
-   const [KW, setKW] = useState(null)
+   const [HP, setHP] = useState('')
+   const [KW, setKW] = useState('')
    const [transmission, setTransmission] = useState('')
    const [VINnumber, setVINnumber] = useState('')
 
@@ -197,8 +197,8 @@ export default function Upload() {
                      setVehicleBrand('')
                      setVehicleSeries('')
                      setBuildYear(new Date())
-                     setHP(null)
-                     setKW(null)
+                     setHP('')
+                     setKW('')
                      setTransmission('')
                      setVINnumber('')
                      setTuningType('')
@@ -251,8 +251,13 @@ export default function Upload() {
    }
 
    useEffect(() => {
-      setKW(HP * 0.7457)
-   }, [HP])
+      if (!HP || HP === 0) {
+         setHP('')
+         setKW('')
+      } else {
+         setKW(HP * 0.7457)
+      }
+   }, [HP, KW])
 
    useEffect(() => {
       if (fileData?.name) setFileOpen(true)
