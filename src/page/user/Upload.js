@@ -37,8 +37,8 @@ export default function Upload() {
    const [vehicleSeries, setVehicleSeries] = useState('')
    const [buildYear, setBuildYear] = useState(new Date())
 
-   const [HP, setHP] = useState(0)
-   const [KW, setKW] = useState(0)
+   const [HP, setHP] = useState(null)
+   const [KW, setKW] = useState(null)
    const [transmission, setTransmission] = useState('')
    const [VINnumber, setVINnumber] = useState('')
 
@@ -197,8 +197,8 @@ export default function Upload() {
                      setVehicleBrand('')
                      setVehicleSeries('')
                      setBuildYear(new Date())
-                     setHP(0)
-                     setKW(0)
+                     setHP(null)
+                     setKW(null)
                      setTransmission('')
                      setVINnumber('')
                      setTuningType('')
@@ -596,7 +596,7 @@ export default function Upload() {
                               onChange={(e) => setTransmission(e.target.value)}
                            >
                               <MenuItem value="Manual">Manual</MenuItem>
-                              <MenuItem value="Actomatic">Actomatic</MenuItem>
+                              <MenuItem value="Automatic">Automatic</MenuItem>
                            </Select>
                         </FormControl>
                      </Grid>
