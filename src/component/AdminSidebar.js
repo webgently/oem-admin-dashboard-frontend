@@ -93,13 +93,13 @@ export default function AdminSidebar() {
    const [avatar, setAvatar] = useState('')
    const navigate = useNavigate()
    const dispatch = useDispatch()
-   const [listopen, setListOpen] = useState(false)
+   const [listopen, setListOpen] = useState(true)
 
    const handleClickList = () => {
       setListOpen(!listopen)
    }
 
-   const [creditopen, setCreditOpen] = useState(false)
+   const [creditopen, setCreditOpen] = useState(true)
 
    const handleClickCreditlist = () => {
       setCreditOpen(!creditopen)
