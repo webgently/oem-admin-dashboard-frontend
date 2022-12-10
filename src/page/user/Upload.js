@@ -668,7 +668,7 @@ export default function Upload() {
                         <Textarea
                            minRows={4}
                            size="sm"
-                           placeholder="Leave an messag"
+                           placeholder="Do you have multiple options? Write them here, or just leave an message"
                            value={message}
                            onChange={(e) => setMessage(e.target.value)}
                         />
