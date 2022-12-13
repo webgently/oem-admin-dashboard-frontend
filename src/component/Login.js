@@ -29,18 +29,16 @@ const Login = () => {
                await axios
                   .post(`${process.env.REACT_APP_API_URL}signin`, { data })
                   .then((result) => {
-                     const data = result.data
-                     delete data.__v
-                     if (data === 'not exist') {
-                        toast.error('This email is not exist!')
-                     } else if (data === 'password') {
-                        toast.error('Password Incorrect!')
-                     } else {
+                     if (result.data.login) {
+                        const data = result.data.data
+                        delete data.__v
                         if (data.permission === 'user') navigate('dashboard')
                         else if (data.permission === 'admin')
                            navigate('admin_dashboard')
                         toast.success('Login Successed')
                         dispatch(setAccountData(data))
+                     } else {
+                        toast.error(result.data.data)
                      }
                   })
             } catch (error) {
