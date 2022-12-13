@@ -379,7 +379,7 @@ export default function AdminSupport() {
                      aria-label="main mailbox folders"
                      style={{
                         overflowY: 'auto',
-                        height: '70vh',
+                        height: '80vh',
                      }}
                   >
                      {allUserList.map((item, ind) => {

@@ -157,10 +157,6 @@ export default function AdminUpload() {
          toast.error('Select the status')
          return
       }
-      if (!note) {
-         toast.error('Field the note')
-         return
-      }
       if (!creditBtnFlag) {
          if (credit < 0) {
             toast.error('Field the credit')
