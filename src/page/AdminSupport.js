@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Fab from '@mui/material/Fab'
+import { InputAdornment } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
@@ -14,6 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
+import SearchIcon from '@mui/icons-material/Search'
 import DescriptionIcon from '@mui/icons-material/Description'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
@@ -50,6 +52,7 @@ export default function AdminSupport() {
    const [fileOpen, setFileOpen] = useState(false)
    const [allMsg, setAllMsg] = useState([])
    const [isLoading, setIsLoading] = useState(false)
+   const [search, setSearch] = useState('')
    const messagesEndRef = useRef(null)
    const inputElement = useRef('fileInput')
    const inputRef = useRef(null)
@@ -88,10 +91,13 @@ export default function AdminSupport() {
       }
    }
 
-   const getUserList = async (id) => {
+   const getUserList = async (id, search) => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}getUserList`, { id: id })
+            .post(`${process.env.REACT_APP_API_URL}getUserList`, {
+               id: id,
+               search,
+            })
             .then((result) => {
                if (result.data.status) {
                   setUnreadCount(result.data.unreadCount)
@@ -297,12 +303,11 @@ export default function AdminSupport() {
    useEffect(() => {
       if (account._id) {
          setMyID(account._id)
-         getUserList(account._id)
+         getUserList(account._id, search)
       }
-   }, [account])
+   }, [account, search])
 
    useEffect(() => {
-      let deleteId = ''
       socket.on(myID, async (e) => {
          const index = allUserList.map((e) => e._id).indexOf(e.data.from)
          const swap = await move(index, 0, allUserList)
@@ -316,9 +321,7 @@ export default function AdminSupport() {
          const copy = { ...unreadCount }
          copy[e.data.from] += 1
          setUnreadCount(copy)
-         deleteId = myID
       })
-
       socket.on('file' + myID, async (e) => {
          const exist = allUserList.map((e) => e._id).indexOf(e.data._id)
          if (exist < 0) {
@@ -327,12 +330,12 @@ export default function AdminSupport() {
             unread[e.data._id] = 0
             setUnreadCount(unread)
          }
-         deleteId = 'file' + myID
       })
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(deleteId)
+         socket.off(myID)
+         socket.off('file' + myID)
       }
    }, [allMsg, allUserList, unreadCount, myID, selectedIndex])
 
@@ -374,12 +377,26 @@ export default function AdminSupport() {
                   paddingRight={3}
                   borderRadius={2}
                >
+                  <TextField
+                     fullWidth
+                     InputProps={{
+                        startAdornment: (
+                           <InputAdornment position="start">
+                              <SearchIcon />
+                           </InputAdornment>
+                        ),
+                     }}
+                     placeholder="Search..."
+                     size="small"
+                     value={search}
+                     onChange={(e) => setSearch(e.target.value)}
+                  />
                   <List
                      component="nav"
                      aria-label="main mailbox folders"
                      style={{
                         overflowY: 'auto',
-                        height: '80vh',
+                        height: '73vh',
                      }}
                   >
                      {allUserList.map((item, ind) => {

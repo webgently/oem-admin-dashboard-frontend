@@ -163,26 +163,24 @@ export default function AdminSidebar() {
       getLogo()
       setAvatar(account.profile)
       if (account._id) {
-         let deleteId = ''
          getUserUnreadCount(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
-            deleteId = account._id
          })
 
          socket.on('file' + account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
-            deleteId = 'file' + account._id
          })
 
          socket.on('checkUnreadCount' + account._id, async (e) => {
             await getUserUnreadCount(account._id)
-            deleteId = 'checkUnreadCount' + account._id
          })
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(deleteId)
+            socket.off(account._id)
+            socket.off('file' + account._id)
+            socket.off('checkUnreadCount' + account._id)
          }
       }
    }, [account, unreadCount])

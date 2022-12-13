@@ -419,16 +419,13 @@ export default function Overview() {
    }, [OrderID, filterSetting, account])
 
    useEffect(() => {
-      let deleteId = ''
       socket.on(myID + dataId + orderId, async (e) => {
          await setAllMsg([...allMsg, e.data])
-         deleteId = myID + dataId + orderId
       })
       socket.on('fileReply' + myID, async (e) => {
          const copy = { ...unreadFileCount }
          copy[e.from] += 1
          setUnreadFileCount(copy)
-         deleteId = 'fileReply' + myID
       })
       if (dataId && orderId && myID)
          setTimeout(() => {
@@ -437,7 +434,8 @@ export default function Overview() {
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(deleteId)
+         socket.off(myID + dataId + orderId)
+         socket.off('fileReply' + myID)
       }
    }, [allMsg, unreadFileCount, dataId, myID, orderId])
 

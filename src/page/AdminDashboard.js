@@ -63,21 +63,19 @@ export default function AdminDashboard() {
    }
 
    useEffect(() => {
-      let deleteId = ''
       if (account._id) {
          getDashBoardData(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
-            deleteId = account._id
          })
          socket.on('request' + account._id, async () => {
             setRequestCount(requestCount + 1)
-            deleteId = 'request' + account._id
          })
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(deleteId)
+            socket.off(account._id)
+            socket.off('request' + account._id)
          }
       }
    }, [account, unreadCount, requestCount])

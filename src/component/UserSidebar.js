@@ -216,33 +216,31 @@ export default function UserSidebar() {
    useEffect(() => {
       getLogo()
       if (account._id) {
-         let deleteId = ''
          setMyID(account._id)
          getUserUnreadCount(account._id)
          getUserUnreadPerFileCount(account._id)
          getSumCredit(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
-            deleteId = account._id
          })
          socket.on('fileReply' + account._id, async (e) => {
             setUnreadFileCount(unreadFileCount + 1)
-            deleteId = 'fileReply' + account._id
             setListOpen(true)
          })
          socket.on('totalUnreadCount' + account._id, async (e) => {
             setUnreadFileCount(unreadFileCount - e.count)
-            deleteId = 'totalUnreadCount' + account._id
          })
          socket.on('creditCheck' + account._id, async () => {
             getSumCredit(account._id)
-            deleteId = 'creditCheck' + account._id
          })
 
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(deleteId)
+            socket.off(account._id)
+            socket.off('fileReply' + account._id)
+            socket.off('totalUnreadCount' + account._id)
+            socket.off('creditCheck' + account._id)
          }
       }
    }, [account, unreadCount, unreadFileCount])

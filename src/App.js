@@ -41,45 +41,43 @@ export default function App() {
       playbackRate,
       interrupt: true,
    })
+
    useEffect(() => {
       const account = JSON.parse(localStorage.getItem('user'))
-      let deleteId = ''
       if (account) dispatch(setAccountData(account))
-
       socket.on(account._id, async (e) => {
          toast.success(e.alertMsg)
-         deleteId = account._id
-         setPlaybackRate(playbackRate + 0.1)
+         setPlaybackRate(playbackRate + 0.5)
          play()
       })
 
       socket.on('fileReply' + account._id, async (e) => {
          toast.success(e.alertMsg)
-         deleteId = 'fileReply' + account._id
-         setPlaybackRate(playbackRate + 0.1)
+         setPlaybackRate(playbackRate + 0.5)
          play()
       })
 
       socket.on('request' + account._id, async (e) => {
          toast.success(e.alertMsg)
-         deleteId = 'request' + account._id
-         setPlaybackRate(playbackRate + 0.1)
+         setPlaybackRate(playbackRate + 0.5)
          play()
       })
 
       socket.on('answer' + account._id, async (e) => {
          toast.success(e.alertMsg)
-         deleteId = 'answer' + account._id
-         setPlaybackRate(playbackRate + 0.1)
+         setPlaybackRate(playbackRate + 0.5)
          play()
       })
 
       return () => {
          socket.off('connect')
          socket.off('disconnect')
-         socket.off(deleteId)
+         socket.off(account._id)
+         socket.off('fileReply' + account._id)
+         socket.off('request' + account._id)
+         socket.off('answer' + account._id)
       }
-   }, [])
+   }, [play])
 
    return (
       <Router>
