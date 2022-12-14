@@ -17,6 +17,7 @@ export const accountSlice = createSlice({
       permission: '',
       phone: '',
       profile: '',
+      support: '',
       status: '',
       subcontinent: '',
       vatNumber: '',
@@ -38,6 +39,7 @@ export const accountSlice = createSlice({
          state.permission = action.payload.permission
          state.phone = action.payload.phone
          state.profile = action.payload.profile
+         state.support = action.payload.support
          state.status = action.payload.status
          state.subcontinent = action.payload.subcontinent
          state.vatNumber = action.payload.vatNumber
@@ -59,6 +61,7 @@ export const accountSlice = createSlice({
          state.permission = ''
          state.phone = ''
          state.profile = ''
+         state.support = ''
          state.status = ''
          state.subcontinent = ''
          state.vatNumber = ''

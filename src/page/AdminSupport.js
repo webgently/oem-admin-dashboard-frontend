@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
+import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
@@ -18,6 +19,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'
 import SearchIcon from '@mui/icons-material/Search'
 import DescriptionIcon from '@mui/icons-material/Description'
 import ListItemText from '@mui/material/ListItemText'
+import Checkbox from '@mui/material/Checkbox'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
@@ -53,6 +55,8 @@ export default function AdminSupport() {
    const [allMsg, setAllMsg] = useState([])
    const [isLoading, setIsLoading] = useState(false)
    const [search, setSearch] = useState('')
+   const [userSelect, setUserSelect] = useState([])
+   const [archive, setArchive] = useState(true)
    const messagesEndRef = useRef(null)
    const inputElement = useRef('fileInput')
    const inputRef = useRef(null)
@@ -287,6 +291,31 @@ export default function AdminSupport() {
       document.documentElement.clientWidth ||
       document.body.clientWidth
 
+   const selectUsers = (status, id) => {
+      if (status) setUserSelect([...userSelect, id])
+      else setUserSelect(userSelect.filter((item) => item !== id))
+   }
+
+   const sendToArchive = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}sendToArchive`, userSelect)
+            .then((result) => {
+               if (result.data.status) {
+                  toast.success(result.data.data)
+                  getUserList(myID, search)
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   useEffect(() => {
+      if (userSelect.length > 0) setArchive(false)
+      else setArchive(true)
+   }, [userSelect])
+
    useEffect(() => {
       const setResponsiveness = () => {
          setChatBoxWidth(getWidth() - getWidth() / 2)
@@ -372,8 +401,8 @@ export default function AdminSupport() {
                   item
                   xs={12}
                   sm={12}
-                  md={3}
-                  lg={3}
+                  md={3.2}
+                  lg={3.2}
                   paddingRight={3}
                   borderRadius={2}
                >
@@ -401,7 +430,24 @@ export default function AdminSupport() {
                   >
                      {allUserList.map((item, ind) => {
                         return (
-                           <div key={item._id}>
+                           <div
+                              key={item._id}
+                              style={{
+                                 position: 'relative',
+                                 display: 'flex',
+                                 alignItems: 'center',
+                              }}
+                           >
+                              <Checkbox
+                                 style={{
+                                    position: 'absolute',
+                                    left: 0,
+                                 }}
+                                 size="small"
+                                 onChange={(e) =>
+                                    selectUsers(e.target.checked, item._id)
+                                 }
+                              />
                               <ListItemButton
                                  id={item._id}
                                  selected={selectedIndex === item._id}
@@ -411,6 +457,7 @@ export default function AdminSupport() {
                                  style={{
                                     borderTopLeftRadius: 10,
                                     borderTopRightRadius: 10,
+                                    paddingLeft: '2rem',
                                  }}
                               >
                                  <Badge
@@ -425,7 +472,7 @@ export default function AdminSupport() {
                                        {item.profile === '' ? (
                                           <Avatar alt="avatar" src="" />
                                        ) : item.profile === 'file' ? (
-                                          <Avatar>
+                                          <Avatar alt="avatar">
                                              <DescriptionIcon />
                                           </Avatar>
                                        ) : (
@@ -448,14 +495,36 @@ export default function AdminSupport() {
                      })}
                   </List>
                </Grid>
-               <Grid item xs={12} sm={12} md={9} lg={9}>
+               <Grid item xs={12} sm={12} md={8.8} lg={8.8}>
                   <Box
-                     color={'#1976d2'}
-                     fontSize={'25px'}
-                     marginTop={1}
-                     paddingBottom={1}
+                     style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                     }}
                   >
-                     Support Area | Chat Section
+                     <Box
+                        color={'#1976d2'}
+                        fontSize={'25px'}
+                        marginTop={1}
+                        paddingBottom={1}
+                     >
+                        Support Area | Chat Section
+                     </Box>
+                     <Box
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                        }}
+                     >
+                        <Button
+                           variant="contained"
+                           endIcon={<SendIcon />}
+                           onClick={sendToArchive}
+                           disabled={archive}
+                        >
+                           Send To Archive
+                        </Button>
+                     </Box>
                   </Box>
                   <Item>
                      <Grid
@@ -465,7 +534,7 @@ export default function AdminSupport() {
                         paddingX={'2vw'}
                         height={'100%'}
                         fontSize={'16px'}
-                        style={{ overflowY: 'auto' }}
+                        style={{ overflowY: 'auto', overflowX: 'hidden' }}
                      >
                         {selectedIndex ? (
                            <>
