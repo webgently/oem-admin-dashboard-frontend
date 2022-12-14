@@ -120,7 +120,7 @@ export default function UserSidebar() {
             })
             .then((result) => {
                if (result.data.status) {
-                  setUnreadCount(result.data.unreadCount)
+                  setUnreadCount(result.data.supportUnreadCount)
                }
             })
       } catch (error) {
@@ -217,8 +217,6 @@ export default function UserSidebar() {
       getLogo()
       if (account._id) {
          setMyID(account._id)
-         getUserUnreadCount(account._id)
-         getUserUnreadPerFileCount(account._id)
          getSumCredit(account._id)
          socket.on(account._id, async (e) => {
             setUnreadCount(unreadCount + 1)
@@ -245,6 +243,10 @@ export default function UserSidebar() {
       }
    }, [account, unreadCount, unreadFileCount])
 
+   useEffect(() => {
+      getUserUnreadCount(account._id)
+      getUserUnreadPerFileCount(account._id)
+   }, [account])
    return (
       <Box sx={{ display: 'flex' }}>
          <CssBaseline />

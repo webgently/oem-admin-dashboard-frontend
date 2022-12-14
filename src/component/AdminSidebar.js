@@ -20,6 +20,7 @@ import LogoIcon1 from '../assets/img/white-logo.png'
 import LogoIcon2 from '../assets/img/blue-logo.png'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PersonIcon from '@mui/icons-material/Person'
+import ArchiveIcon from '@mui/icons-material/Archive'
 import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -88,7 +89,8 @@ export default function AdminSidebar() {
    const theme = useTheme()
    const [open, setOpen] = useState(true)
    const [logo, setLogo] = useState('')
-   const [unreadCount, setUnreadCount] = useState(0)
+   const [unreadCount1, setUnreadCount1] = useState(0)
+   const [unreadCount2, setUnreadCount2] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)
    const [avatar, setAvatar] = useState('')
    const navigate = useNavigate()
@@ -137,7 +139,8 @@ export default function AdminSidebar() {
             })
             .then((result) => {
                if (result.data.status) {
-                  setUnreadCount(result.data.unreadCount)
+                  setUnreadCount1(result.data.supportUnreadCount)
+                  setUnreadCount2(result.data.archiveUnreadCount)
                }
             })
       } catch (error) {
@@ -163,27 +166,40 @@ export default function AdminSidebar() {
       getLogo()
       setAvatar(account.profile)
       if (account._id) {
-         getUserUnreadCount(account._id)
          socket.on(account._id, async (e) => {
-            setUnreadCount(unreadCount + 1)
-         })
-
-         socket.on('file' + account._id, async (e) => {
-            setUnreadCount(unreadCount + 1)
+            if (e.support) {
+               setUnreadCount1(unreadCount1 + 1)
+            } else {
+               setUnreadCount2(unreadCount2 + 1)
+            }
          })
 
          socket.on('checkUnreadCount' + account._id, async (e) => {
             await getUserUnreadCount(account._id)
          })
+
+         socket.on('sendToChatBox', async () => {
+            await getUserUnreadCount(account._id)
+         })
+
+         socket.on('sendToArchive', async () => {
+            await getUserUnreadCount(account._id)
+         })
+
          return () => {
             socket.off('connect')
             socket.off('disconnect')
             socket.off(account._id)
-            socket.off('file' + account._id)
+            socket.off('sendToArchive')
+            socket.off('sendToChatBox')
             socket.off('checkUnreadCount' + account._id)
          }
       }
-   }, [account, unreadCount])
+   }, [account, unreadCount1, unreadCount2])
+
+   useEffect(() => {
+      if (account._id) getUserUnreadCount(account._id)
+   }, [account])
 
    return (
       <Box sx={{ display: 'flex' }}>
@@ -418,7 +434,24 @@ export default function AdminSidebar() {
                      >
                         Support{' '}
                         <span style={{ color: 'blue', fontWeight: 'bold' }}>
-                           {unreadCount}
+                           {unreadCount1}
+                        </span>
+                     </ListItemText>
+                  </ListItemButton>
+               </ListItem>
+               <ListItem disablePadding>
+                  <ListItemButton>
+                     <ListItemIcon>
+                        <ArchiveIcon />
+                     </ListItemIcon>
+                     <ListItemText
+                        onClick={() => {
+                           navigate('admin_archive')
+                        }}
+                     >
+                        Archive{' '}
+                        <span style={{ color: 'blue', fontWeight: 'bold' }}>
+                           {unreadCount2}
                         </span>
                      </ListItemText>
                   </ListItemButton>
@@ -562,7 +595,26 @@ export default function AdminSidebar() {
                                        fontWeight: 'bold',
                                     }}
                                  >
-                                    {unreadCount}
+                                    {unreadCount1}
+                                 </span>
+                              </ListItemIcon>
+                           </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                           <ListItemButton
+                              onClick={() => {
+                                 navigate('admin_archive')
+                              }}
+                           >
+                              <ListItemIcon>
+                                 <ArchiveIcon />{' '}
+                                 <span
+                                    style={{
+                                       color: 'blue',
+                                       fontWeight: 'bold',
+                                    }}
+                                 >
+                                    {unreadCount2}
                                  </span>
                               </ListItemIcon>
                            </ListItemButton>

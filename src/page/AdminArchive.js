@@ -4,18 +4,13 @@ import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
-import Fab from '@mui/material/Fab'
 import { InputAdornment } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
-import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import { experimentalStyled as styled } from '@mui/material/styles'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import AttachFileIcon from '@mui/icons-material/AttachFile'
-import HighlightOffIcon from '@mui/icons-material/HighlightOff'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
 import SearchIcon from '@mui/icons-material/Search'
 import DescriptionIcon from '@mui/icons-material/Description'
 import ListItemText from '@mui/material/ListItemText'
@@ -25,7 +20,6 @@ import Avatar from '@mui/material/Avatar'
 import axios from 'axios'
 import Badge from '@mui/material/Badge'
 import toast from 'react-hot-toast'
-import { ClockLoader } from 'react-spinners'
 import io from 'socket.io-client'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -40,26 +34,20 @@ const Item = styled(Paper)(({ theme }) => ({
    borderLeft: '5px solid #1976d2',
    color: theme.palette.text.secondary,
 }))
-const socket = io(process.env.REACT_APP_BASE_URL)
 
-export default function AdminSupport() {
+const socket = io(process.env.REACT_APP_BASE_URL)
+export default function AdminArchive() {
    const account = useSelector((state) => state.account)
    const [selectedIndex, setSelectedIndex] = useState('')
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
    const [unreadCount, setUnreadCount] = useState({})
-   const [chattingMsg, setChattingMsg] = useState('')
    const [chatBoxWidth, setChatBoxWidth] = useState(null)
-   const [fileData, setFileData] = useState(null)
-   const [fileOpen, setFileOpen] = useState(false)
    const [allMsg, setAllMsg] = useState([])
-   const [isLoading, setIsLoading] = useState(false)
    const [search, setSearch] = useState('')
    const [userSelect, setUserSelect] = useState([])
    const [archive, setArchive] = useState(true)
    const messagesEndRef = useRef(null)
-   const inputElement = useRef('fileInput')
-   const inputRef = useRef(null)
 
    const handleListItemClick = (event, index) => {
       setSelectedIndex(index)
@@ -101,7 +89,7 @@ export default function AdminSupport() {
             .post(`${process.env.REACT_APP_API_URL}getUserList`, {
                id: id,
                search,
-               support: true,
+               support: false,
             })
             .then((result) => {
                if (result.data.status) {
@@ -112,143 +100,6 @@ export default function AdminSupport() {
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
-   }
-
-   const sendChatting = async () => {
-      if (!isLoading) {
-         setIsLoading(true)
-         try {
-            const date = await getCustomDate()
-            let data = {}
-            let flag
-            if (fileData?.name) {
-               data = {
-                  from: myID,
-                  to: selectedIndex,
-                  msg: '',
-                  date: date,
-                  status: false,
-               }
-               flag = true
-            } else {
-               data = {
-                  from: myID,
-                  to: selectedIndex,
-                  msg: chattingMsg,
-                  date: date,
-                  status: false,
-               }
-               flag = false
-            }
-
-            if (selectedIndex !== '') {
-               const userIndex = allUserList
-                  .map((e) => e._id)
-                  .indexOf(selectedIndex)
-               const orderId = allUserList[userIndex].name.split(': ')[1]
-               if (chattingMsg.trim() || fileData?.name) {
-                  if (fileData?.size / 1000000 > 5) {
-                     toast.error(`Can't upload 2MB files`)
-                     return
-                  }
-                  if (flag) {
-                     if (selectedIndex.length > 30) {
-                        let params = new FormData()
-                        params.append('file', fileData)
-                        params.append('data', JSON.stringify(data))
-                        params.append('orderId', orderId)
-                        await axios
-                           .post(
-                              `${process.env.REACT_APP_API_URL}sendToUserPerFile`,
-                              params
-                           )
-                           .then(async (result) => {
-                              if (result.data.status) {
-                                 data.msg = result.data.data
-                                 await setAllMsg([...allMsg, data])
-                              } else {
-                                 toast.error(result.data.data)
-                              }
-                           })
-                     } else {
-                        let params = new FormData()
-                        params.append('file', fileData)
-                        params.append('data', JSON.stringify(data))
-                        await axios
-                           .post(
-                              `${process.env.REACT_APP_API_URL}sendToUser`,
-                              params
-                           )
-                           .then(async (result) => {
-                              if (result.data.status) {
-                                 data.msg = result.data.data
-                                 await setAllMsg([...allMsg, data])
-                              } else {
-                                 toast.error(result.data.data)
-                              }
-                           })
-                     }
-                  } else {
-                     if (selectedIndex.length > 30)
-                        socket.emit('sendToUserPerFile', { data, orderId })
-                     else socket.emit('sendToUser', data)
-                     await setAllMsg([...allMsg, data])
-                  }
-               } else {
-                  toast.error('Write the message')
-               }
-            } else {
-               toast.error('Select the user')
-            }
-            if (flag) {
-               setFileData(null)
-               setFileOpen(false)
-               inputElement.current.value = null
-            } else {
-               setChattingMsg('')
-               inputRef.current.focus()
-            }
-         } catch (error) {
-            if (process.env.REACT_APP_MODE) console.log(error)
-         }
-         setIsLoading(false)
-      } else {
-         toast.error('Loading...')
-      }
-   }
-
-   const getKeyCode = async (e) => {
-      if (e === 13) {
-         await sendChatting()
-      }
-   }
-
-   const getCustomDate = () => {
-      const d = new Date()
-      const weekdaylist = [
-         'Sunday',
-         'Monday',
-         'Tuesday',
-         'Wednesday',
-         'Thursday',
-         'Friday',
-         'Saturday',
-      ]
-      let year = d.getFullYear()
-      let month = d.getMonth() + 1
-      let day = d.getDate()
-      let weekday = d.getDay()
-      let hour = d.getHours()
-      let minute = d.getMinutes()
-      let second = d.getSeconds()
-
-      if (month < 10) month = '0' + month
-      if (day < 10) day = '0' + day
-      if (hour < 10) hour = '0' + hour
-      if (minute < 10) minute = '0' + minute
-      if (second < 10) second = '0' + second
-
-      return `${day}-${month}-${year} ${hour}:${minute}:${second} ${weekdaylist[weekday]}`
    }
 
    const getChattingHistory = async (id) => {
@@ -272,21 +123,6 @@ export default function AdminSupport() {
       return newArr
    }
 
-   const handleFileload = () => {
-      inputElement.current.click()
-   }
-
-   const getFile = async (e) => {
-      setFileData(e.target.files[0])
-      setChattingMsg('')
-      setFileOpen(true)
-   }
-
-   const deleteFile = () => {
-      setFileData(null)
-      setFileOpen(false)
-   }
-
    const getWidth = () =>
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -297,10 +133,10 @@ export default function AdminSupport() {
       else setUserSelect(userSelect.filter((item) => item !== id))
    }
 
-   const sendToArchive = async () => {
+   const sendToChatBox = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}sendToArchive`, userSelect)
+            .post(`${process.env.REACT_APP_API_URL}sendToChatBox`, userSelect)
             .then((result) => {
                if (result.data.status) {
                   toast.success(result.data.data)
@@ -313,22 +149,17 @@ export default function AdminSupport() {
    }
 
    useEffect(() => {
+      if (userSelect.length > 0) setArchive(false)
+      else setArchive(true)
+   }, [userSelect])
+
+   useEffect(() => {
       const setResponsiveness = () => {
          setChatBoxWidth(getWidth() - getWidth() / 2)
       }
       setResponsiveness()
       window.addEventListener('resize', setResponsiveness)
    }, [])
-
-   useEffect(() => {
-      if (userSelect.length > 0) setArchive(false)
-      else setArchive(true)
-   }, [userSelect])
-
-   useEffect(() => {
-      if (fileData?.name) setFileOpen(true)
-      else setFileOpen(false)
-   }, [fileData])
 
    useEffect(() => {
       if (account._id) {
@@ -339,13 +170,13 @@ export default function AdminSupport() {
 
    useEffect(() => {
       socket.on(myID, async (e) => {
-         if (e.support) {
+         if (!e.support) {
             const index = allUserList.map((e) => e._id).indexOf(e.data.from)
             const swap = await move(index, 0, allUserList)
             setAllUserList(swap)
             if (
                selectedIndex === e.data.from &&
-               window.location.href.search('admin_support') > 0
+               window.location.href.search('admin_archive') > 0
             ) {
                await setAllMsg([...allMsg, e.data])
             }
@@ -354,22 +185,11 @@ export default function AdminSupport() {
             setUnreadCount(copy)
          }
       })
-      socket.on('file' + myID, async (e) => {
-         if (!e.userExist) {
-            const exist = allUserList.map((e) => e._id).indexOf(e.data._id)
-            if (exist < 0) {
-               setAllUserList([...allUserList, e.data])
-               let unread = unreadCount
-               unread[e.data._id] = 0
-               setUnreadCount(unread)
-            }
-         }
-      })
+
       return () => {
          socket.off('connect')
          socket.off('disconnect')
          socket.off(myID)
-         socket.off('file' + myID)
       }
    }, [allMsg, allUserList, unreadCount, myID, selectedIndex])
 
@@ -522,7 +342,7 @@ export default function AdminSupport() {
                            alignItems: 'center',
                         }}
                      >
-                        Support Area | Chat Section
+                        Archive Area | Chat History
                      </Grid>
                      <Grid
                         item
@@ -539,10 +359,10 @@ export default function AdminSupport() {
                         <Button
                            variant="contained"
                            endIcon={<SendIcon />}
-                           onClick={sendToArchive}
+                           onClick={sendToChatBox}
                            disabled={archive}
                         >
-                           Send&nbsp;To&nbsp;Archive
+                           Send&nbsp;To&nbsp;Support
                         </Button>
                      </Grid>
                   </Grid>
@@ -635,88 +455,6 @@ export default function AdminSupport() {
                         ) : (
                            <></>
                         )}
-                     </Grid>
-                     <Grid
-                        container
-                        justifyContent={'space-between'}
-                        alignItems={'flex-end'}
-                     >
-                        <Grid item xs={0.5}>
-                           <input
-                              ref={inputElement}
-                              type="file"
-                              style={{ display: 'none' }}
-                              onChange={(e) => getFile(e)}
-                           />
-                           <IconButton
-                              color="primary"
-                              component="label"
-                              onClick={handleFileload}
-                           >
-                              <AttachFileIcon />
-                           </IconButton>
-                        </Grid>
-                        {fileOpen ? (
-                           <Grid className="select-file" item xs={10}>
-                              <Box className="file-group-box">
-                                 <Box className="upload-img-box">
-                                    <UploadFileIcon className="upload-img-icon" />
-                                 </Box>
-                                 <Box className="file-info">
-                                    <Box>
-                                       <Box className="filename-string">
-                                          {fileData?.name}
-                                       </Box>
-                                       <Box>
-                                          {(fileData?.size / 1000000).toFixed(
-                                             4
-                                          )}{' '}
-                                          MB
-                                       </Box>
-                                    </Box>
-                                 </Box>
-                              </Box>
-                              <Box className="close-img-box">
-                                 <HighlightOffIcon
-                                    className="close-img-icon"
-                                    onClick={() => deleteFile()}
-                                 />
-                              </Box>
-                           </Grid>
-                        ) : (
-                           <Grid item xs={10}>
-                              <TextField
-                                 id="filled-multiline-flexible"
-                                 ref={inputRef}
-                                 label="Type Something"
-                                 multiline
-                                 variant="filled"
-                                 minRows={1}
-                                 maxRows={3}
-                                 fullWidth
-                                 value={chattingMsg}
-                                 onKeyUp={(e) => getKeyCode(e.keyCode)}
-                                 onChange={(e) =>
-                                    setChattingMsg(e.target.value)
-                                 }
-                              />
-                           </Grid>
-                        )}
-                        <Grid item xs={1}>
-                           <Fab
-                              color="secondary"
-                              aria-label="edit"
-                              onClick={() => {
-                                 sendChatting()
-                              }}
-                           >
-                              {isLoading ? (
-                                 <ClockLoader color="#fff" size={30} />
-                              ) : (
-                                 <SendIcon />
-                              )}
-                           </Fab>
-                        </Grid>
                      </Grid>
                   </Item>
                </Grid>

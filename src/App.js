@@ -28,6 +28,7 @@ import AdminPricelist from './page/AdminPricelist'
 import AdminProfile from './page/AdminProfliesetting'
 import AdminInvoice from './page/AdminInvoice'
 import AdminSupport from './page/AdminSupport'
+import AdminArchive from './page/AdminArchive'
 import { setAccountData } from './features/account/account'
 import soundSrc from './assets/mp3/ring.mp3'
 import toast, { Toaster } from 'react-hot-toast'
@@ -108,6 +109,7 @@ export default function App() {
                <Route path="/admin_profilsetting" element={<AdminProfile />} />
                <Route path="/admin_invoice" element={<AdminInvoice />} />
                <Route path="/admin_support" element={<AdminSupport />} />
+               <Route path="/admin_archive" element={<AdminArchive />} />
             </Route>
          </Routes>
          <Toaster />
