@@ -141,6 +141,12 @@ export default function AdminArchive() {
                if (result.data.status) {
                   toast.success(result.data.data)
                   getUserList(myID, search)
+                  const exist = userSelect.indexOf(selectedIndex)
+                  if (exist > -1) {
+                     setAllMsg([])
+                     setSelectedIndex('')
+                  }
+                  setUserSelect([])
                }
             })
       } catch (error) {
