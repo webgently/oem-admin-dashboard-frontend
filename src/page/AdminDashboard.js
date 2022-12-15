@@ -31,6 +31,8 @@ export default function AdminDashboard() {
    const [serviceCount, setServiceCount] = useState(0)
    const [requestCount, setRequestCount] = useState(0)
    const [unreadCount, setUnreadCount] = useState(0)
+   const [supportUnreadCount, setSupportUnreadCount] = useState(0)
+   const [archiveUnreadCount, setArchiveUnreadCount] = useState(0)
    const [requestAlert, setRequestAlert] = useState(true)
 
    const getDashBoardData = async (id) => {
@@ -41,8 +43,13 @@ export default function AdminDashboard() {
                setUserCount(result.data.userCount)
                setServiceCount(result.data.serviceCount)
                setRequestCount(result.data.requestCount)
-               setUnreadCount(result.data.supportCount)
                setRequestAlert(result.data.requestAlert)
+               setUnreadCount(
+                  result.data.supportUnreadCount +
+                     result.data.archiveUnreadCount
+               )
+               setSupportUnreadCount(result.data.supportUnreadCount)
+               setArchiveUnreadCount(result.data.archiveUnreadCount)
             })
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -193,7 +200,13 @@ export default function AdminDashboard() {
                <Grid item xs={12} sm={12} md={3}>
                   <Item
                      onClick={() => {
-                        navigate('/admin_support')
+                        navigate(
+                           `${
+                              supportUnreadCount >= archiveUnreadCount
+                                 ? '/admin_support'
+                                 : '/admin_archive'
+                           }`
+                        )
                      }}
                      className={unreadCount > 0 ? 'shaking-animation' : ''}
                   >
