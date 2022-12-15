@@ -472,6 +472,7 @@ export default function Upload() {
                               <MenuItem value="Cadillac">Cadillac</MenuItem>
                               <MenuItem value="Chevrolet">Chevrolet</MenuItem>
                               <MenuItem value="Chrysler">Chrysler</MenuItem>
+                              <MenuItem value="Citroen">Citroen</MenuItem>
                               <MenuItem value="Dodge">Dodge</MenuItem>
                               <MenuItem value="Ducati">Ducati</MenuItem>
                               <MenuItem value="Ferrari">Ferrari</MenuItem>
@@ -521,6 +522,7 @@ export default function Upload() {
                               <MenuItem value="Skoda">Skoda</MenuItem>
                               <MenuItem value="Smart">Smart</MenuItem>
                               <MenuItem value="Subaru">Subaru</MenuItem>
+                              <MenuItem value="Suzuki">Suzuki</MenuItem>
                               <MenuItem value="Tata">Tata</MenuItem>
                               <MenuItem value="Toyota">Toyota</MenuItem>
                               <MenuItem value="Tesla">Tesla</MenuItem>
