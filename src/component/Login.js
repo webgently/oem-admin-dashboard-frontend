@@ -105,11 +105,10 @@ const Login = () => {
             </Box>
             <Box>
                <TextField
-                  hiddenLabel
                   variant="filled"
                   type="email"
                   fullWidth
-                  placeholder="Input the Email Address"
+                  label="Email*"
                   value={mail}
                   onChange={(e) => {
                      setMail(e.target.value)
@@ -118,10 +117,9 @@ const Login = () => {
             </Box>
             <Box>
                <TextField
-                  hiddenLabel
                   variant="filled"
                   type="password"
-                  placeholder="Input the password"
+                  label="Password*"
                   fullWidth
                   value={pass}
                   onChange={(e) => {
@@ -158,7 +156,7 @@ const Login = () => {
                   display: 'flex',
                }}
             >
-               Don't have an account yet?
+               Don't have an account yet?&nbsp;&nbsp;
                <span
                   onClick={() => {
                      navigate('/register')

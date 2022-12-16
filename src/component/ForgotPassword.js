@@ -75,11 +75,10 @@ const ForgotPassword = () => {
             </Box>
             <Box>
                <TextField
-                  hiddenLabel
                   variant="filled"
                   type="email"
                   fullWidth
-                  placeholder="Registered Email"
+                  label="Registered Email"
                   value={registerEmail}
                   onChange={(e) => {
                      setRegisterEmail(e.target.value)
@@ -102,7 +101,7 @@ const ForgotPassword = () => {
                   justifyContent: 'center',
                }}
             >
-               Can't Change Password?
+               Can't Change Password?&nbsp;&nbsp;
                <span
                   onClick={() => {
                      navigate('/')

@@ -173,6 +173,66 @@ p {
   }
 }
 
+.MuiAutocomplete-popupIndicator {
+  position: absolute!important;
+  right: 0!important;
+}
+
+.MuiAutocomplete-endAdornment {
+  .MuiAutocomplete-clearIndicator {
+    padding-right: 30px!important;
+  }
+}
+
+.MuiAutocomplete-clearIndicator{
+  position: absolute !important;
+  right: 0% !important;
+}
+
+.phone-select-group {
+  .react-tel-input {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    border-bottom: 1px solid rgb(139 139 139) !important;
+    justify-content: start;
+    width:100%;
+    align-items: center;
+    input {
+      width: 100% !important;
+      display: flex;
+      justify-content: end;
+      background-color: rgb(240 240 240) !important;
+      border: none!important;
+      border-radius: 0!important;
+      border-top-left-radius: 4px!important;
+      border-top-right-radius: 4px !important;
+    }
+    .special-label {
+      display: none!important;
+    }
+    .flag-dropdown{
+      width: 20%;
+    }
+    @media only screen and (max-width: 899px) {
+      input { 
+        background-color: rgba(0, 0, 0, 0.06) !important;
+      }
+      .country-list {
+        .country-name {
+          color: black!important;
+        }
+      }
+    }
+  }
+}
+
+.react-tel-input {
+  input {
+    width: 100%!important;
+    height: 45px;
+  }
+}
+
 .user-profile-bg {
   position: relative;
     .bg-edit-btn {
@@ -187,7 +247,6 @@ p {
       }
     }
 }
-
 
 .filename-string {
   overflow: hidden;

@@ -108,11 +108,10 @@ const ResetPassword = () => {
             </Box>
             <Box>
                <TextField
-                  hiddenLabel
                   variant="filled"
                   fullWidth
                   type="password"
-                  placeholder="Password*"
+                  label="Password*"
                   value={password}
                   onChange={(e) => {
                      setPassword(e.target.value)
@@ -121,10 +120,9 @@ const ResetPassword = () => {
             </Box>
             <Box>
                <TextField
-                  hiddenLabel
                   variant="filled"
                   fullWidth
-                  placeholder="Confirm Password*"
+                  label="Confirm Password*"
                   value={cpassword}
                   type="password"
                   onChange={(e) => {
@@ -149,7 +147,7 @@ const ResetPassword = () => {
                   paddingTop: '6vh',
                }}
             >
-               Can't Reset Password?
+               Can't Reset Password?&nbsp;&nbsp;
                <span
                   onClick={() => navigate('/')}
                   style={{
