@@ -152,7 +152,7 @@ export default function AdminRegister() {
    const getUserData = async () => {
       try {
          await axios
-            .get(`${process.env.REACT_APP_API_URL}getUserData`)
+            .post(`${process.env.REACT_APP_API_URL}getUserData`)
             .then((result) => {
                setUserData(result.data)
             })
