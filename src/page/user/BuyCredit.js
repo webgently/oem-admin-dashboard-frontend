@@ -34,6 +34,7 @@ export default function BuyCredit() {
    const [creditsData, setCreditsData] = useState([])
    const [selectIndex, setSelectIndex] = useState(0)
    const [handleFee, setHandleFee] = useState(0)
+   const [tax, setTax] = useState(0)
    const [credits, setCredits] = useState(0)
    const [price, setPrice] = useState(0)
    const [total, setTotal] = useState(0)
@@ -145,12 +146,14 @@ export default function BuyCredit() {
    useEffect(() => {
       if (selectIndex > 0) {
          const sum =
-            Number(creditsData[selectIndex - 1].price) + Number(handleFee)
+            Number(creditsData[selectIndex - 1].price) +
+            Number(handleFee) +
+            (tax * creditsData[selectIndex - 1].price) / 100
          setTotal(sum.toFixed(2))
          setCredits(creditsData[selectIndex - 1].credit)
          setPrice(creditsData[selectIndex - 1].price)
       }
-   }, [selectIndex, credits, price, creditsData, handleFee])
+   }, [selectIndex, credits, price, creditsData, handleFee, tax])
 
    useEffect(() => {
       if (selectIndex === 0) {
@@ -172,7 +175,8 @@ export default function BuyCredit() {
       getAllPriceList()
       getHandlingFee()
       getAllCredit()
-   }, [])
+      setTax(account.tax)
+   }, [account])
 
    return (
       <Box
@@ -335,6 +339,49 @@ export default function BuyCredit() {
                               }}
                            >
                               <EuroIcon sx={{ fontSize: '20px' }} /> {handleFee}
+                           </Grid>
+                        </Grid>
+                        <Divider />
+                        <Grid
+                           container
+                           sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              m: '15px 0px 15px 30px',
+                           }}
+                        >
+                           <Grid
+                              item
+                              xs={8}
+                              sm={8}
+                              md={8}
+                              sx={{
+                                 display: 'flex',
+                                 alignItems: 'center',
+                              }}
+                           >
+                              <Box
+                                 sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                 }}
+                              >
+                                 Tax
+                              </Box>
+                           </Grid>
+                           <Grid
+                              item
+                              xs={2.5}
+                              sm={2.5}
+                              md={2.5}
+                              sx={{
+                                 display: 'flex',
+                                 alignItems: 'center',
+                              }}
+                           >
+                              <EuroIcon sx={{ fontSize: '20px' }} />{' '}
+                              {(price * tax) / 100} ({tax}%)
                            </Grid>
                         </Grid>
                         <Divider />

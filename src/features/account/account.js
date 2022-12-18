@@ -22,6 +22,7 @@ export const accountSlice = createSlice({
       subcontinent: '',
       vatNumber: '',
       zcode: '',
+      tax: '',
    },
    reducers: {
       setAccountData: (state, action) => {
@@ -44,6 +45,7 @@ export const accountSlice = createSlice({
          state.subcontinent = action.payload.subcontinent
          state.vatNumber = action.payload.vatNumber
          state.zcode = action.payload.zcode
+         state.tax = action.payload.tax
          localStorage.setItem('user', JSON.stringify(action.payload))
       },
       clearAccountData: (state) => {
@@ -66,6 +68,7 @@ export const accountSlice = createSlice({
          state.subcontinent = ''
          state.vatNumber = ''
          state.zcode = ''
+         state.tax = ''
          localStorage.removeItem('user')
       },
    },

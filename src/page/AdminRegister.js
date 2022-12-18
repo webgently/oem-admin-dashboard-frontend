@@ -20,6 +20,7 @@ import {
 import EuroIcon from '@mui/icons-material/Euro'
 import ClearIcon from '@mui/icons-material/Clear'
 import CheckIcon from '@mui/icons-material/Check'
+import PercentIcon from '@mui/icons-material/Percent'
 import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import CloseIcon from '@mui/icons-material/Close'
 import toast from 'react-hot-toast'
@@ -35,6 +36,7 @@ const columns = [
    { id: 'permission', label: 'Role', minWidth: 50 },
    { id: 'date', label: 'Date', minWidth: 100 },
    { id: 'credit', label: 'Credits', minWidth: 50 },
+   { id: 'tax', label: 'Tax', minWidth: 50 },
    { id: 'status', label: 'Status', minWidth: 50 },
    { id: 'action', label: 'Action', minWidth: 50, align: 'center' },
 ]
@@ -45,6 +47,19 @@ const style = {
    left: '50%',
    transform: 'translate(-50%, -50%)',
    width: '50vw',
+   bgcolor: 'background.paper',
+   border: '0px',
+   borderRadius: 1,
+   boxShadow: 24,
+   p: 0,
+}
+
+const style1 = {
+   position: 'absolute',
+   top: '50%',
+   left: '50%',
+   transform: 'translate(-50%, -50%)',
+   width: '400px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -63,8 +78,12 @@ export default function AdminRegister() {
    const [addCredit, setAddCredit] = useState(0)
    const [minusCredit, setMinusCredit] = useState(0)
    const [currentRow, setCurrentRow] = useState()
+   const [tax, setTax] = useState(0)
    const [curTotalCredit, setCurTotalCredit] = useState(0)
    const [subTotalCredit, setSubTotalCredit] = useState(0)
+   const [open, setOpen] = useState(false)
+   const [open2, setOpen2] = useState(false)
+   const [open3, setOpen3] = useState(false)
 
    const AddCredit = async () => {
       let data = { _id: currentRow._id, credit: addCredit }
@@ -111,17 +130,14 @@ export default function AdminRegister() {
       setPage(0)
    }
 
-   const [open, setOpen] = useState(false)
-
    const handleOpen = (row) => {
+      console.log(row._id)
       setCurId(row._id)
       setCurNote(row.note)
       setOpen(true)
    }
 
    const handleClose = () => setOpen(false)
-
-   const [open2, setOpen2] = useState(false)
 
    const handleOpen2 = async (row) => {
       setCurrentRow(row)
@@ -155,6 +171,37 @@ export default function AdminRegister() {
                   getUserData()
                   setOpen(false)
                   toast.success('Update Note Successfully')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
+   const handleOpen3 = async (row) => {
+      setCurrentRow(row)
+      setCurId(row._id)
+      setOpen3(true)
+      const i = userData.map((e) => e._id).indexOf(row._id)
+      setTax(userData[i].tax)
+   }
+
+   const handleClose3 = () => {
+      setOpen3(false)
+   }
+
+   const UpdateTax = async () => {
+      let data = { _id: curId, tax: tax }
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}updatetax`, {
+               data: data,
+            })
+            .then((result) => {
+               if (result.data === 'success') {
+                  getUserData()
+                  setOpen3(false)
+                  toast.success(`Update Tax Successfully`)
                }
             })
       } catch (error) {
@@ -311,6 +358,15 @@ export default function AdminRegister() {
                                                 aria-label="add to shopping cart"
                                              >
                                                 <EuroIcon />
+                                             </IconButton>
+                                             <IconButton
+                                                onClick={() => {
+                                                   handleOpen3(row)
+                                                }}
+                                                color="primary"
+                                                aria-label="add to shopping cart"
+                                             >
+                                                <PercentIcon />
                                              </IconButton>
                                              <IconButton
                                                 onClick={() => {
@@ -586,6 +642,68 @@ export default function AdminRegister() {
                         </Box>
                      </>
                   )}
+               </Box>
+            </Box>
+         </Modal>
+         <Modal
+            open={open3}
+            onClose={handleClose3}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <Box sx={style1}>
+               <Box
+                  sx={{
+                     px: 3,
+                     py: 1,
+                     bgcolor: '#1976d2',
+                     borderRadius: 1,
+                     color: 'white',
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+               >
+                  <Box>Update Tax</Box>
+                  <Box sx={{ flex: '1' }}></Box>
+                  <Box>
+                     <IconButton onClick={handleClose3}>
+                        <CloseIcon sx={{ color: 'white' }} />
+                     </IconButton>
+                  </Box>
+               </Box>
+               <Box sx={{ p: 3 }}>
+                  <Box>
+                     <TextField
+                        label="Note"
+                        type="number"
+                        variant="outlined"
+                        size="small"
+                        value={tax}
+                        style={{ width: '100%' }}
+                        onChange={(e) => {
+                           setTax(e.target.value)
+                        }}
+                     />
+                  </Box>
+                  <Box sx={{ display: 'flex' }}>
+                     <Box sx={{ flex: '1' }}></Box>
+                     <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
+                        <Button
+                           size="small"
+                           variant="contained"
+                           onClick={handleClose3}
+                        >
+                           Close
+                        </Button>
+                        <Button
+                           size="small"
+                           variant="contained"
+                           onClick={UpdateTax}
+                        >
+                           Update
+                        </Button>
+                     </Box>
+                  </Box>
                </Box>
             </Box>
          </Modal>
