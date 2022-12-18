@@ -17,7 +17,7 @@ import {
    Modal,
    TextField,
 } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
+import KRIcon from '../assets/img/kr.svg'
 import ClearIcon from '@mui/icons-material/Clear'
 import CheckIcon from '@mui/icons-material/Check'
 import PercentIcon from '@mui/icons-material/Percent'
@@ -357,7 +357,7 @@ export default function AdminRegister() {
                                                 color="primary"
                                                 aria-label="add to shopping cart"
                                              >
-                                                <EuroIcon />
+                                                <img src={KRIcon} alt="kr" />
                                              </IconButton>
                                              <IconButton
                                                 onClick={() => {

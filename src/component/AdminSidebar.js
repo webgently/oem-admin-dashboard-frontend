@@ -30,7 +30,7 @@ import { Collapse, Menu, MenuItem, Avatar } from '@mui/material'
 import { useNavigate, Outlet } from 'react-router-dom'
 import CloudUpload from '@mui/icons-material/CloudUpload'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
-import EuroIcon from '@mui/icons-material/Euro'
+import KRIcon from '../assets/img/gray-kr.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearAccountData } from '../features/account/account'
 import axios from 'axios'
@@ -392,7 +392,7 @@ export default function AdminSidebar() {
                         }}
                      >
                         <ListItemIcon>
-                           <EuroIcon />
+                           <img src={KRIcon} alt="kr" />
                         </ListItemIcon>
                         <ListItemText>Price List</ListItemText>
                      </ListItemButton>
@@ -554,7 +554,7 @@ export default function AdminSidebar() {
                                  }}
                               >
                                  <ListItemIcon>
-                                    <EuroIcon />
+                                    <img src={KRIcon} alt="kr" />
                                  </ListItemIcon>
                               </ListItemButton>
                            </List>

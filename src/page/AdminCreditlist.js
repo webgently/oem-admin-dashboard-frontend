@@ -15,7 +15,7 @@ import {
    Modal,
    TextField,
 } from '@mui/material'
-import EuroIcon from '@mui/icons-material/Euro'
+import KRIcon from '../assets/img/kr.svg'
 import CloseIcon from '@mui/icons-material/Close'
 import toast from 'react-hot-toast'
 import AddIcon from '@mui/icons-material/Add'
@@ -462,7 +462,7 @@ export default function AdminCreditlist() {
                               fontSize: '20px',
                            }}
                         >
-                           <EuroIcon /> {handleFee}
+                           <img src={KRIcon} alt="kr" /> {handleFee}
                         </Box>
                      </Box>
                      <TextField

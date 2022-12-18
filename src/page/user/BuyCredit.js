@@ -8,7 +8,7 @@ import StripeCheckout from 'react-stripe-checkout'
 import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
-import EuroIcon from '@mui/icons-material/Euro'
+import KRIcon from '../../assets/img/gray-kr.svg'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import stripe from '../../assets/img/stripe.png'
 import Checkbox from '@mui/material/Checkbox'
@@ -100,7 +100,7 @@ export default function BuyCredit() {
             .then((result) => {
                if (result.data.stauts) {
                   toast.success(
-                     `You have bought ${credits} credits for €${total}`
+                     `You have bought ${credits} credits for Kr${total}`
                   )
                } else {
                   toast.error('Something went wrong')
@@ -292,7 +292,8 @@ export default function BuyCredit() {
                                              alignItems: 'center',
                                           }}
                                        >
-                                          <EuroIcon sx={{ fontSize: '20px' }} />{' '}
+                                          <img src={KRIcon} alt="kr" />
+                                          &nbsp;&nbsp;
                                           {item.price}
                                        </Grid>
                                     </Grid>
@@ -339,7 +340,8 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> {handleFee}
+                              <img src={KRIcon} alt="kr" />
+                              &nbsp;&nbsp; {handleFee}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -381,8 +383,9 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} />{' '}
-                              {(price * tax) / 100} ({tax}%)
+                              <img src={KRIcon} alt="kr" />
+                              &nbsp;&nbsp; {(price * tax) / 100} ({tax}
+                              %)
                            </Grid>
                         </Grid>
                         <Divider />
@@ -424,7 +427,8 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> {price}
+                              <img src={KRIcon} alt="kr" />
+                              &nbsp;&nbsp; {price}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -466,7 +470,8 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <EuroIcon sx={{ fontSize: '20px' }} /> {total}
+                              <img src={KRIcon} alt="kr" />
+                              &nbsp;&nbsp; {total}
                            </Grid>
                         </Grid>
                         <Divider />
@@ -566,8 +571,8 @@ export default function BuyCredit() {
                               }
                               token={handleToken}
                               amount={total * 100}
-                              currency="EUR"
-                              name={`You are paying €${total}`}
+                              currency="SEK"
+                              name={`You are paying Kr${total}`}
                            >
                               <button
                                  className={
