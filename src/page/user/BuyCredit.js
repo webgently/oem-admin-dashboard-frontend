@@ -8,7 +8,7 @@ import StripeCheckout from 'react-stripe-checkout'
 import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
-import KRIcon from '../../assets/img/gray-kr.svg'
+import KRIcon from '../../assets/img/small-kr.svg'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import stripe from '../../assets/img/stripe.png'
 import Checkbox from '@mui/material/Checkbox'
@@ -292,9 +292,13 @@ export default function BuyCredit() {
                                              alignItems: 'center',
                                           }}
                                        >
-                                          <img src={KRIcon} alt="kr" />
-                                          &nbsp;&nbsp;
-                                          {item.price}
+                                          <div>
+                                             <img src={KRIcon} alt="kr" />
+                                          </div>
+                                          <div>
+                                             &nbsp;&nbsp;
+                                             {item.price}
+                                          </div>
                                        </Grid>
                                     </Grid>
                                  }
@@ -340,8 +344,13 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <img src={KRIcon} alt="kr" />
-                              &nbsp;&nbsp; {handleFee}
+                              <div>
+                                 <img src={KRIcon} alt="kr" />
+                              </div>
+                              <div>
+                                 &nbsp;&nbsp;
+                                 {handleFee}
+                              </div>
                            </Grid>
                         </Grid>
                         <Divider />
@@ -383,9 +392,13 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <img src={KRIcon} alt="kr" />
-                              &nbsp;&nbsp; {(price * tax) / 100} ({tax}
-                              %)
+                              <div>
+                                 <img src={KRIcon} alt="kr" />
+                              </div>
+                              <div>
+                                 &nbsp;&nbsp; {(price * tax) / 100} ({tax}
+                                 %)
+                              </div>
                            </Grid>
                         </Grid>
                         <Divider />
@@ -427,8 +440,10 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <img src={KRIcon} alt="kr" />
-                              &nbsp;&nbsp; {price}
+                              <div>
+                                 <img src={KRIcon} alt="kr" />
+                              </div>
+                              <div>&nbsp;&nbsp; {price}</div>
                            </Grid>
                         </Grid>
                         <Divider />
@@ -470,8 +485,10 @@ export default function BuyCredit() {
                                  alignItems: 'center',
                               }}
                            >
-                              <img src={KRIcon} alt="kr" />
-                              &nbsp;&nbsp; {total}
+                              <div>
+                                 <img src={KRIcon} alt="kr" />
+                              </div>
+                              <div>&nbsp;&nbsp; {total}</div>
                            </Grid>
                         </Grid>
                         <Divider />
