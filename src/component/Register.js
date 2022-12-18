@@ -117,6 +117,7 @@ const Regiter = () => {
                      setSubcontinent('')
                      setVatNumber('')
                      toast.success('Success Signup!')
+                     navigate('/')
                   }
                })
          } catch (error) {
