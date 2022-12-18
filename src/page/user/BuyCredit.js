@@ -90,7 +90,8 @@ export default function BuyCredit() {
             date: getCustomDate(),
             method: '',
             fee: handleFee,
-            vatCharge: 0,
+            vatCharge: (tax * price) / 100,
+            tax: tax,
          },
       }
       try {
