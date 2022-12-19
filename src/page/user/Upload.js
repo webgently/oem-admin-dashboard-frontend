@@ -144,10 +144,6 @@ export default function Upload() {
          toast.error('Field the Tuning Type')
          return
       }
-      if (!extras) {
-         toast.error('Field the extras')
-         return
-      }
       if (!term) {
          toast.error('Accept the term')
          return
@@ -510,6 +506,7 @@ export default function Upload() {
                               <MenuItem value="Nissan">Nissan</MenuItem>
                               <MenuItem value="Norton">Norton</MenuItem>
                               <MenuItem value="Pagani">Pagani</MenuItem>
+                              <MenuItem value="Peugeot">Peugeot</MenuItem>
                               <MenuItem value="Porsche">Porsche</MenuItem>
                               <MenuItem value="Ram">Ram</MenuItem>
                               <MenuItem value="Renault">Renault</MenuItem>
