@@ -102,7 +102,8 @@ export default function Upload() {
          type !== 'mtx' &&
          type !== 'fpf' &&
          type !== 'cod' &&
-         type !== 'tun'
+         type !== 'tun' &&
+         fileData.name.toLowerCase() !== type
       ) {
          toast.error(`Can't select the file like this type`)
          return
