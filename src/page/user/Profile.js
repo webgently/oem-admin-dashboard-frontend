@@ -120,6 +120,8 @@ export default function Profile() {
    const handleClose2 = async () => {
       setOpen2(false)
    }
+
+
    const avatarHandleFileload = () => {
       avatarInputElement.current.click()
    }

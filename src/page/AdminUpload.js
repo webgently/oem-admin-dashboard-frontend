@@ -41,6 +41,7 @@ const columns = [
    { id: 'HP', label: 'HP', minWidth: 100 },
    { id: 'status', label: 'Status', minWidth: 50 },
    { id: 'tuningType', label: 'Tuning Type', minWidth: 100 },
+   { id: 'date', label: 'Upload Date', minWidth: 100 },
    { id: 'action', label: 'Action', align: 'center' },
 ]
 
@@ -444,7 +445,7 @@ export default function AdminUpload() {
                                                 <VisibilityIcon />
                                              </IconButton>
                                           </ButtonGroup>
-                                       ) : (
+                                       ) : column.id === 'date' ? row.createdAt : (
                                           value
                                        )}
                                     </TableCell>
@@ -809,7 +810,7 @@ export default function AdminUpload() {
                                  >
                                     <Grid item xs={12} sm={6} md={6}>
                                        <Box sx={{ my: '20px' }}>
-                                          Tunnig Type:
+                                          Tuning Type:
                                        </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6}>
