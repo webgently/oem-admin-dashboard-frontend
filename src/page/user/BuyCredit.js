@@ -275,7 +275,9 @@ export default function BuyCredit() {
                                                 alignItems: 'center',
                                              }}
                                           >
-                                             <LocalAtmIcon />
+                                             <div>
+                                                <img src={KRIcon} alt="kr" />
+                                             </div>&nbsp;
                                              {item.credit}
                                           </Box>
                                        </Grid>
