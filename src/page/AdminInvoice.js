@@ -319,7 +319,7 @@ export default function AdminInvoice() {
                            >
                               Amount Paid
                            </Box>
-                           <Box>€ {invoice.paidAmount}</Box>
+                           <Box>Kr {invoice.paidAmount}</Box>
                         </Box>
                      </Box>
                      <Box
@@ -421,12 +421,12 @@ export default function AdminInvoice() {
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           € {invoice.paidAmount - invoice.handleFee}
+                           Kr {invoice.paidAmount - invoice.handleFee}
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>€ {invoice.handleFee}</Box>
+                        <Box sx={{ py: '5px' }}>Kr {invoice.handleFee}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
@@ -435,7 +435,7 @@ export default function AdminInvoice() {
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px', fontWeight: 'bold' }}>
-                           € {invoice.paidAmount}
+                           Kr {invoice.paidAmount}
                         </Box>
                      </Box>
                   </Box>
