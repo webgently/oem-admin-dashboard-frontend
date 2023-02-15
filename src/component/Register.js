@@ -207,6 +207,17 @@ const Regiter = () => {
                <TextField
                   variant="filled"
                   fullWidth
+                  label="Zip Code*"
+                  value={zcode}
+                  onChange={(e) => {
+                     setZcode(e.target.value)
+                  }}
+               />
+            </Box>
+            <Box>
+               <TextField
+                  variant="filled"
+                  fullWidth
                   label="City*"
                   value={city}
                   onChange={(e) => {
@@ -252,24 +263,25 @@ const Regiter = () => {
                   }}
                />
             </Box>
-            <Box className="phone-select-group">
+            <Box>
+               <TextField
+                  variant="filled"
+                  fullWidth
+                  label="Phone*"
+                  value={phone}
+                  onChange={(e) => {
+                     setPhone(e.target.value)
+                  }}
+               />
+            </Box>
+            {/* <Box className="phone-select-group">
                <PhoneInput
                   country={'us'}
                   value={phone}
                   onChange={(phone) => setPhone(phone)}
                />
-            </Box>
-            <Box>
-               <TextField
-                  variant="filled"
-                  fullWidth
-                  label="Zip Code*"
-                  value={zcode}
-                  onChange={(e) => {
-                     setZcode(e.target.value)
-                  }}
-               />
-            </Box>
+            </Box> */}
+            
             <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
                <InputLabel id="demo-simple-select-filled-label">
                   Sub Continent
