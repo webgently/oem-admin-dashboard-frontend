@@ -285,17 +285,21 @@ export default function AdminInvoice() {
                <Box
                   sx={{
                      px: 5,
-                     pt: 8,
+                     pt: 2,
                      overflowY: 'auto',
-                     height: '800px',
+                     height: '840px',
                   }}
                   ref={invoiceRef}
                >
+                  <Box style={{textAlign: 'center'}}>
+                     <img src="https://ipfs.io/ipfs/Qmbe4x6BizKws5BbNRuLxZrP14vhDVgbNRHhBL68amnB5Z" width="75%" />
+                  </Box>
                   <Box
                      sx={{
                         textAlign: 'center',
                         fontSize: '20px',
                         fontWeight: 'bold',
+                        paddingTop: 2,
                      }}
                   >
                      Receipt from OEM Automotive Svenska AB
