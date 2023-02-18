@@ -319,7 +319,7 @@ export default function AdminInvoice() {
                            >
                               Amount Paid
                            </Box>
-                           <Box>SEK {invoice.paidAmount}</Box>
+                           <Box>SEK {invoice.paidAmount.toFixed(2)}</Box>
                         </Box>
                      </Box>
                      <Box
@@ -405,7 +405,7 @@ export default function AdminInvoice() {
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>VAT(25%)</Box>
+                        <Box sx={{ py: '5px' }}>VAT({invoice.vatCharge}%)</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
@@ -415,21 +415,21 @@ export default function AdminInvoice() {
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           {invoice.paidAmount - invoice.handleFee}
+                           {(invoice.paidAmount - invoice.handleFee).toFixed(2)}
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>{invoice.handleFee}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.handleFee.toFixed(2)}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>{invoice.vatCharge}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.vatCharge.toFixed(2)}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px', fontWeight: 'bold' }}>
-                           {invoice.paidAmount} SEK
+                           {invoice.paidAmount.toFixed(2)} SEK
                         </Box>
                      </Box>
                   </Box>
