@@ -298,10 +298,10 @@ export default function AdminInvoice() {
                         fontWeight: 'bold',
                      }}
                   >
-                     Receipt from OEMSERVICE
+                     Receipt from OEM Automotive Svenska AB
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                     Receipt #: {invoice.receipt}
+                     Reciept number: {invoice.receipt}
                   </Box>
                   <Box sx={{ display: 'flex', pt: 2, fontSize: '14px' }}>
                      <Box
@@ -319,7 +319,7 @@ export default function AdminInvoice() {
                            >
                               Amount Paid
                            </Box>
-                           <Box>Kr {invoice.paidAmount}</Box>
+                           <Box>SEK {invoice.paidAmount}</Box>
                         </Box>
                      </Box>
                      <Box
@@ -372,27 +372,21 @@ export default function AdminInvoice() {
                   >
                      <Box sx={{ flex: '1', fontWeight: 'bold' }}>
                         <Box>Name:</Box>
-                        <Box>Email:</Box>
-                        <Box>Contact:</Box>
-                        <Box>VAT Number:</Box>
-                        <Box>Account Status:</Box>
-                        <Box>Region:</Box>
-                        <Box>Country:</Box>
-                        <Box>City:</Box>
                         <Box>Address:</Box>
                         <Box>Zip Code:</Box>
+                        <Box>City:</Box>
+                        <Box>Country:</Box>
+                        <Box>Telephone:</Box>
+                        <Box>VAT number:</Box>
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box>{invoice.name}</Box>
-                        <Box>{invoice.email}</Box>
-                        <Box>{invoice.contact}</Box>
-                        <Box>{invoice.vatNumber}</Box>
-                        <Box>{invoice.accountStatus}</Box>
-                        <Box>{invoice.region}</Box>
-                        <Box>{invoice.country}</Box>
-                        <Box>{invoice.city}</Box>
                         <Box>{invoice.address}</Box>
                         <Box>{invoice.zipCode}</Box>
+                        <Box>{invoice.city}</Box>
+                        <Box>{invoice.country}</Box>
+                        <Box>{invoice.contact}</Box>
+                        <Box>{invoice.vatNumber}</Box>
                      </Box>
                   </Box>
                   <Box sx={{ pt: 1, fontSize: '20px', fontWeight: 'bold' }}>
@@ -402,16 +396,16 @@ export default function AdminInvoice() {
                   <Box sx={{ display: 'flex', px: 4, py: 2 }}>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           Bought {invoice.credits} Credits.
+                           {invoice.credits} Filservice credit(s)
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>Handling Fee</Box>
+                        <Box sx={{ py: '5px' }}>Handling fee</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>25% VAT Charges</Box>
+                        <Box sx={{ py: '5px' }}>VAT(25%)</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
@@ -421,12 +415,12 @@ export default function AdminInvoice() {
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           Kr {invoice.paidAmount - invoice.handleFee}
+                           {invoice.paidAmount - invoice.handleFee}
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>Kr {invoice.handleFee}</Box>
+                        <Box sx={{ py: '5px' }}>{invoice.handleFee}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
@@ -435,7 +429,7 @@ export default function AdminInvoice() {
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px', fontWeight: 'bold' }}>
-                           Kr {invoice.paidAmount}
+                           {invoice.paidAmount} SEK
                         </Box>
                      </Box>
                   </Box>
@@ -448,7 +442,7 @@ export default function AdminInvoice() {
                      }}
                   >
                      If you have any questions, contact us at{' '}
-                     <span style={{ fontWeight: 'bold' }}>
+                     <span style={{ fontWeight: 'bold', color: 'blue', textDecoration: 'underline' }}>
                         {invoice.adminMail}
                      </span>
                   </Box>
@@ -460,8 +454,7 @@ export default function AdminInvoice() {
                         textAlign: 'center',
                      }}
                   >
-                     You're receiving this email because you made a purchase at
-                     OEMSERVICE
+                     OEM Automotive Svenska AB – Org: 559417-9839 – VAT: SE559417983901
                   </Box>
                </Box>
             </Box>

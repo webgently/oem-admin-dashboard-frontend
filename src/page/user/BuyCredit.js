@@ -21,6 +21,7 @@ import TableRow from '@mui/material/TableRow'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { da } from 'date-fns/locale'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
@@ -116,10 +117,14 @@ export default function BuyCredit() {
       let year = d.getFullYear()
       let month = d.getMonth() + 1
       let day = d.getDate()
+      let hour = d.getHours()
+      let minute = d.getMinutes();
       if (month < 10) month = '0' + month
       if (day < 10) day = '0' + day
+      if (hour < 10) hour  = '0' + hour
+      if (minute < 10) minute  = '0' + minute
 
-      const result = `${day}-${month}-${year}`
+      const result = `${year}-${month}-${day} ${hour}:${minute}`
       return result
    }
 
