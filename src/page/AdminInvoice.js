@@ -319,7 +319,7 @@ export default function AdminInvoice() {
                            >
                               Amount Paid
                            </Box>
-                           <Box>SEK {invoice.paidAmount.toFixed(2)}</Box>
+                           <Box>{Number(invoice.paidAmount).toFixed(2)} SEK</Box>
                         </Box>
                      </Box>
                      <Box
@@ -415,21 +415,21 @@ export default function AdminInvoice() {
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           {(invoice.paidAmount - invoice.handleFee).toFixed(2)}
+                           {Number(invoice.paidAmount - invoice.handleFee).toFixed(2)}
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>{invoice.handleFee.toFixed(2)}</Box>
+                        <Box sx={{ py: '5px' }}>{Number(invoice.handleFee).toFixed(2)}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>{invoice.vatCharge.toFixed(2)}</Box>
+                        <Box sx={{ py: '5px' }}>{Number(invoice.vatCharge).toFixed(2)}</Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px', fontWeight: 'bold' }}>
-                           {invoice.paidAmount.toFixed(2)} SEK
+                           {Number(invoice.paidAmount).toFixed(2)} SEK
                         </Box>
                      </Box>
                   </Box>
