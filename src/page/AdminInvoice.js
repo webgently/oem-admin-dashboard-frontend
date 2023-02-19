@@ -409,7 +409,9 @@ export default function AdminInvoice() {
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
-                        <Box sx={{ py: '5px' }}>VAT({invoice.vatCharge}%)</Box>
+                        <Box sx={{ py: '5px' }}>
+                           VAT({Number(invoice.credits * invoice.vatCharge)}%)
+                        </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />

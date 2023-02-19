@@ -21,7 +21,6 @@ import TableRow from '@mui/material/TableRow'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { da } from 'date-fns/locale'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
@@ -218,7 +217,7 @@ export default function BuyCredit() {
                      spacing={{ xs: 2, md: 3 }}
                      columns={{ xs: 4, sm: 8, md: 12 }}
                   >
-                     <Grid item xs={6} sm={6} md={6}>
+                     <Grid item xs={9.5} sm={9.5} md={9.5}>
                         <Box
                            sx={{
                               display: 'flex',
@@ -228,9 +227,6 @@ export default function BuyCredit() {
                         >
                            Choose Credit from Category
                         </Box>
-                     </Grid>
-                     <Grid item xs={3.5} sm={3.5} md={3.5}>
-                        Credits
                      </Grid>
                      <Grid item xs={2.5} sm={2.5} md={2.5}>
                         Price
@@ -266,9 +262,9 @@ export default function BuyCredit() {
                                     >
                                        <Grid
                                           item
-                                          xs={6}
-                                          sm={6}
-                                          md={6}
+                                          xs={9.5}
+                                          sm={9.5}
+                                          md={9.5}
                                           sx={{
                                              display: 'flex',
                                              alignItems: 'center',
@@ -285,9 +281,6 @@ export default function BuyCredit() {
                                              </div>&nbsp;
                                              {item.credit}
                                           </Box>
-                                       </Grid>
-                                       <Grid item xs={3.5} sm={3.5} md={3.5}>
-                                          {item.credit}
                                        </Grid>
                                        <Grid
                                           item

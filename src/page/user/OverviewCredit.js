@@ -304,7 +304,9 @@ export default function OverviewCredit() {
                                  return (
                                     <TableRow key={row._id}>
                                        {columns2.map((column) => {
-                                          const value = row[column.id]
+                                          let value = row[column.id]
+                                          if(column.id === "netAmount") value = value + " SEK"
+                                          
                                           return (
                                              <TableCell
                                                 key={column.id}

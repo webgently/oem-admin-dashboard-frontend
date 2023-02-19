@@ -453,7 +453,7 @@ export default function UserSidebar() {
                            <DescriptionIcon />
                         </ListItemIcon>
                         <ListItemText>
-                           Over View{' '}
+                           Overview{' '}
                            <span style={{ color: 'blue', fontWeight: 'bold' }}>
                               {unreadFileCount}
                            </span>
@@ -484,7 +484,7 @@ export default function UserSidebar() {
                         <ListItemIcon>
                            <CreditCardIcon />
                         </ListItemIcon>
-                        <ListItemText>Over View</ListItemText>
+                        <ListItemText>Overview</ListItemText>
                      </ListItemButton>
                      <ListItemButton
                         sx={{ pl: 4 }}

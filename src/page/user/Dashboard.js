@@ -125,8 +125,8 @@ export default function Dashboard() {
             .then((result) => {
                if (result.data.status) {
                   if (result.data.data.open === '--:--:--') {
-                     setOpenTime('Office Close Today')
-                     setCloseTime('Office Close Today')
+                     setOpenTime('Fileservice is closed')
+                     setCloseTime('Fileservice is closed')
                   } else {
                      setOpenTime(customTime(result.data.data.open))
                      setCloseTime(customTime(result.data.data.close))
