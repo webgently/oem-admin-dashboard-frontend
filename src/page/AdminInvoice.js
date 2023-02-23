@@ -410,7 +410,7 @@ export default function AdminInvoice() {
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px' }}>
-                           VAT({Number(invoice.credits * invoice.vatCharge)}%)
+                           VAT({Number((100 * invoice.vatCharge)/(invoice.paidAmount - invoice.handleFee - invoice.vatCharge))}%)
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
@@ -421,7 +421,7 @@ export default function AdminInvoice() {
                      </Box>
                      <Box sx={{ flex: '1' }}>
                         <Box sx={{ py: '5px' }}>
-                           {Number(invoice.paidAmount - invoice.handleFee).toFixed(2)}
+                           {Number(invoice.paidAmount - invoice.handleFee - invoice.vatCharge).toFixed(2)}
                         </Box>
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}

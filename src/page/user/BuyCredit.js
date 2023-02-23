@@ -9,6 +9,7 @@ import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
 import KRIcon from '../../assets/img/small-kr.svg'
+import CRIcon from '../../assets/img/credit.png'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import stripe from '../../assets/img/stripe.png'
 import Checkbox from '@mui/material/Checkbox'
@@ -247,7 +248,7 @@ export default function BuyCredit() {
                         {creditsData.map((item, index) => {
                            return (
                               <RadioJoy
-                                 sx={{ color: 'black', m: '15px 0px' }}
+                                 sx={{ display: 'flex', alignItems: 'center', color: 'black', m: '15px 0px' }}
                                  value={index + 1}
                                  key={item._id}
                                  label={
@@ -277,11 +278,12 @@ export default function BuyCredit() {
                                              }}
                                           >
                                              <div>
-                                                <img src={KRIcon} alt="kr" />
+                                                <img src={CRIcon} alt="cr" width="50px" />
                                              </div>&nbsp;
                                              {item.credit}
                                           </Box>
                                        </Grid>
+
                                        <Grid
                                           item
                                           xs={2.5}
