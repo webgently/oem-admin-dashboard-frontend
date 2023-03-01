@@ -226,7 +226,7 @@ export default function AdminDashboard() {
                            justifyContent: 'flex-start',
                         }}
                      >
-                        <h3 style={{ margin: '0px' }}>Unread Chart</h3>
+                        <h3 style={{ margin: '0px' }}>Unread Chat</h3>
                      </Box>
                      <Box
                         sx={{

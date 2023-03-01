@@ -9,8 +9,6 @@ import FormControlJoy from '@mui/joy/FormControl'
 import RadioJoy from '@mui/joy/Radio'
 import RadioGroupJoy from '@mui/joy/RadioGroup'
 import KRIcon from '../../assets/img/small-kr.svg'
-import CRIcon from '../../assets/img/credit.png'
-import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import stripe from '../../assets/img/stripe.png'
 import Checkbox from '@mui/material/Checkbox'
 import Table from '@mui/material/Table'
@@ -19,6 +17,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import CreditCardIcon from '@mui/icons-material/CreditCard'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
@@ -277,9 +276,7 @@ export default function BuyCredit() {
                                                 alignItems: 'center',
                                              }}
                                           >
-                                             <div>
-                                                <img src={CRIcon} alt="cr" width="50px" />
-                                             </div>&nbsp;
+                                             <CreditCardIcon />&nbsp;
                                              {item.credit}
                                           </Box>
                                        </Grid>

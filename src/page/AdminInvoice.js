@@ -412,6 +412,11 @@ export default function AdminInvoice() {
                         <Box sx={{ py: '5px' }}>
                            VAT({Number((100 * invoice.vatCharge)/(invoice.paidAmount - invoice.handleFee - invoice.vatCharge))}%)
                         </Box>
+                        {Number((100 * invoice.vatCharge) / (invoice.paidAmount - invoice.handleFee - invoice.vatCharge)) === 0 &&
+                           <Box sx={{ py: '5px' }}>
+                              Tax to be paid on reverse charge basis
+                           </Box>
+                        }
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
@@ -431,6 +436,11 @@ export default function AdminInvoice() {
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />
                         <Box sx={{ py: '5px' }}>{Number(invoice.vatCharge).toFixed(2)}</Box>
+                        {Number((100 * invoice.vatCharge) / (invoice.paidAmount - invoice.handleFee - invoice.vatCharge)) === 0 &&
+                           <Box sx={{ py: '5px' }}>
+                              &nbsp;
+                           </Box>
+                        }
                         <Divider
                            style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                         />

@@ -290,7 +290,7 @@ export default function UserSidebar() {
                         alignItems: 'center',
                      }}
                   >
-                     <WalletIcon sx={{ color: '#1976d2' }} />
+                     <CreditCardIcon sx={{ color: '#1976d2' }} />
                      {creditAmount} Credit
                   </Box>
                   <Divider orientation="vertical" flexItem />
