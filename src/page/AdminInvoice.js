@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Logo from '../assets/img/logo.jpg';
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -292,7 +293,7 @@ export default function AdminInvoice() {
                   ref={invoiceRef}
                >
                   <Box style={{textAlign: 'center'}}>
-                     <img src="https://ipfs.io/ipfs/Qmbe4x6BizKws5BbNRuLxZrP14vhDVgbNRHhBL68amnB5Z" width="75%" />
+                     <img src={Logo} width="75%" />
                   </Box>
                   <Box
                      sx={{
