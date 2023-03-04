@@ -61,7 +61,7 @@ export default function Upload() {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
             .then((result) => {
-               document.getElementById('description').innerHTML = result.data.privacy
+               setPolicy(result.data.privacy)
             })
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -270,6 +270,10 @@ export default function Upload() {
       getPrivacy()
    }, [])
 
+   useEffect(() => { 
+      if (termViewFlag) document.getElementById('description').innerHTML = policy;
+   }, [termViewFlag])
+
    return (
       <Box
          sx={{
@@ -315,6 +319,7 @@ export default function Upload() {
                      bgcolor: 'white',
                      borderBottomRightRadius: '5px',
                      borderBottomLeftRadius: '5px',
+                     overflow: 'auto',
                      p: '10px',
                      height: '60vh',
                   }}

@@ -38,6 +38,7 @@ export default function Policy() {
                bgcolor: 'white',
                borderBottomRightRadius: '5px',
                borderBottomLeftRadius: '5px',
+               overflow: 'auto',
                p: '10px',
                height: '60vh',
             }}
