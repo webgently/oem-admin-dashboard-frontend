@@ -291,6 +291,11 @@ p {
   }
 }
 
+.rdw-editor-main {
+  max-height: 350px!important;
+  height: 140px!important;
+}
+
 @media only screen and (max-width: 900px) {
   .login-container {
     background-image: url("./assets/img/bg-login.png");

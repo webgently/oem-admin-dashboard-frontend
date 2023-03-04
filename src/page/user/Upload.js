@@ -61,7 +61,7 @@ export default function Upload() {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
             .then((result) => {
-               setPolicy(result.data.privacy)
+               document.getElementById('description').innerHTML = result.data.privacy
             })
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -318,8 +318,8 @@ export default function Upload() {
                      p: '10px',
                      height: '60vh',
                   }}
+                  id='description'
                >
-                  {policy}
                </Box>
             </Box>
          ) : (

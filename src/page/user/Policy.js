@@ -3,13 +3,12 @@ import Box from '@mui/material/Box'
 import axios from 'axios'
 
 export default function Policy() {
-   const [policy, setPolicy] = useState('')
    const getPrivacy = async () => {
       try {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
             .then((result) => {
-               setPolicy(result.data.privacy)
+               document.getElementById('description').innerHTML = result.data.privacy
             })
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
@@ -30,20 +29,20 @@ export default function Policy() {
          }}
       >
          <Box sx={{ mt: '80px' }}>
-            <h2 style={{ color: 'red', margin: '0px' }}>Privacy Policy</h2>
+            <h2 style={{ color: '#1976d2', margin: '0px' }}>Privacy Policy</h2>
          </Box>
          <Box
             sx={{
                mt: '10px',
-               borderTop: '5px solid red',
+               borderTop: '5px solid #1976d2',
                bgcolor: 'white',
                borderBottomRightRadius: '5px',
                borderBottomLeftRadius: '5px',
                p: '10px',
                height: '60vh',
             }}
+            id='description'
          >
-            {policy}
          </Box>
       </Box>
    )

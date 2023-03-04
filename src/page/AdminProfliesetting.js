@@ -42,6 +42,11 @@ import { BeatLoader } from 'react-spinners'
 import PhoneInput from 'react-phone-input-2'
 import Autocomplete from '@mui/material/Autocomplete'
 import { setAccountData } from '../features/account/account'
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -70,9 +75,10 @@ const ServiceStyle = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: '500px',
-   minWidth: '320px',
-   height: '390px',
+   maxwidth: '1200px',
+   minWidth: '340px',
+   maxHeight: '600px',
+   minHeight: '300px',
    bgcolor: 'background.paper',
    border: '0px',
    borderRadius: 1,
@@ -555,7 +561,7 @@ export default function AdminProfliesetting() {
    }, [holyDay])
    // privacy setting
    const [privacyContent, setPrivacyContent] = useState('')
-   const [privacyMsg, setPrivacyMsg] = useState('')
+   const [editorState, setEditorState] = useState(EditorState.createEmpty())
    const [privacyID, setPrivacyID] = useState('')
    const [open2, setOpen2] = useState(false)
    const handleOpen2 = () => {
@@ -563,7 +569,7 @@ export default function AdminProfliesetting() {
    }
    const handleClose2 = () => setOpen2(false)
    const savePrivacy = async () => {
-      if (!privacyMsg) {
+      if (!draftToHtml(convertToRaw(editorState.getCurrentContent()))) {
          toast.error('Input privacy policy Content')
          return
       }
@@ -571,12 +577,13 @@ export default function AdminProfliesetting() {
          await axios
             .post(`${process.env.REACT_APP_API_URL}savePrivacy`, {
                id: privacyID,
-               privacyMsg,
+               privacyMsg: draftToHtml(convertToRaw(editorState.getCurrentContent())),
             })
             .then((result) => {
                if (result.data.status) {
-                  setPrivacyContent(privacyMsg)
+                  setPrivacyContent(editorState)
                   setOpen2(false)
+                  document.getElementById('description').innerHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
                   toast.success('Content Updated Successfully')
                }
             })
@@ -589,14 +596,24 @@ export default function AdminProfliesetting() {
          await axios
             .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
             .then((result) => {
-               setPrivacyMsg(result.data.privacy)
-               setPrivacyContent(result.data.privacy)
+               const blocksFromHtml = htmlToDraft(result.data.privacy);
+               const { contentBlocks, entityMap } = blocksFromHtml;
+               const contentState = ContentState.createFromBlockArray(
+                  contentBlocks,
+                  entityMap,
+               );
+               document.getElementById('description').innerHTML = result.data.privacy;
+               setEditorState(EditorState.createWithContent(contentState))
                setPrivacyID(result.data._id)
             })
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
+   const onEditorStateChange = (value) => {
+      setEditorState(value)
+   };
+
    // change password
    const [oldPassword, setOldPassword] = useState('')
    const [newPassword, setNewPassword] = useState('')
@@ -1084,8 +1101,9 @@ export default function AdminProfliesetting() {
                   bgcolor: 'white',
                   borderRadius: '10px',
                }}
+               id='description'
             >
-               {privacyContent}
+               
             </Box>
 
             <Box sx={{ pt: '20px', fontSize: '25px' }}>Update Logo</Box>
@@ -1512,16 +1530,12 @@ export default function AdminProfliesetting() {
                   </Box>
                </Box>
                <Box sx={{ p: 3 }}>
-                  <TextField
-                     id="outlined-multiline-static"
-                     label="Type here: Privacy Policy Content"
-                     multiline
-                     fullWidth
-                     value={privacyMsg}
-                     rows={9}
-                     onChange={(e) => setPrivacyMsg(e.target.value)}
+                  <Editor
+                     editorState={editorState}
+                     wrapperClassName="demo-wrapper"
+                     editorClassName="demo-editor"
+                     onEditorStateChange={onEditorStateChange}
                   />
-
                   <Box sx={{ display: 'flex' }}>
                      <Box sx={{ flex: '1' }}></Box>
                      <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
