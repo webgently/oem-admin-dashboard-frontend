@@ -332,7 +332,6 @@ export default function AdminUpload() {
             .post(`${process.env.REACT_APP_API_URL}getAllPrice`)
             .then((result) => {
                if (result) {
-                  console.log(result.data)
                   setCreditsData(result.data)
                } else {
                   toast.error('Interanal server error')
