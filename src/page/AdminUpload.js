@@ -321,12 +321,18 @@ export default function AdminUpload() {
       return `${day}-${month}-${year} ${hour}:${minute} ${ampm}`
    }
 
-   const getAllCredit = async () => {
+   const deleteFile = () => {
+      setFileData({})
+      setFileOpen(false)
+   }
+
+   const getAllPrice = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}getAllCredit`)
+            .post(`${process.env.REACT_APP_API_URL}getAllPrice`)
             .then((result) => {
                if (result) {
+                  console.log(result.data)
                   setCreditsData(result.data)
                } else {
                   toast.error('Interanal server error')
@@ -337,14 +343,9 @@ export default function AdminUpload() {
       }
    }
 
-   const deleteFile = () => {
-      setFileData({})
-      setFileOpen(false)
-   }
-
    useEffect(() => {
       getRequests()
-      getAllCredit()
+      getAllPrice()
    }, [])
 
    useEffect(() => {
@@ -669,7 +670,7 @@ export default function AdminUpload() {
                               >
                                  {creditsData.map((item, key) => { 
                                     return (
-                                       <MenuItem key={key} value={item.price}>{item.price}</MenuItem>
+                                       <MenuItem key={key} value={item.credit}>{item.credit}</MenuItem>
                                     )
                                  })}
                               </Select>
