@@ -60,6 +60,7 @@ const style = {
 
 export default function AdminUpload() {
    const socket = io(process.env.REACT_APP_BASE_URL)
+   const [creditsData, setCreditsData] = useState([])
    const account = useSelector((state) => state.account)
    const [page, setPage] = useState(0)
    const [myID, setMyID] = useState('')
@@ -320,6 +321,22 @@ export default function AdminUpload() {
       return `${day}-${month}-${year} ${hour}:${minute} ${ampm}`
    }
 
+   const getAllCredit = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getAllCredit`)
+            .then((result) => {
+               if (result) {
+                  setCreditsData(result.data)
+               } else {
+                  toast.error('Interanal server error')
+               }
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
+
    const deleteFile = () => {
       setFileData({})
       setFileOpen(false)
@@ -327,6 +344,7 @@ export default function AdminUpload() {
 
    useEffect(() => {
       getRequests()
+      getAllCredit()
    }, [])
 
    useEffect(() => {
@@ -640,15 +658,21 @@ export default function AdminUpload() {
                            </Box>
                            <Box>
                               CHARGE CREDITS
-                              <TextField
-                                 type="number"
-                                 variant="outlined"
+                              <Select
+                                 labelId="demo-simple-select-filled-label"
+                                 id="demo-simple-select-filled"
                                  size="small"
                                  fullWidth
                                  disabled={creditBtnFlag}
                                  value={credit}
                                  onChange={(e) => setCredit(e.target.value)}
-                              />
+                              >
+                                 {creditsData.map((item, key) => { 
+                                    return (
+                                       <MenuItem key={key} value={item.credit}>{item.credit}</MenuItem>
+                                    )
+                                 })}
+                              </Select>
                            </Box>
                            <Box>
                               <Button

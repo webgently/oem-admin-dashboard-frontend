@@ -24,8 +24,8 @@ const columns1 = [
 ]
 
 const columns2 = [
-   { id: 'credits', label: 'Credit', minWidth: 100, align: 'left' },
-   { id: 'netAmount', label: 'Price', minWidth: 100, align: 'center' },
+   { id: 'credits', label: 'Credits', minWidth: 100, align: 'left' },
+   { id: 'netAmount', label: 'Paid', minWidth: 100, align: 'center' },
    { id: 'date', label: 'Date', minWidth: 100, align: 'center' },
 ]
 
