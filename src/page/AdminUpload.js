@@ -670,7 +670,7 @@ export default function AdminUpload() {
                               >
                                  {creditsData.map((item, key) => { 
                                     return (
-                                       <MenuItem key={key} value={item.credit}>{item.credit}</MenuItem>
+                                       <MenuItem key={key} value={item.credit}>{item.service + '-' + item.credit}</MenuItem>
                                     )
                                  })}
                               </Select>
