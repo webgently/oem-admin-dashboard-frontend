@@ -70,6 +70,15 @@ export default function App() {
          play()
       })
 
+      socket.on('privacy', async (e) => { 
+         if (account._id !== e.adminId) { 
+            toast.success("OEMSERVICE privacy message is updated")
+            setTimeout(() => { 
+               window.location.href = '/policy'
+            }, 1000)
+         }
+      })
+
       return () => {
          socket.off('connect')
          socket.off('disconnect')
@@ -77,6 +86,7 @@ export default function App() {
          socket.off('fileReply' + account._id)
          socket.off('request' + account._id)
          socket.off('answer' + account._id)
+         socket.off('privacy')
       }
    }, [play])
 

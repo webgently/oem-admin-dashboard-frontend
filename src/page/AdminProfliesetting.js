@@ -47,6 +47,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import io from 'socket.io-client'
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -128,6 +129,8 @@ const ServiceStyle5 = {
    boxShadow: 24,
    p: 0,
 }
+
+const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminProfliesetting() {
    const account = useSelector((state) => state.account)
