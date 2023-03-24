@@ -79,6 +79,15 @@ export default function App() {
          }
       })
 
+      socket.on('news', async (e) => { 
+         if (account._id !== e.adminId) { 
+            toast.success("OEMSERVICE news message is updated")
+            setTimeout(() => { 
+               window.location.href = '/dashboard'
+            }, 1000)
+         }
+      })
+
       return () => {
          socket.off('connect')
          socket.off('disconnect')
@@ -87,6 +96,7 @@ export default function App() {
          socket.off('request' + account._id)
          socket.off('answer' + account._id)
          socket.off('privacy')
+         socket.off('news')
       }
    }, [play])
 

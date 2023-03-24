@@ -22,6 +22,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import bgCar from '../assets/img/bgCar.jpg'
 import EditIcon from '@mui/icons-material/Edit'
+import SaveIcon from '@mui/icons-material/Save'
 import PersonIcon from '@mui/icons-material/Person'
 import TablePagination from '@mui/material/TablePagination'
 import { ButtonGroup } from '@mui/material'
@@ -48,6 +49,8 @@ import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import io from 'socket.io-client'
+
+import { CKEditor } from 'ckeditor4-react';
 
 const columns = [
    { id: 'id', label: 'Sr #', minWidth: 50 },
@@ -563,59 +566,49 @@ export default function AdminProfliesetting() {
       }
    }, [holyDay])
    // privacy setting
-   const [privacyContent, setPrivacyContent] = useState('')
-   const [editorState, setEditorState] = useState(EditorState.createEmpty())
-   const [privacyID, setPrivacyID] = useState('')
-   const [open2, setOpen2] = useState(false)
-   const handleOpen2 = () => {
-      setOpen2(true)
-   }
-   const handleClose2 = () => setOpen2(false)
-   const savePrivacy = async () => {
-      if (!draftToHtml(convertToRaw(editorState.getCurrentContent()))) {
-         toast.error('Input privacy policy Content')
-         return
+   const [content, setContent] = useState({
+      inited: false,
+      privacy: '',
+      news: ''
+   })
+   const saveContents = async (e) => {
+      if (e === 'privacy') {
+         if (!content.privacy) {
+            toast.error('Input privacy policy Content')
+            return
+         }
+      } else { 
+         if (!content.news) {
+            toast.error('Input news Content')
+            return
+         }
       }
+
       try {
-         await axios
+         const result = await axios
             .post(`${process.env.REACT_APP_API_URL}savePrivacy`, {
-               id: privacyID,
-               privacyMsg: draftToHtml(convertToRaw(editorState.getCurrentContent())),
-            })
-            .then((result) => {
-               if (result.data.status) {
-                  setPrivacyContent(editorState)
-                  setOpen2(false)
-                  document.getElementById('description').innerHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
-                  toast.success('Content Updated Successfully')
-               }
-            })
+               action: e,
+               privacyMsg: content.privacy,
+               newsMsg: content.news
+            });
+         if (result.data.status) {
+            toast.success('Content Updated Successfully')
+         }
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
-   const getPrivacy = async () => {
+   const getContents = async () => {
       try {
-         await axios
-            .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
-            .then((result) => {
-               const blocksFromHtml = htmlToDraft(result.data.privacy);
-               const { contentBlocks, entityMap } = blocksFromHtml;
-               const contentState = ContentState.createFromBlockArray(
-                  contentBlocks,
-                  entityMap,
-               );
-               document.getElementById('description').innerHTML = result.data.privacy;
-               setEditorState(EditorState.createWithContent(contentState))
-               setPrivacyID(result.data._id)
-            })
+         const result = await axios.post(`${process.env.REACT_APP_API_URL}getContents`)
+         console.log(result)
+         const _content = {privacy: result.data.privacy, news: result.data.new}
+         setContent({..._content, inited: true})
       } catch (error) {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
+      return null
    }
-   const onEditorStateChange = (value) => {
-      setEditorState(value)
-   };
 
    // change password
    const [oldPassword, setOldPassword] = useState('')
@@ -758,7 +751,7 @@ export default function AdminProfliesetting() {
    }, [account])
 
    useEffect(() => {
-      getPrivacy()
+      getContents()
       getAllDaily()
       getLogo()
       getBg()
@@ -1093,8 +1086,8 @@ export default function AdminProfliesetting() {
 
             <Box sx={{ pt: '20px', fontSize: '25px' }}>
                Privacy Policy
-               <IconButton onClick={() => handleOpen2()}>
-                  <EditIcon />
+               <IconButton onClick={() => saveContents('privacy')}>
+                  <SaveIcon />
                </IconButton>
             </Box>
             <Box
@@ -1104,11 +1097,51 @@ export default function AdminProfliesetting() {
                   bgcolor: 'white',
                   borderRadius: '10px',
                }}
-               id='description'
             >
+               {content.inited ?
+                  <CKEditor
+                     initData={content.privacy}
+                     editorName={`${Math.random()}`}
+                     data={content.privacy}
+                     name="Policy"
+                     onChange={event => setContent({...content, privacy: event.editor.getData()})}
+                     values={content.privacy}
+                  />
+                  : (
+                     <></>
+                  )}
                
             </Box>
 
+            <Box sx={{ pt: '20px', fontSize: '25px' }}>
+               News
+               <IconButton onClick={() => saveContents('news')}>
+                  <SaveIcon />
+               </IconButton>
+            </Box>
+            <Box
+               sx={{
+                  p: 5,
+                  my: 3,
+                  bgcolor: 'white',
+                  borderRadius: '10px',
+               }}
+            >
+               {content.inited ?
+                  <CKEditor
+                     initData={content.news}
+                     editorName={`${Math.random()}`}
+                     data={content.news}
+                     name="News"
+                     onChange={event => setContent({...content, news: event.editor.getData()})}
+                     values={content.news}
+                  />
+                  : (
+                     <></>
+               )}
+               
+            </Box>
+            
             <Box sx={{ pt: '20px', fontSize: '25px' }}>Update Logo</Box>
             <Box
                sx={{
@@ -1495,59 +1528,6 @@ export default function AdminProfliesetting() {
                            onClick={() => saveProfile()}
                         >
                            Update Profile
-                        </Button>
-                     </Box>
-                  </Box>
-               </Box>
-            </Box>
-         </Modal>
-
-         <Modal
-            open={open2}
-            onClose={handleClose2}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-         >
-            <Box sx={ServiceStyle}>
-               <Box
-                  sx={{
-                     px: 3,
-                     py: 1,
-                     bgcolor: '#1976d2',
-                     borderRadius: 1,
-                     color: 'white',
-                     display: 'flex',
-                     alignItems: 'center',
-                  }}
-               >
-                  <Box>Privacy Policy</Box>
-                  <Box sx={{ flex: '1' }}></Box>
-                  <Box>
-                     <IconButton
-                        onClick={() => {
-                           handleClose2()
-                        }}
-                     >
-                        <CloseIcon sx={{ color: 'white' }} />
-                     </IconButton>
-                  </Box>
-               </Box>
-               <Box sx={{ p: 3 }}>
-                  <Editor
-                     editorState={editorState}
-                     wrapperClassName="demo-wrapper"
-                     editorClassName="demo-editor"
-                     onEditorStateChange={onEditorStateChange}
-                  />
-                  <Box sx={{ display: 'flex' }}>
-                     <Box sx={{ flex: '1' }}></Box>
-                     <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
-                        <Button
-                           size="small"
-                           variant="contained"
-                           onClick={() => savePrivacy()}
-                        >
-                           Update Content
                         </Button>
                      </Box>
                   </Box>

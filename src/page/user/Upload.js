@@ -56,10 +56,10 @@ export default function Upload() {
    const [termViewFlag, setTermViewFlag] = useState(false)
    const [isLoading, setIsLoading] = useState(false)
 
-   const getPrivacy = async () => {
+   const getContents = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
+            .post(`${process.env.REACT_APP_API_URL}getContents`)
             .then((result) => {
                setPolicy(result.data.privacy)
             })
@@ -267,7 +267,7 @@ export default function Upload() {
    }, [account])
 
    useEffect(() => {
-      getPrivacy()
+      getContents()
    }, [])
 
    useEffect(() => { 

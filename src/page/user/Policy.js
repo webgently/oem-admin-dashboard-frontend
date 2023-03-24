@@ -3,10 +3,10 @@ import Box from '@mui/material/Box'
 import axios from 'axios'
 
 export default function Policy() {
-   const getPrivacy = async () => {
+   const getContents = async () => {
       try {
          await axios
-            .post(`${process.env.REACT_APP_API_URL}getPrivacy`)
+            .post(`${process.env.REACT_APP_API_URL}getContents`)
             .then((result) => {
                document.getElementById('description').innerHTML = result.data.privacy
             })
@@ -16,7 +16,7 @@ export default function Policy() {
    }
 
    useEffect(() => {
-      getPrivacy()
+      getContents()
    }, [])
 
    return (

@@ -154,9 +154,21 @@ export default function Dashboard() {
          if (process.env.REACT_APP_MODE) console.log(error)
       }
    }
+   const getContents = async () => {
+      try {
+         await axios
+            .post(`${process.env.REACT_APP_API_URL}getContents`)
+            .then((result) => {
+               document.getElementById('description').innerHTML = result.data.new
+            })
+      } catch (error) {
+         if (process.env.REACT_APP_MODE) console.log(error)
+      }
+   }
 
    useEffect(() => {
       if (account._id) {
+         getContents()
          getDataByFilter(account._id)
          getServiceTime()
          getSumCredit(account._id)
@@ -438,6 +450,23 @@ export default function Dashboard() {
                   </Item2>
                </Grid>
             </Grid>
+         </Box>
+         <Box sx={{ mt: '30px' }}>
+            <h2 style={{ color: '#1976d2', margin: '0px' }}>News</h2>
+         </Box>
+         <Box
+            sx={{
+               mt: '10px',
+               borderTop: '5px solid #1976d2',
+               bgcolor: 'white',
+               borderBottomRightRadius: '5px',
+               borderBottomLeftRadius: '5px',
+               overflow: 'auto',
+               p: '10px',
+               height: '60vh',
+            }}
+            id='description'
+         >
          </Box>
       </Box>
    )
