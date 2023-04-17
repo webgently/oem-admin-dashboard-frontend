@@ -32,6 +32,7 @@ import axios from 'axios'
 import io from 'socket.io-client'
 import { useSelector } from 'react-redux'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import { da } from 'date-fns/locale'
 
 const columns = [
    { id: 'orderId', label: 'ID', minWidth: 100 },
@@ -332,7 +333,12 @@ export default function AdminUpload() {
             .post(`${process.env.REACT_APP_API_URL}getAllPrice`)
             .then((result) => {
                if (result) {
-                  setCreditsData(result.data)
+                  let data = result.data.map((item)=>{
+                     return {credit: item.credit, service: item.service}
+                  })
+                  data.unshift({credit: 0, service: "blank"})
+                  console.log(data)
+                  setCreditsData(data)
                } else {
                   toast.error('Interanal server error')
                }
