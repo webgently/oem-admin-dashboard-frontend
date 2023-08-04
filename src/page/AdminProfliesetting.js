@@ -136,10 +136,23 @@ const ServiceStyle5 = {
 const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminProfliesetting() {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const dispatch = useDispatch()
    const [page, setPage] = useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
+
+
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
    }
@@ -184,7 +197,7 @@ export default function AdminProfliesetting() {
    const bgHandleFileUpload = async () => {
       let params = new FormData()
       params.append('file', bgFile)
-      params.append('userId', JSON.stringify(account._id))
+      params.append('userId', JSON.stringify(account?._id))
       if (bgProfile !== bgPreview) {
          if (!isLoading1) {
             setIsLoading1(true)
@@ -284,7 +297,7 @@ export default function AdminProfliesetting() {
    const avatarHandleFileUpload = async () => {
       let params = new FormData()
       params.append('file', avatarFile)
-      params.append('userId', JSON.stringify(account._id))
+      params.append('userId', JSON.stringify(account?._id))
       if (avatar !== avatarPreview) {
          if (!isLoading2) {
             setIsLoading2(true)
@@ -363,14 +376,14 @@ export default function AdminProfliesetting() {
    const [address, setAddress] = useState('')
    const [open1, setOpen1] = useState(false)
    const handleOpen1 = () => {
-      setName(account.name)
-      setEmail(account.email)
-      setPhone(account.phone)
-      setVatNumber(account.vatNumber)
-      setRegion(account.subcontinent)
-      setCountry(account.country)
-      setCity(account.city)
-      setAddress(account.address)
+      setName(account?.name)
+      setEmail(account?.email)
+      setPhone(account?.phone)
+      setVatNumber(account?.vatNumber)
+      setRegion(account?.subcontinent)
+      setCountry(account?.country)
+      setCity(account?.city)
+      setAddress(account?.address)
       setOpen1(true)
    }
    const handleClose1 = () => setOpen1(false)
@@ -730,23 +743,23 @@ export default function AdminProfliesetting() {
    }
 
    useEffect(() => {
-      if (account._id) {
-         setUserName(account.name)
-         setUserID(account._id)
-         getAvatar(account._id)
+      if (account) {
+         setUserName(account?.name)
+         setUserID(account?._id)
+         getAvatar(account?._id)
       }
       setUserData([
-         { label: 'Email:', value: account.email },
+         { label: 'Email:', value: account?.email },
          {
             label: 'Account Status:',
-            value: account.status,
+            value: account?.status,
          },
-         { label: 'Address:', value: account.address },
-         { label: 'City:', value: account.city },
-         { label: 'Country:', value: account.country },
-         { label: 'Phone:', value: account.phone },
-         { label: 'Region:', value: account.subcontinent },
-         { label: 'VAT Number:', value: account.vatNumber },
+         { label: 'Address:', value: account?.address },
+         { label: 'City:', value: account?.city },
+         { label: 'Country:', value: account?.country },
+         { label: 'Phone:', value: account?.phone },
+         { label: 'Region:', value: account?.subcontinent },
+         { label: 'VAT Number:', value: account?.vatNumber },
       ])
    }, [account])
 

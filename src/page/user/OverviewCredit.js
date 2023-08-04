@@ -30,7 +30,7 @@ const columns2 = [
 ]
 
 export default function OverviewCredit() {
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const navigate = useNavigate()
    const [page, setPage] = React.useState(0)
    const [rowsPerPage, setRowsPerPage] = React.useState(10)
@@ -38,6 +38,16 @@ export default function OverviewCredit() {
    const [OrderID, setOrderID] = useState('')
    const [allData, setAllData] = useState([])
    const [buyData, setBuyData] = useState([])
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -104,13 +114,13 @@ export default function OverviewCredit() {
    }
 
    useEffect(() => {
-      if (account._id) {
-         setUserId(account._id)
+      if (account) {
+         setUserId(account?._id)
          if (OrderID) {
             getCreditByOrderID()
          } else {
-            getCreditHistory(account._id)
-            getUserInvoiceHistory(account._id)
+            getCreditHistory(account?._id)
+            getUserInvoiceHistory(account?._id)
          }
       }
    }, [account, OrderID])

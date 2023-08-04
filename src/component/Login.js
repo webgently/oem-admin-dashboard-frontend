@@ -11,7 +11,8 @@ import axios from 'axios'
 import { setAccountData } from '../features/account/account'
 
 const Login = () => {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
+   const [account, setAccount] = useState(null)
    const navigate = useNavigate()
    const dispatch = useDispatch()
    const [mobileView, setMobileView] = useState(false)
@@ -29,14 +30,24 @@ const Login = () => {
                await axios
                   .post(`${process.env.REACT_APP_API_URL}signin`, { data })
                   .then((result) => {
+                     console.log(result)
                      if (result.data.login) {
-                        const data = result.data.data
-                        delete data.__v
-                        if (data.permission === 'user') navigate('dashboard')
-                        else if (data.permission === 'admin')
-                           navigate('admin_dashboard')
+                        const Data = result.data.data
+                        console.log(Data)
+
+                        delete Data.__v
+                        // dispatch(setAccountData(Data))
+                        localStorage.setItem('user', JSON.stringify(Data));
                         toast.success('Login Successed')
-                        dispatch(setAccountData(data))
+                        if (Data.permission === 'user') {
+                           window.location.replace(`${window.origin}/dashboard`)
+                        }
+                        if (Data.permission === 'admin') {
+                           window.location.replace(
+                              `${window.origin}/admin_dashboard`
+                           )
+                        }
+                        // navigate('admin_dashboard')
                      } else {
                         toast.error(result.data.data)
                      }
@@ -68,20 +79,28 @@ const Login = () => {
    }, [])
 
    useEffect(() => {
-      if (account) {
-         switch (account.permission) {
-            case 'admin':
-               navigate('admin_dashboard')
-               break
-            case 'user':
-               navigate('dashboard')
-               break
-            default:
-               break
-         }
-         dispatch(setAccountData(account))
+      let user = localStorage.getItem('user')
+      if (user) {
+         let parse = JSON.parse(user)
+         setAccount(parse)
       }
-   }, [account, dispatch, navigate])
+   }, [])
+
+   // useEffect(() => {
+   //    if (account) {
+   //       switch (account?.permission) {
+   //          case 'admin':
+   //             navigate('admin_dashboard')
+   //             break
+   //          case 'user':
+   //             navigate('dashboard')
+   //             break
+   //          default:
+   //             break
+   //       }
+   //       dispatch(setAccountData(account))
+   //    }
+   // }, [account, dispatch, navigate])
 
    return (
       <Grid className="right-bg" item xs={12} md={6} lg={6}>

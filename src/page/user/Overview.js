@@ -110,12 +110,22 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function Overview() {
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const [page, setPage] = React.useState(0)
    const [rowsPerPage, setRowsPerPage] = useState(10)
    const [allData, setAllData] = useState([])
    const [filterSetting, setFilterSetting] = useState('all')
    const [OrderID, setOrderID] = useState('')
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
    const [downloadList, setDownloadList] = useState({
       origin: [],
       rename: [],
@@ -313,7 +323,7 @@ export default function Overview() {
          userId,
          dataId,
          orderId,
-         name: `${account.name}/R-ID: ${orderId}`,
+         name: `${account?.name}/R-ID: ${orderId}`,
          profile: 'file',
       }
       const copy = { ...unreadFileCount }
@@ -406,13 +416,13 @@ export default function Overview() {
    }, [fileData])
 
    useEffect(() => {
-      if (account._id) {
-         setMyID(account._id)
-         setName(account.name)
+      if (account) {
+         setMyID(account?._id)
+         setName(account?.name)
          if (!OrderID) {
-            getDataByFilter(account._id)
+            getDataByFilter(account?._id)
          } else {
-            getDataByOrderID(account._id)
+            getDataByOrderID(account?._id)
          }
          getSupportID()
       }

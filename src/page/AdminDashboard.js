@@ -25,7 +25,8 @@ const Item = styled(Paper)(({ theme }) => ({
 const socket = io(process.env.REACT_APP_BASE_URL)
 
 export default function AdminDashboard() {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
+   const [account, setAccount] = useState(null)
    const navigate = useNavigate()
    const [userCount, setUserCount] = useState(0)
    const [serviceCount, setServiceCount] = useState(0)
@@ -70,19 +71,27 @@ export default function AdminDashboard() {
    }
 
    useEffect(() => {
-      if (account._id) {
-         getDashBoardData(account._id)
-         socket.on(account._id, async (e) => {
+      const user = localStorage.getItem('user')
+      if (user) {
+         let parse = JSON.parse(user);
+         setAccount(parse)
+      }
+   }, [])
+
+   useEffect(() => {
+      if (account) {
+         getDashBoardData(account?._id)
+         socket.on(account?._id, async (e) => {
             setUnreadCount(unreadCount + 1)
          })
-         socket.on('request' + account._id, async () => {
+         socket.on('request' + account?._id, async () => {
             setRequestCount(requestCount + 1)
          })
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(account._id)
-            socket.off('request' + account._id)
+            socket.off(account?._id)
+            socket.off('request' + account?._id)
          }
       }
    }, [account, unreadCount, requestCount])

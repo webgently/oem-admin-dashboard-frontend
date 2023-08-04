@@ -28,7 +28,7 @@ import io from 'socket.io-client'
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function Upload() {
    const navigate = useNavigate()
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const [supportID, setSupportID] = useState('')
    const [userName, setUserName] = useState('')
 
@@ -55,6 +55,16 @@ export default function Upload() {
    const [fileOpen, setFileOpen] = useState(false)
    const [termViewFlag, setTermViewFlag] = useState(false)
    const [isLoading, setIsLoading] = useState(false)
+
+
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
 
    const getContents = async () => {
       try {
@@ -153,7 +163,7 @@ export default function Upload() {
       const data = {
          orderId: '',
          userId,
-         email: account.email,
+         email: account?.email,
          client: userName,
          fileName: [fileData.name],
          fileSize: [fileData.size],
@@ -260,9 +270,9 @@ export default function Upload() {
 
    useEffect(() => {
       getSupportID()
-      if (account._id) {
-         setUserName(account.name)
-         setUserID(account._id)
+      if (account) {
+         setUserName(account?.name)
+         setUserID(account?._id)
       }
    }, [account])
 

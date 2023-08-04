@@ -37,7 +37,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function AdminArchive() {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
+   const [account , setAccount] = useState(null);
    const [selectedIndex, setSelectedIndex] = useState('')
    const [myID, setMyID] = useState('')
    const [allUserList, setAllUserList] = useState([])
@@ -167,10 +168,20 @@ export default function AdminArchive() {
       window.addEventListener('resize', setResponsiveness)
    }, [])
 
+  
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
+
    useEffect(() => {
-      if (account._id) {
-         setMyID(account._id)
-         getUserList(account._id, search)
+      if (account) {
+         setMyID(account?._id)
+         getUserList(account?._id, search)
       }
    }, [account, search])
 

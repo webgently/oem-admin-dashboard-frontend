@@ -72,11 +72,24 @@ const Item3 = styled(Paper)(({ theme }) => ({
 }))
 
 export default function Dashboard() {
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const [allData, setAllData] = useState([])
    const [openTime, setOpenTime] = useState('')
    const [closeTime, setCloseTime] = useState('')
    const [creditAmount, setCreditAmount] = useState(0)
+ 
+     
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
+
+
+
    const navigate = useNavigate()
    const customTime = (date) => {
       const d = new Date(date)
@@ -167,11 +180,11 @@ export default function Dashboard() {
    }
 
    useEffect(() => {
-      if (account._id) {
+      if (account) {
          getContents()
-         getDataByFilter(account._id)
+         getDataByFilter(account?._id)
          getServiceTime()
-         getSumCredit(account._id)
+         getSumCredit(account?._id)
       }
    }, [account])
 

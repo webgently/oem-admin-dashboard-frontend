@@ -337,9 +337,9 @@ export default function AdminSupport() {
    }, [fileData])
 
    useEffect(() => {
-      if (account._id) {
-         setMyID(account._id)
-         getUserList(account._id, search)
+      if (account?._id) {
+         setMyID(account?._id)
+         getUserList(account?._id, search)
       }
    }, [account, search])
 

@@ -66,7 +66,7 @@ const ServiceStyle2 = {
 }
 
 export default function Profile() {
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const dispatch = useDispatch()
    const [userData, setUserData] = useState([])
    const [userName, setUserName] = useState('')
@@ -81,6 +81,16 @@ export default function Profile() {
    const [address, setAddress] = useState('')
    const [open1, setOpen1] = useState(false)
    const [bgProfile, setBgProfile] = useState('')
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
    const getBg = async () => {
       try {
          await axios
@@ -144,7 +154,8 @@ export default function Profile() {
    const avatarHandleFileUpload = async () => {
       let params = new FormData()
       params.append('file', avatarFile)
-      params.append('userId', JSON.stringify(account._id))
+      params.append('userId', JSON.stringify(account?._id))
+      console.log(account)
       if (avatar !== avatarPreview) {
          if (!isLoading1) {
             setIsLoading1(true)
@@ -210,14 +221,14 @@ export default function Profile() {
       }
    }
    const handleOpen1 = () => {
-      setName(account.name)
-      setEmail(account.email)
-      setPhone(account.phone)
-      setVatNumber(account.vatNumber)
-      setRegion(account.subcontinent)
-      setCountry(account.country)
-      setCity(account.city)
-      setAddress(account.address)
+      setName(account?.name)
+      setEmail(account?.email)
+      setPhone(account?.phone)
+      setVatNumber(account?.vatNumber)
+      setRegion(account?.subcontinent)
+      setCountry(account?.country)
+      setCity(account?.city)
+      setAddress(account?.address)
       setOpen1(true)
    }
    const handleClose1 = () => setOpen1(false)
@@ -344,26 +355,28 @@ export default function Profile() {
    }
 
    useEffect(() => {
-      if (account._id) {
-         setUserName(account.name)
-         setUserID(account._id)
-         getAvatar(account._id)
+      if (account) {
+         setUserName(account?.name)
+         setUserID(account?._id)
+         getAvatar(account?._id)
          getBg()
-      }
       setUserData([
-         { label: 'Email:', value: account.email },
+         { label: 'Email:', value: account?.email },
          {
             label: 'Account Status:',
-            value: account.status,
+            value: account?.status,
          },
-         { label: 'Address:', value: account.address },
-         { label: 'City:', value: account.city },
-         { label: 'Country:', value: account.country },
-         { label: 'Phone:', value: account.phone },
-         { label: 'Region:', value: account.subcontinent },
-         { label: 'VAT Number:', value: account.vatNumber },
+         { label: 'Address:', value: account?.address },
+         { label: 'City:', value: account?.city },
+         { label: 'Country:', value: account?.country },
+         { label: 'Phone:', value: account?.phone },
+         { label: 'Region:', value: account?.subcontinent },
+         { label: 'VAT Number:', value: account?.vatNumber },
       ])
+   }
    }, [account])
+
+   console.log(account , userID)
 
    return (
       <>

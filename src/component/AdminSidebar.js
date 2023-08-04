@@ -85,10 +85,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function AdminSidebar() {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
    const theme = useTheme()
    const [open, setOpen] = useState(true)
    const [logo, setLogo] = useState('')
+   const [account, setAccount] = useState(null)
    const [unreadCount1, setUnreadCount1] = useState(0)
    const [unreadCount2, setUnreadCount2] = useState(0)
    const [anchorElUser, setAnchorElUser] = useState(null)
@@ -164,9 +165,11 @@ export default function AdminSidebar() {
 
    useEffect(() => {
       getLogo()
-      setAvatar(account.profile)
-      if (account._id) {
-         socket.on(account._id, async (e) => {
+      if (account) {
+         setAvatar(account?.profile)
+         // if (account?._id) {
+         if (account?._id) getUserUnreadCount(account?._id)
+         socket.on(account?._id, async (e) => {
             if (e.support) {
                setUnreadCount1(unreadCount1 + 1)
             } else {
@@ -174,32 +177,37 @@ export default function AdminSidebar() {
             }
          })
 
-         socket.on('checkUnreadCount' + account._id, async (e) => {
-            await getUserUnreadCount(account._id)
+         socket.on('checkUnreadCount' + account?._id, async (e) => {
+            await getUserUnreadCount(account?._id)
          })
 
          socket.on('sendToChatBox', async () => {
-            await getUserUnreadCount(account._id)
+            await getUserUnreadCount(account?._id)
          })
 
          socket.on('sendToArchive', async () => {
-            await getUserUnreadCount(account._id)
+            await getUserUnreadCount(account?._id)
          })
 
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(account._id)
+            socket.off(account?._id)
             socket.off('sendToArchive')
             socket.off('sendToChatBox')
-            socket.off('checkUnreadCount' + account._id)
+            socket.off('checkUnreadCount' + account?._id)
          }
+         // }
       }
    }, [account, unreadCount1, unreadCount2])
 
    useEffect(() => {
-      if (account._id) getUserUnreadCount(account._id)
-   }, [account])
+      let user = localStorage.getItem('user')
+      if (user) {
+         let parse = JSON.parse(user)
+         setAccount(parse)
+      }
+   }, [])
 
    return (
       <Box sx={{ display: 'flex' }}>
@@ -272,8 +280,10 @@ export default function AdminSidebar() {
                >
                   <MenuItem
                      onClick={() => {
-                        dispatch(clearAccountData())
-                        navigate('/')
+                        // dispatch(clearAccountData())
+                        localStorage.clear();
+                        handleCloseUserMenu();
+                         window.location.replace(`${window.origin}/`)
                      }}
                   >
                      <Typography textAlign="center">LogOut</Typography>

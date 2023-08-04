@@ -85,7 +85,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function UserSidebar() {
-   const account = useSelector((state) => state.account)
+   // const account = useSelector((state) => state.account)
+   const [account, setAccount] = useState(null)
    const theme = useTheme()
    const dispatch = useDispatch()
    const [open, setOpen] = useState(true)
@@ -197,6 +198,14 @@ export default function UserSidebar() {
       document.body.clientWidth
 
    useEffect(() => {
+      const user = localStorage.getItem('user')
+      if (user) {
+         let parse = JSON.parse(user);
+         setAccount(parse)
+      }
+   }, [])
+
+   useEffect(() => {
       const setResponsiveness = () => {
          getWidth() < 600 ? setMobileView(true) : setMobileView(false)
       }
@@ -215,37 +224,39 @@ export default function UserSidebar() {
 
    useEffect(() => {
       getLogo()
-      if (account._id) {
-         setMyID(account._id)
-         getSumCredit(account._id)
-         socket.on(account._id, async (e) => {
+      if (account) {
+         setMyID(account?._id)
+         getSumCredit(account?._id)
+         socket.on(account?._id, async (e) => {
             setUnreadCount(unreadCount + 1)
          })
-         socket.on('fileReply' + account._id, async (e) => {
+         socket.on('fileReply' + account?._id, async (e) => {
             setUnreadFileCount(unreadFileCount + 1)
             setListOpen(true)
          })
-         socket.on('totalUnreadCount' + account._id, async (e) => {
+         socket.on('totalUnreadCount' + account?._id, async (e) => {
             setUnreadFileCount(unreadFileCount - e.count)
          })
-         socket.on('creditCheck' + account._id, async () => {
-            getSumCredit(account._id)
+         socket.on('creditCheck' + account?._id, async () => {
+            getSumCredit(account?._id)
          })
 
          return () => {
             socket.off('connect')
             socket.off('disconnect')
-            socket.off(account._id)
-            socket.off('fileReply' + account._id)
-            socket.off('totalUnreadCount' + account._id)
-            socket.off('creditCheck' + account._id)
+            socket.off(account?._id)
+            socket.off('fileReply' + account?._id)
+            socket.off('totalUnreadCount' + account?._id)
+            socket.off('creditCheck' + account?._id)
          }
       }
    }, [account, unreadCount, unreadFileCount])
 
    useEffect(() => {
-      getUserUnreadCount(account._id)
-      getUserUnreadPerFileCount(account._id)
+      if (account) {
+         getUserUnreadCount(account?._id)
+         getUserUnreadPerFileCount(account?._id)
+      }
    }, [account])
    return (
       <Box sx={{ display: 'flex' }}>
@@ -371,8 +382,8 @@ export default function UserSidebar() {
                   </MenuItem>
                   <MenuItem
                      onClick={() => {
-                        dispatch(clearAccountData())
-                        navigate('/')
+                        localStorage.clear();
+                         window.location.replace(`${window.origin}/`)
                      }}
                   >
                      <Typography textAlign="center">LogOut</Typography>

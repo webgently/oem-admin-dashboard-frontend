@@ -62,7 +62,7 @@ const style = {
 export default function AdminUpload() {
    const socket = io(process.env.REACT_APP_BASE_URL)
    const [creditsData, setCreditsData] = useState([])
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const [page, setPage] = useState(0)
    const [myID, setMyID] = useState('')
    const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -104,6 +104,17 @@ export default function AdminUpload() {
    const inputElement = useRef('fileInput')
    /* file modal */
    const [fileOpen, setFileOpen] = useState(false)
+
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
 
    const handleChangePage = (event, newPage) => {
       setPage(newPage)
@@ -367,8 +378,8 @@ export default function AdminUpload() {
    }, [status])
 
    useEffect(() => {
-      if (account._id) {
-         setMyID(account._id)
+      if (account) {
+         setMyID(account?._id)
       }
    }, [account])
 

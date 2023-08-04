@@ -31,7 +31,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const socket = io(process.env.REACT_APP_BASE_URL)
 export default function Support() {
-   const account = useSelector((state) => state.account)
+   const [account,setAccount] = useState(null);
    const messagesEndRef = useRef(null)
    const inputRef = useRef(null)
    const [myID, setMyID] = useState('')
@@ -44,6 +44,16 @@ export default function Support() {
    const [fileOpen, setFileOpen] = useState(false)
    const [isLoading, setIsLoading] = useState(false)
    const inputElement = useRef('fileInput')
+
+   
+   useEffect(()=>{
+      const user = localStorage.getItem('user');
+      if(user){
+         let parse = JSON.parse(user);
+         setAccount(parse);
+      }
+   },[]);
+
 
    const scrollToBottom = () => {
       messagesEndRef.current.scrollIntoView({
@@ -220,10 +230,10 @@ export default function Support() {
    }, [fileData])
 
    useEffect(() => {
-      if (account._id) {
-         setMyID(account._id)
-         setName(account.name)
-         getChattingHistory(account._id)
+      if (account) {
+         setMyID(account?._id)
+         setName(account?.name)
+         getChattingHistory(account?._id)
          getSupportID()
       }
    }, [account])

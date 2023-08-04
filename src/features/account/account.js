@@ -15,14 +15,7 @@ export const accountSlice = createSlice({
       note: '',
       password: '',
       permission: '',
-      phone: '',
-      profile: '',
-      support: '',
-      status: '',
-      subcontinent: '',
-      vatNumber: '',
-      zcode: '',
-      tax: '',
+   
    },
    reducers: {
       setAccountData: (state, action) => {
@@ -36,7 +29,7 @@ export const accountSlice = createSlice({
          state.email = action.payload.email
          state.name = action.payload.name
          state.note = action.payload.note
-         state.password = action.payload.password
+         // state.password = action.payload.password
          state.permission = action.payload.permission
          state.phone = action.payload.phone
          state.profile = action.payload.profile
@@ -49,27 +42,9 @@ export const accountSlice = createSlice({
          localStorage.setItem('user', JSON.stringify(action.payload))
       },
       clearAccountData: (state) => {
-         state.id = ''
-         state.address = ''
-         state.checkflag = ''
-         state.city = ''
-         state.country = ''
-         state.credit = ''
-         state.date = ''
-         state.email = ''
-         state.name = ''
-         state.note = ''
-         state.password = ''
-         state.permission = ''
-         state.phone = ''
-         state.profile = ''
-         state.support = ''
-         state.status = ''
-         state.subcontinent = ''
-         state.vatNumber = ''
-         state.zcode = ''
-         state.tax = ''
-         localStorage.removeItem('user')
+
+         console.log("Remove item Called");
+         localStorage.removeItem('user');
       },
    },
 })
